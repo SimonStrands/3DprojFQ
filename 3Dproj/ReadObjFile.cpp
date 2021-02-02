@@ -1,6 +1,6 @@
 #include "ReadObjFile.h"
 //#thisNeedFix
-//git
+//get to use assimp
 FileReader::FileReader()
 {
 

@@ -4,7 +4,7 @@
 #include "rotation.h"
 #include "Keyboard.h"
 #include "Vec.h"
-//git
+
 class Camera {
 public:
 	Camera(Graphics *&gfx);
