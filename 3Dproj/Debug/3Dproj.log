@@ -1,0 +1,5 @@
+﻿  Graphics.cpp
+C:\Users\etta1\source\repos\3Dproj\3Dproj\Graphics.cpp(265,26): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+  ReadObjFile.cpp
+  Generating Code...
+  3Dproj.vcxproj -> C:\Users\etta1\source\repos\3Dproj\Debug\3Dproj.exe
