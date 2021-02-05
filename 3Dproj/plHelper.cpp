@@ -74,13 +74,12 @@ bool CreateInputLayout(ID3D11Device* device, ID3D11InputLayout*& inputLayout, st
 	return !FAILED(hr);
 }
 
-bool CreateTexture(ID3D11Device* device, ID3D11Texture2D*& tex, ID3D11ShaderResourceView*& texSRV) 
+bool CreateTexture(std::string file, ID3D11Device* device, ID3D11Texture2D*& tex, ID3D11ShaderResourceView*& texSRV) 
 {
 	int textureWidth;
 	int textureHeight;
 	int channels;
 
-	std::string file = "Textures/babyyoda.jpg";
 	unsigned char * textureData = stbi_load(file.c_str(), &textureWidth, &textureHeight, &channels, 4);
 
 	D3D11_TEXTURE2D_DESC desc;
@@ -127,8 +126,8 @@ bool CreateSamplerState(ID3D11Device* device, ID3D11SamplerState*& sampler)
 	return !FAILED(hr);
 }
 
-bool SetupPipeline(ID3D11Device* device, ID3D11Buffer*& vBuffer, 
-	ID3D11VertexShader*& vShader, ID3D11PixelShader*& pShader, 
+bool SetupPipeline(ID3D11Device* device, ID3D11VertexShader*& vShader, 
+	ID3D11PixelShader*& pShader, 
 	ID3D11InputLayout*& inputLayout, ID3D11Texture2D*& tex, 
 	ID3D11ShaderResourceView*& textureRSV, ID3D11SamplerState*& sampler)
 {
@@ -144,7 +143,7 @@ bool SetupPipeline(ID3D11Device* device, ID3D11Buffer*& vBuffer,
 		std::cerr << "cant load inputlayout" << std::endl;
 		return false;
 	}
-	if (!CreateTexture(device, tex, textureRSV))
+	if (!CreateTexture("Textures/babyyoda.jpg", device, tex, textureRSV))
 	{
 		std::cerr << "cant load texture" << std::endl;
 		return false;

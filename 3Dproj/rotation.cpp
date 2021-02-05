@@ -1,6 +1,6 @@
 #include "rotation.h"
 //git
-void XRotation(DirectX::XMMATRIX &Matrix, float rot)
+void XRotation(DirectX::XMMATRIX &Matrix, const float rot)
 {
 	//X rotation
 	DirectX::XMMATRIX Mrot(
@@ -12,7 +12,7 @@ void XRotation(DirectX::XMMATRIX &Matrix, float rot)
 	Matrix = Matrix * Mrot;
 }
 
-void YRotation(DirectX::XMMATRIX &Matrix, float rot)
+void YRotation(DirectX::XMMATRIX &Matrix, const float rot)
 {
 	DirectX::XMMATRIX Mrot(
 		1.0f, 0.0f, 0.0f, 0.0f,
@@ -23,7 +23,7 @@ void YRotation(DirectX::XMMATRIX &Matrix, float rot)
 	Matrix = Matrix * Mrot;
 }
 
-void ZRotation(DirectX::XMMATRIX &Matrix, float rot)
+void ZRotation(DirectX::XMMATRIX &Matrix, const float rot)
 {
 	DirectX::XMMATRIX Mrot(
 		std::cos(rot), -std::sin(rot), 0.0f, 0.0f,

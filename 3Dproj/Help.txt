@@ -1,0 +1,10 @@
+how to add more objects 
+flera vertexBuffers?
+
+vad är en diffuse/ambient texture map?
+
+är det ok att använda trianglelist istället för trianglestrip
+
+
+varje object world
+position rot scala

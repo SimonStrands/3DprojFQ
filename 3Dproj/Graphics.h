@@ -7,6 +7,8 @@
 #include "WindowHelper.h"
 #include "deltaTime.h"
 #include "ReadObjFile.h"
+#include "object.h"
+#include "rotation.h"
 //git
 struct Vcb {
 	struct {
@@ -29,6 +31,9 @@ struct Pcb {
 	}cameraPos;
 	struct {
 		float element[4];
+	}lightColor;
+	struct {
+		float element[4];
 	}ka;
 	struct {
 		float element[4];
@@ -46,7 +51,11 @@ private:
 	const UINT WIDTH = 1080;
 	const UINT HEIGHT = 720;
 	HWND wnd;
+public:
+	Graphics(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine, _In_ int nCmdShow);
+	virtual ~Graphics();
 private:
+	//D3D11
 	ID3D11Device* device;
 	ID3D11DeviceContext* immediateContext;
 	IDXGISwapChain* swapChain;
@@ -55,19 +64,14 @@ private:
 	ID3D11DepthStencilView* dsView;
 	D3D11_VIEWPORT viewPort;
 	ID3D11InputLayout* inputLayout;
-	ID3D11Buffer* vertexBuffer;
 	ID3D11VertexShader* vShader;
 	ID3D11PixelShader* pShader;
+	ID3D11Buffer* vertexBuffer;
 	ID3D11Buffer* Vg_pConstantBuffer;
 	ID3D11Buffer* Pg_pConstantBuffer;
 	ID3D11RasterizerState* pRS;
+	////////////////////////
 
-	ID3D11Texture2D* tex;
-	ID3D11ShaderResourceView* texSRV;
-	ID3D11SamplerState* sampler;
-	
-	DirectX::XMMATRIX lightMatrix;
-	DirectX::XMMATRIX makeToCb;
 	//VertexConstantBuffer
 	Vcb vcbd = {
 		{//transform
@@ -86,6 +90,9 @@ private:
 		{//camPos
 			0,0,1,1,
 		},
+		{//lightColor
+			1,1,1,0
+		},
 		{//ka
 			0.5,0.5,0.5,0,
 		},
@@ -97,30 +104,44 @@ private:
 		},
 	};
 
-	void Projection();
+	//textures
+	ID3D11Texture2D* tex;
+	ID3D11ShaderResourceView* texSRV;
+	ID3D11SamplerState* sampler;
+	//not yet done
+	ID3D11Texture2D* diffuse;
+	ID3D11Texture2D* ambient;
 
-	vec3 quadpos;
-	vec3 quadRoationPos;
-
+	//objects
 	PointLight light;
-	float speed;
 	FileReader reader;
+	object** objects;
 
-	int nrOfTriangles;
-	float yRot;
-	float scale;
+	//variables
+	float speed;
+	int nrOfVertexes;
 	float fov, ratio, farPlane, nearPlane;
+	int nrOfObject;
+	
+
+	//functions
+	void Projection();
 	void Render();
-	bool CreateVertexBuffer();
 	bool worldMatrix();
+
 public:
-	Graphics(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine, _In_ int nCmdShow);
-	virtual ~Graphics();
-	int getNrOfTriangles();
-	void Update(DeltaTime dt);
-public:
+	//get things
 	Vcb *getVcb();
 	Pcb *getPcb();
+	int getNrOfVertexes();
+	void setObjects(object** obj, int nrOfObjects);
+
+	//help create vertexbuffer
+	bool CreateVertexBuffer(object& obj, std::string fileName);
+	
+	//update
+	void Update(DeltaTime dt);
+	void updateWorldMatrix(object& obj);
 private:
 	//Debug shit
 	float c = 0;
@@ -128,4 +149,6 @@ private:
 	void debugcd();
 	void keyboardDebug();
 	bool pressed = false;
+public:
+	void createBuffer();
 };

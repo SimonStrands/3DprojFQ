@@ -15,6 +15,13 @@ private:
 	Graphics *gfx;
 	void Update();
 private:
+	//logic
 	DeltaTime dt;
+
+	//game objects
 	Camera *camera;
+	object** obj;
+
+	//var
+	int nrOfObj;
 };
