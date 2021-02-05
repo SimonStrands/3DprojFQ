@@ -24,7 +24,7 @@ void Graphics::createBuffer()
 bool Graphics::CreateVertexBuffer(object &obj, std::string fileName)
 {
 	reader.readObjFile(obj.getVertecies(), fileName, nrOfVertexes);
-	nrOfObject++;
+
 	D3D11_BUFFER_DESC bDesc = {};
 	bDesc.ByteWidth = sizeof(vertex) * (UINT)obj.getVertecies()[0].size();
 	bDesc.Usage = D3D11_USAGE_DYNAMIC;
@@ -38,7 +38,6 @@ bool Graphics::CreateVertexBuffer(object &obj, std::string fileName)
 	data.SysMemPitch = 0;
 	data.SysMemSlicePitch = 0;
 
-	//HRESULT hr = device->CreateBuffer(&bDesc, &data, &vertexBuffer);
 	HRESULT hr = device->CreateBuffer(&bDesc, &data, &obj.vertexBuffer);
 
 	if (FAILED(hr)) {
@@ -59,7 +58,8 @@ bool Graphics::CreateVertexBuffer(object &obj, std::string fileName)
 	InitData.SysMemPitch = 0;
 	InitData.SysMemSlicePitch = 0;
 
-	hr = device->CreateBuffer(&CbDesc, &InitData, &Vg_pConstantBuffer);
+	hr = device->CreateBuffer(&CbDesc, &InitData, &obj.Vg_pConstantBuffer);
+	//hr = device->CreateBuffer(&CbDesc, &InitData, &obj.Vg_pConstantBuffer);
 	if (FAILED(hr)) {
 		printf("failed");
 		return false;
@@ -71,9 +71,10 @@ bool Graphics::CreateVertexBuffer(object &obj, std::string fileName)
 	UINT strid = sizeof(vertex);
 	UINT offset = 0;
 
-	immediateContext->VSSetConstantBuffers(0, 1, &Vg_pConstantBuffer);
+	//immediateContext->VSSetConstantBuffers(nrOfObject, 1, &Vg_pConstantBuffer);
 	immediateContext->PSSetConstantBuffers(0, 1, &Pg_pConstantBuffer);
 
+	nrOfObject++;
 	return !FAILED(hr);
 
 }
@@ -125,14 +126,14 @@ void Graphics::updateWorldMatrix(object& obj)
 
 	D3D11_MAPPED_SUBRESOURCE resource;
 
-	/*immediateContext->Map(Vg_pConstantBuffer[0], 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
+	immediateContext->Map(obj.Vg_pConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
 	memcpy(resource.pData, &vcbd, sizeof(Vcb));
-	immediateContext->Unmap(Vg_pConstantBuffer[0], 0);
-	ZeroMemory(&resource, sizeof(D3D11_MAPPED_SUBRESOURCE));*/
-	immediateContext->Map(Vg_pConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
-	memcpy(resource.pData, &vcbd, sizeof(Vcb));
-	immediateContext->Unmap(Vg_pConstantBuffer, 0);
+	immediateContext->Unmap(obj.Vg_pConstantBuffer, 0);
 	ZeroMemory(&resource, sizeof(D3D11_MAPPED_SUBRESOURCE));
+	/*immediateContext->Map(obj.Vg_pConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
+	memcpy(resource.pData, &vcbd, sizeof(Vcb));
+	immediateContext->Unmap(obj.Vg_pConstantBuffer, 0);
+	ZeroMemory(&resource, sizeof(D3D11_MAPPED_SUBRESOURCE));*/
 }
 
 void Graphics::Projection()
@@ -223,7 +224,7 @@ Graphics::~Graphics()
 			Vg_pConstantBuffer[i]->Release();
 		}
 	}*/
-	Vg_pConstantBuffer->Release();
+	//Vg_pConstantBuffer->Release();
 	if (Pg_pConstantBuffer != nullptr) {
 		Pg_pConstantBuffer->Release();
 	}
@@ -290,7 +291,8 @@ void Graphics::Render()
 	UINT offset = 0;
 
 	for (int i = 0; i < nrOfObject; i++) {
-		//immediateContext->VSSetConstantBuffers(0,1, ob)
+		//immediateContext->VSSetConstantBuffers(0, 1, &objects[i]->Vg_pConstantBuffer);
+		immediateContext->VSSetConstantBuffers(0, 1, &objects[i]->Vg_pConstantBuffer);
 		immediateContext->IASetVertexBuffers(0, 1, &objects[i]->vertexBuffer, &strid, &offset);
 		immediateContext->Draw((int)objects[i]->getVertecies()[0].size(), 0);
 	}
