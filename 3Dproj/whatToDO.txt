@@ -1,0 +1,32 @@
+-move around in space (done) (if not wanna move with mouse and direction)
+-see so lightning is good//kinda 
+
+-skeletal Animation else see what deffered rendering is
+
+-model format parsing
+-Morph-based Vertex animation
+else{
+-Displacement Mapping using Tessellation Hardware
+-Walkable Height-map Terrain Rendering
+-Level of Detail using Tessellation Hardware
+}
+
+-Normal mapping
+else{
+-Screen Space Ambient Occlusion (SSAO)
+-Blend Mapping
+}
+
+-Shadow mapping
+
+-Back Face Culling using Geometry Shader
+and/or
+-Portal Culling
+
+-Particle System with Billboarded Particles
+-Picking using the Mouse
+-Water-effect
+else{
+-Screen-Space Antialiasing
+-Make your application into a small game
+}

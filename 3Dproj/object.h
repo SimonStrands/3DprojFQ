@@ -15,16 +15,20 @@ public:
 	const vec3 getPos();
 	const vec3 getRot();
 	const vec3 getScale();
-	std::vector<std::vector<vertex>> &getVertecies();
-	//dubg
-	ID3D11Buffer* vertexBuffer;
-	ID3D11Buffer* Vg_pConstantBuffer;
+	ID3D11Buffer*& getVertexBuffer();
+	ID3D11Buffer*& getVertexConstBuffer();
+
+	int& getNrOfVertex();
 private:
+	//object data
 	vec3 pos;
 	vec3 rot;
 	vec3 scale;
+	int nrOfVertexes;
+	ID3D11Buffer* vertexBuffer;
+	ID3D11Buffer* Vg_pConstantBuffer;
+	ID3D11Buffer* Pg_pConstantBuffer;
+
 	std::string fileName;
-	std::vector<std::vector<vertex>> vertices; //one for all the object in one object other for the vertecies for one object
 	std::vector<std::string> material; 
 };
-//vertices

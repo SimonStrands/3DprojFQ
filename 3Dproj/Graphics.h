@@ -66,7 +66,7 @@ private:
 	ID3D11InputLayout* inputLayout;
 	ID3D11VertexShader* vShader;
 	ID3D11PixelShader* pShader;
-	ID3D11Buffer* Vg_pConstantBuffer;
+	//ID3D11Buffer* Vg_pConstantBuffer;
 	ID3D11Buffer* Pg_pConstantBuffer;
 	ID3D11RasterizerState* pRS;
 	////////////////////////
@@ -118,7 +118,6 @@ private:
 
 	//variables
 	float speed;
-	int nrOfVertexes;
 	float fov, ratio, farPlane, nearPlane;
 	int nrOfObject;
 	
@@ -132,7 +131,6 @@ public:
 	//get things
 	Vcb *getVcb();
 	Pcb *getPcb();
-	int getNrOfVertexes();
 	void setObjects(object** obj, int nrOfObjects);
 
 	//help create vertexbuffer

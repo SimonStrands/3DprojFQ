@@ -167,5 +167,8 @@
     <Text Include="Help.txt">
       <Filter>Resource Files</Filter>
     </Text>
+    <Text Include="whatToDO.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
   </ItemGroup>
 </Project>

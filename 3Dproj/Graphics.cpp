@@ -23,10 +23,11 @@ void Graphics::createBuffer()
 //going to create multiple Vg_pConstantBuffer?
 bool Graphics::CreateVertexBuffer(object &obj, std::string fileName)
 {
-	reader.readObjFile(obj.getVertecies(), fileName, nrOfVertexes);
+	std::vector<std::vector<vertex>> vertices;
+	reader.readObjFile(vertices, fileName, obj.getNrOfVertex());
 
 	D3D11_BUFFER_DESC bDesc = {};
-	bDesc.ByteWidth = sizeof(vertex) * (UINT)obj.getVertecies()[0].size();
+	bDesc.ByteWidth = sizeof(vertex) * (UINT)obj.getNrOfVertex();
 	bDesc.Usage = D3D11_USAGE_DYNAMIC;
 	bDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	bDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
@@ -34,11 +35,12 @@ bool Graphics::CreateVertexBuffer(object &obj, std::string fileName)
 	bDesc.StructureByteStride = 0;
 
 	D3D11_SUBRESOURCE_DATA data;
-	data.pSysMem = obj.getVertecies()[0].data();
+	//data.pSysMem = obj.getVertecies()[0].data();
+	data.pSysMem = vertices[0].data();
 	data.SysMemPitch = 0;
 	data.SysMemSlicePitch = 0;
 
-	HRESULT hr = device->CreateBuffer(&bDesc, &data, &obj.vertexBuffer);
+	HRESULT hr = device->CreateBuffer(&bDesc, &data, &obj.getVertexBuffer());
 
 	if (FAILED(hr)) {
 		printf("failed");
@@ -58,7 +60,7 @@ bool Graphics::CreateVertexBuffer(object &obj, std::string fileName)
 	InitData.SysMemPitch = 0;
 	InitData.SysMemSlicePitch = 0;
 
-	hr = device->CreateBuffer(&CbDesc, &InitData, &obj.Vg_pConstantBuffer);
+	hr = device->CreateBuffer(&CbDesc, &InitData, &obj.getVertexConstBuffer());
 	//hr = device->CreateBuffer(&CbDesc, &InitData, &obj.Vg_pConstantBuffer);
 	if (FAILED(hr)) {
 		printf("failed");
@@ -126,9 +128,9 @@ void Graphics::updateWorldMatrix(object& obj)
 
 	D3D11_MAPPED_SUBRESOURCE resource;
 
-	immediateContext->Map(obj.Vg_pConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
+	immediateContext->Map(obj.getVertexConstBuffer(), 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
 	memcpy(resource.pData, &vcbd, sizeof(Vcb));
-	immediateContext->Unmap(obj.Vg_pConstantBuffer, 0);
+	immediateContext->Unmap(obj.getVertexConstBuffer(), 0);
 	ZeroMemory(&resource, sizeof(D3D11_MAPPED_SUBRESOURCE));
 	/*immediateContext->Map(obj.Vg_pConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
 	memcpy(resource.pData, &vcbd, sizeof(Vcb));
@@ -156,10 +158,8 @@ Graphics::Graphics(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	ratio = 16.f / 9.f;
 	farPlane = 40;
 	nearPlane = 0.1f;
-	nrOfVertexes = 0;
 	nrOfObject = 0;
 
-	Vg_pConstantBuffer = NULL;
 	Pg_pConstantBuffer = NULL;
 	inputLayout = nullptr; pShader = nullptr; vShader = nullptr; texSRV = nullptr;
 	//setting matrixes
@@ -219,12 +219,6 @@ Graphics::~Graphics()
 	if (device != nullptr) {
 		device->Release();
 	}
-	/*for (int i = 0; i < nrOfObject; i++) {
-		if (Vg_pConstantBuffer[i] != nullptr) {
-			Vg_pConstantBuffer[i]->Release();
-		}
-	}*/
-	//Vg_pConstantBuffer->Release();
 	if (Pg_pConstantBuffer != nullptr) {
 		Pg_pConstantBuffer->Release();
 	}
@@ -241,11 +235,6 @@ Graphics::~Graphics()
 		sampler->Release();
 	}
 	delete[] objects;
-}
-
-int Graphics::getNrOfVertexes()
-{
-	return this->nrOfVertexes;
 }
 
 void Graphics::setObjects(object** obj, int nrOfObjects)
@@ -292,11 +281,10 @@ void Graphics::Render()
 
 	for (int i = 0; i < nrOfObject; i++) {
 		//immediateContext->VSSetConstantBuffers(0, 1, &objects[i]->Vg_pConstantBuffer);
-		immediateContext->VSSetConstantBuffers(0, 1, &objects[i]->Vg_pConstantBuffer);
-		immediateContext->IASetVertexBuffers(0, 1, &objects[i]->vertexBuffer, &strid, &offset);
-		immediateContext->Draw((int)objects[i]->getVertecies()[0].size(), 0);
+		immediateContext->VSSetConstantBuffers(0, 1, &objects[i]->getVertexConstBuffer());
+		immediateContext->IASetVertexBuffers(0, 1, &objects[i]->getVertexBuffer(), &strid, &offset);
+		immediateContext->Draw((int)objects[i]->getNrOfVertex(), 0);
 	}
-	//immediateContext->DrawInstanced(,);
 
 	//show the "picture"
 	swapChain->Present(0, 0);

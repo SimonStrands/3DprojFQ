@@ -11,6 +11,15 @@ object::object(std::string file, Graphics& gfx, vec3 pos, vec3 rot, vec3 scale)
 
 object::~object()
 {
+    if (vertexBuffer != nullptr) {
+        vertexBuffer->Release();
+    }
+    if (Vg_pConstantBuffer != nullptr) {
+        Vg_pConstantBuffer->Release();
+    }
+    if (Pg_pConstantBuffer != nullptr) {
+        Pg_pConstantBuffer->Release();
+    }
 }
 
 const vec3 object::getPos()
@@ -28,7 +37,19 @@ const vec3 object::getScale()
     return this->scale;
 }
 
-std::vector<std::vector<vertex>>& object::getVertecies()
+int& object::getNrOfVertex()
 {
-    return vertices;
+    return this->nrOfVertexes;
 }
+
+ID3D11Buffer*& object::getVertexBuffer()
+{
+    return this->vertexBuffer;
+} 
+
+ID3D11Buffer*& object::getVertexConstBuffer()
+{
+    return this->Vg_pConstantBuffer;
+}
+
+
