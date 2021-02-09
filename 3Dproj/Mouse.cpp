@@ -1,29 +1,29 @@
 #include "Mouse.h"
 
-mouse::mouse()
+Mouse::Mouse()
 {
 	mouseSense = 1;
 	pitch = 0;
 	yaw = 0;
 }
 
-void mouse::changeSense(float newSence)
+void Mouse::changeSense(float newSence)
 {
 	this->mouseSense = newSence;
 }
 
-void mouse::OnRawDelta(int deltaX, int deltaY)
+void Mouse::OnRawDelta(int deltaX, int deltaY)
 {
 	pitch = deltaX;
 	yaw = deltaY;
 }
 
-vec2 mouse::getDeltaPos()
+vec2 Mouse::getDeltaPos()
 {
 	return vec2(pitch, yaw);
 }
 
-float mouse::getSense()
+float Mouse::getSense()
 {
 	return mouseSense;
 }

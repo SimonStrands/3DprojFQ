@@ -21,6 +21,7 @@ private:
 	//game objects
 	Camera *camera;
 	object** obj;
+	Mouse* mus;
 
 	//var
 	int nrOfObj;

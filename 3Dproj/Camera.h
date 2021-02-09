@@ -7,11 +7,12 @@
 
 class Camera {
 public:
-	Camera(Graphics *&gfx);
+	Camera(Graphics *&gfx, Mouse *mus = nullptr);
 	virtual ~Camera();
 	void updateCamera(float dt);
 	vec3 getPos();
 private:
+	Mouse *mus;
 	Vcb *Vcbd;
 	Pcb *Pcbd;
 	void rotaiton(DirectX::XMMATRIX &matrix);

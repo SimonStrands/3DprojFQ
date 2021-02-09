@@ -2,14 +2,9 @@
 //git
 Game::Game(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine, _In_ int nCmdShow)
 {
-	
+	mus = new Mouse();
 	gfx = new Graphics(hInstance, hPrevInstance, lpCmdLine, nCmdShow);
 	camera = new Camera(gfx);
-	if (!setUpWindow(hInstance, WIDTH, HEIGHT, nCmdShow, wnd)) {
-		std::cerr << "failed" << std::endl;
-	}
-
-
 	nrOfObj = 4;
 	obj = new object * [nrOfObj];
 	obj[0] = new object("obj/objtest.obj", *gfx, "", vec3(0,0,10), vec3(0,0,0));
@@ -32,6 +27,7 @@ Game::~Game()
 
 void Game::run()
 {
+	std::vector<BYTE> RAWBUFFER;
 	while (msg.message != WM_QUIT)
 	{
 		
