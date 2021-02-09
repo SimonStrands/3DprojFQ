@@ -1,11 +1,15 @@
 #include "object.h"
 #include "Graphics.h"
 
-object::object(std::string file, Graphics& gfx, vec3 pos, vec3 rot, vec3 scale)
+object::object(std::string file, Graphics& gfx, std::string texture, vec3 pos, vec3 rot, vec3 scale)
 {
     this->pos = pos;
     this->rot = rot;
     this->scale = scale;
+    if(texture == ""){
+        texture = "stripestest.png";
+    }
+    fileName = "Textures/" + texture;
     gfx.CreateVertexBuffer(*this, file);
 }
 

@@ -137,7 +137,7 @@ public:
 	bool CreateVertexBuffer(object& obj, std::string fileName);
 	
 	//update
-	void Update(DeltaTime dt);
+	void Update(float dt);
 	void updateWorldMatrix(object& obj);
 private:
 	//Debug shit

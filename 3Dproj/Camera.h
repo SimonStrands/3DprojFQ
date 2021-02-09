@@ -9,14 +9,14 @@ class Camera {
 public:
 	Camera(Graphics *&gfx);
 	virtual ~Camera();
-	void updateCamera(DeltaTime dt);
+	void updateCamera(float dt);
 	vec3 getPos();
 private:
 	Vcb *Vcbd;
 	Pcb *Pcbd;
 	void rotaiton(DirectX::XMMATRIX &matrix);
 	void movement();
-	void handleEvent(DeltaTime dt);
+	void handleEvent(float dt);
 	Graphics* gfx;
 	float speed;
 	float mouseSensitivity;
@@ -25,4 +25,7 @@ private:
 	float zCamPos;
 	float xCamRot;
 	float yCamRot;
+	DirectX::XMFLOAT3 translation;
+	float movementspeed = 10;
+	void Translate(float dt);
 };

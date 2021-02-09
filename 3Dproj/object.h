@@ -10,15 +10,17 @@
 class Graphics;
 class object{
 public:
-	object(std::string file, Graphics &gfx, vec3 pos = vec3(0, 0, 0), vec3 rot = vec3(0, 0, 0), vec3 scale = vec3(1, 1, 1));
+	object(std::string file, Graphics &gfx, std::string texture = "stripestest.png", vec3 pos = vec3(0, 0, 0), vec3 rot = vec3(0, 0, 0), vec3 scale = vec3(1, 1, 1));
 	virtual ~object();
 	const vec3 getPos();
 	const vec3 getRot();
 	const vec3 getScale();
 	ID3D11Buffer*& getVertexBuffer();
 	ID3D11Buffer*& getVertexConstBuffer();
-
 	int& getNrOfVertex();
+
+	ID3D11ShaderResourceView* texSRV;
+	std::string fileName;
 private:
 	//object data
 	vec3 pos;
@@ -29,6 +31,6 @@ private:
 	ID3D11Buffer* Vg_pConstantBuffer;
 	ID3D11Buffer* Pg_pConstantBuffer;
 
-	std::string fileName;
+	
 	std::vector<std::string> material; 
 };

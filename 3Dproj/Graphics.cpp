@@ -75,8 +75,11 @@ bool Graphics::CreateVertexBuffer(object &obj, std::string fileName)
 
 	//immediateContext->VSSetConstantBuffers(nrOfObject, 1, &Vg_pConstantBuffer);
 	immediateContext->PSSetConstantBuffers(0, 1, &Pg_pConstantBuffer);
-
 	nrOfObject++;
+
+	//debug thing
+	CreateTexture(obj.fileName, device, tex, obj.texSRV);
+
 	return !FAILED(hr);
 
 }
@@ -91,11 +94,6 @@ bool Graphics::worldMatrix()
 
 	//changing constant buffer
 	D3D11_MAPPED_SUBRESOURCE resource;
-
-	//immediateContext->Map(Vg_pConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
-	//memcpy(resource.pData, &vcbd, sizeof(Vcb));
-	//immediateContext->Unmap(Vg_pConstantBuffer, 0);
-	//ZeroMemory(&resource, sizeof(D3D11_MAPPED_SUBRESOURCE));
 
 	immediateContext->Map(Pg_pConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
 	memcpy(resource.pData, &pcbd, sizeof(Pcb));
@@ -132,10 +130,6 @@ void Graphics::updateWorldMatrix(object& obj)
 	memcpy(resource.pData, &vcbd, sizeof(Vcb));
 	immediateContext->Unmap(obj.getVertexConstBuffer(), 0);
 	ZeroMemory(&resource, sizeof(D3D11_MAPPED_SUBRESOURCE));
-	/*immediateContext->Map(obj.Vg_pConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
-	memcpy(resource.pData, &vcbd, sizeof(Vcb));
-	immediateContext->Unmap(obj.Vg_pConstantBuffer, 0);
-	ZeroMemory(&resource, sizeof(D3D11_MAPPED_SUBRESOURCE));*/
 }
 
 void Graphics::Projection()
@@ -150,10 +144,6 @@ Graphics::Graphics(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	light(vec3(0.5, 0, -2.f)),
 	reader()
 {
-	if (!setUpWindow(hInstance, WIDTH, HEIGHT, nCmdShow, wnd)) {
-		std::cerr << "failed" << std::endl;
-	}
-
 	fov = 45.f;
 	ratio = 16.f / 9.f;
 	farPlane = 40;
@@ -161,7 +151,7 @@ Graphics::Graphics(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	nrOfObject = 0;
 
 	Pg_pConstantBuffer = NULL;
-	inputLayout = nullptr; pShader = nullptr; vShader = nullptr; texSRV = nullptr;
+	inputLayout = nullptr; pShader = nullptr; vShader = nullptr; //texSRV = nullptr;
 	//setting matrixes
 	Projection();
 	//if delete this happens it will get an error and program will stop working(I want this to happen when I debug)
@@ -177,15 +167,13 @@ Graphics::Graphics(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	}
 	
 	//set settings up
-	immediateContext->PSSetShaderResources(0, 1, &texSRV);
+	//immediateContext->PSSetShaderResources(0, 1, &texSRV);
 	immediateContext->PSSetSamplers(0, 1, &sampler);
 	immediateContext->VSSetShader(vShader, nullptr, 0);
 	immediateContext->PSSetShader(pShader, nullptr, 0);
 	immediateContext->RSSetViewports(1, &viewPort);
 	immediateContext->OMSetRenderTargets(1, &renderTarget, dsView);
 	immediateContext->RSSetState(pRS);
-	//here we set number of constantBuffers
-	//immediateContext->PSSetSamplers(0,1,)
 	immediateContext->IASetInputLayout(inputLayout);
 	immediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
@@ -246,15 +234,15 @@ void Graphics::setObjects(object** obj, int nrOfObjects)
 }
 
 float nextFpsUpdate = 0;
-void Graphics::Update(DeltaTime dt)
+void Graphics::Update(float dt)
 {
 	worldMatrix();
 	Render();
 	
-	nextFpsUpdate += (float)dt.dt();
+	nextFpsUpdate += (float)dt;
 	if (nextFpsUpdate >= 0.5f) {
 		nextFpsUpdate = 0;
-		float fps = 1.f / (float)dt.dt();
+		float fps = 1.f / (float)dt;
 		SetWindowTextA(wnd, std::to_string(fps).c_str());
 	}
 
@@ -280,7 +268,7 @@ void Graphics::Render()
 	UINT offset = 0;
 
 	for (int i = 0; i < nrOfObject; i++) {
-		//immediateContext->VSSetConstantBuffers(0, 1, &objects[i]->Vg_pConstantBuffer);
+		immediateContext->PSSetShaderResources(0, 1, &objects[i]->texSRV);
 		immediateContext->VSSetConstantBuffers(0, 1, &objects[i]->getVertexConstBuffer());
 		immediateContext->IASetVertexBuffers(0, 1, &objects[i]->getVertexBuffer(), &strid, &offset);
 		immediateContext->Draw((int)objects[i]->getNrOfVertex(), 0);

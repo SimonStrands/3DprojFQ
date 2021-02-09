@@ -1,6 +1,21 @@
 #pragma once
 #include <math.h>
 //git
+struct vec2 {
+	vec2(float x, float y) {
+		this->x = x;
+		this->y = y;
+	}
+	float legth() {
+		return (float)sqrt(x * x + y * y);
+	}
+	void Normalize() {
+		float le = this->legth();
+		this->x /= le;
+		this->y /= le;
+	}
+	float x, y;
+};
 struct vec3 {
 	vec3(float a, float b, float c) {
 		this->x = a;
