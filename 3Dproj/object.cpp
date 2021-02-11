@@ -9,7 +9,8 @@ object::object(std::string file, Graphics& gfx, std::string texture, vec3 pos, v
     if(texture == ""){
         texture = "stripestest.png";
     }
-    fileName = "Textures/" + texture;
+    fileName[0] = "Textures/" + texture + "_BaseColor.jpg";
+    fileName[1] = "Textures/" + texture + "_Normal.jpg";
     gfx.CreateVertexBuffer(*this, file);
 }
 

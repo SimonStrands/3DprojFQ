@@ -78,7 +78,8 @@ bool Graphics::CreateVertexBuffer(object &obj, std::string fileName)
 	nrOfObject++;
 
 	//debug thing
-	CreateTexture(obj.fileName, device, tex, obj.texSRV);
+	CreateTexture(obj.fileName[0], device, tex, obj.texSRV[0]);
+	CreateTexture(obj.fileName[1], device, tex, obj.texSRV[1]);
 
 	return !FAILED(hr);
 
@@ -94,7 +95,7 @@ bool Graphics::worldMatrix()
 
 	//changing constant buffer
 	D3D11_MAPPED_SUBRESOURCE resource;
-
+	
 	immediateContext->Map(Pg_pConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
 	memcpy(resource.pData, &pcbd, sizeof(Pcb));
 	immediateContext->Unmap(Pg_pConstantBuffer, 0);
@@ -170,7 +171,6 @@ Graphics::Graphics(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	}
 	
 	//set settings up
-	//immediateContext->PSSetShaderResources(0, 1, &texSRV);
 	immediateContext->PSSetSamplers(0, 1, &sampler);
 	immediateContext->VSSetShader(vShader, nullptr, 0);
 	immediateContext->PSSetShader(pShader, nullptr, 0);
@@ -271,7 +271,8 @@ void Graphics::Render()
 	UINT offset = 0;
 
 	for (int i = 0; i < nrOfObject; i++) {
-		immediateContext->PSSetShaderResources(0, 1, &objects[i]->texSRV);
+		immediateContext->PSSetShaderResources(0, 1, &objects[i]->texSRV[0]);
+		immediateContext->PSSetShaderResources(1, 1, &objects[i]->texSRV[1]);
 		immediateContext->VSSetConstantBuffers(0, 1, &objects[i]->getVertexConstBuffer());
 		immediateContext->IASetVertexBuffers(0, 1, &objects[i]->getVertexBuffer(), &strid, &offset);
 		immediateContext->Draw((int)objects[i]->getNrOfVertex(), 0);

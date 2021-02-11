@@ -5,12 +5,12 @@ Game::Game(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWS
 	mus = new Mouse();
 	gfx = new Graphics(hInstance, hPrevInstance, lpCmdLine, nCmdShow);
 	camera = new Camera(gfx);
-	nrOfObj = 4;
+	nrOfObj = 1;
 	obj = new object * [nrOfObj];
-	obj[0] = new object("obj/objtest.obj", *gfx, "", vec3(0,0,10), vec3(0,0,0));
-	obj[1] = new object("obj/stol.obj", *gfx, "babyyoda.jpg", vec3(10,0,0),vec3(0,0,0));
-	obj[2] = new object("obj/stol.obj", *gfx, "", vec3(0,0,-10),vec3(0,0,0));
-	obj[3] = new object("obj/stol.obj", *gfx, "babyyoda.jpg", vec3(-10,0,0),vec3(0,0,0));
+	//obj[0] = new object("obj/objtest.obj", *gfx, "", vec3(0,0,10), vec3(0,0,0));
+	obj[0] = new object("obj/stol.obj", *gfx, "WallStone", vec3(10,0,0),vec3(0,0,0));
+	//obj[2] = new object("obj/stol.obj", *gfx, "", vec3(0,0,-10),vec3(0,0,0));
+	//obj[3] = new object("obj/stol.obj", *gfx, "babyyoda.jpg", vec3(-10,0,0),vec3(0,0,0));
 	gfx->createBuffer();
 	gfx->setObjects(obj, nrOfObj);
 }
@@ -27,7 +27,7 @@ Game::~Game()
 
 void Game::run()
 {
-	std::vector<BYTE> RAWBUFFER;
+
 	while (msg.message != WM_QUIT)
 	{
 		
@@ -49,7 +49,7 @@ void Game::Update()
 	//keyboard
 	
 	//update
-	camera->updateCamera(dt.dt());
+	camera->updateCamera((float)dt.dt());
 	//render
-	gfx->Update(dt.dt());
+	gfx->Update((float)dt.dt());
 }

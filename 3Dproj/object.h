@@ -19,8 +19,8 @@ public:
 	ID3D11Buffer*& getVertexConstBuffer();
 	int& getNrOfVertex();
 
-	ID3D11ShaderResourceView* texSRV;
-	std::string fileName;
+	ID3D11ShaderResourceView** texSRV = new ID3D11ShaderResourceView*[2];
+	std::string fileName[2];//color, normal
 private:
 	//object data
 	vec3 pos;
@@ -30,7 +30,4 @@ private:
 	ID3D11Buffer* vertexBuffer;
 	ID3D11Buffer* Vg_pConstantBuffer;
 	ID3D11Buffer* Pg_pConstantBuffer;
-
-	
-	std::vector<std::string> material; 
 };

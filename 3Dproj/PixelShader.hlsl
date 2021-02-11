@@ -1,7 +1,3 @@
-Texture2D testTex : register(t0);
-SamplerState testSampler;
-
-//git
 struct PixelShaderInput 
 {
 	float4 position : SV_POSITION;
@@ -21,8 +17,17 @@ cbuffer CBuf
 	float4 ks;
 };
 
+Texture2D testTex : register(t0);
+Texture2D nMap : register(t1);
+SamplerState testSampler;
+
 float4 main(PixelShaderInput input) : SV_TARGET
 {
+	const float3 normalSample = nMap.Sample(testSampler, input.uv).xyz;
+	input.normal.x = normalSample.x * 2.0f - 1.0f;
+	input.normal.y = -normalSample.y * 2.0f + 1.0f;
+	input.normal.z = -normalSample.z;
+
 	//ambient
 	float3 ambient_light = ka.xyz * lightColor.xyz;
 	

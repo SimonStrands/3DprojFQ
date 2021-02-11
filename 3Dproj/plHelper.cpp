@@ -9,7 +9,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 //load shader
-bool loadShader(ID3D11Device* device, ID3D11VertexShader*& vShader, ID3D11PixelShader*& pShader, std::string& vShaderByteCode) 
+bool loadShader(ID3D11Device* device, ID3D11VertexShader*& vShader, ID3D11PixelShader*& pShader, std::string& vShaderByteCode, std::string& pShaderByteCode)
 {
 	std::string shaderData;
 	std::ifstream reader;
@@ -55,12 +55,14 @@ bool loadShader(ID3D11Device* device, ID3D11VertexShader*& vShader, ID3D11PixelS
 		std::cerr << "cannot create pixelShader" << std::endl;
 		return false;
 	}
+	pShaderByteCode = shaderData;
+
 
 	return true;
 
 }
 
-bool CreateInputLayout(ID3D11Device* device, ID3D11InputLayout*& inputLayout, std::string& byteCode) 
+bool CreateInputLayout(ID3D11Device* device, ID3D11InputLayout*& inputLayout, std::string& VbyteCode, std::string &PbyteCode) 
 {
 	D3D11_INPUT_ELEMENT_DESC inputDesc[3] = 
 	{
@@ -69,7 +71,19 @@ bool CreateInputLayout(ID3D11Device* device, ID3D11InputLayout*& inputLayout, st
 		{"NORMAL", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 20, D3D11_INPUT_PER_VERTEX_DATA, 0},
 	};
 
-	HRESULT hr = device->CreateInputLayout(inputDesc, 3, byteCode.c_str(), byteCode.length(), &inputLayout);
+	HRESULT hr = device->CreateInputLayout(inputDesc, 3, VbyteCode.c_str(), VbyteCode.length(), &inputLayout);
+	if (FAILED(hr)) {
+		return false;
+	}
+
+	D3D11_INPUT_ELEMENT_DESC inputDescPixel[1] =
+	{
+		{"TEXCHORD", 0,  DXGI_FORMAT_R32G32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA ,0}
+	};
+    //hr = device->CreateInputLayout(inputDesc, 3, PbyteCode.c_str(), PbyteCode.length(), &inputLayout);
+	if (FAILED(hr)) {
+		return false;
+	}
 
 	return !FAILED(hr);
 }
@@ -132,13 +146,14 @@ bool SetupPipeline(ID3D11Device* device, ID3D11VertexShader*& vShader,
 	ID3D11ShaderResourceView*& textureRSV, ID3D11SamplerState*& sampler)
 {
 	std::string vShaderByteCode;
-	if (!loadShader(device, vShader, pShader, vShaderByteCode)) 
+	std::string PShaderByteCode;
+	if (!loadShader(device, vShader, pShader, vShaderByteCode, PShaderByteCode)) 
 	{
 		std::cerr << "cant load shaders" << std::endl;
 		return false;
 	}
 
-	if (!CreateInputLayout(device, inputLayout, vShaderByteCode))
+	if (!CreateInputLayout(device, inputLayout, vShaderByteCode, PShaderByteCode))
 	{
 		std::cerr << "cant load inputlayout" << std::endl;
 		return false;
