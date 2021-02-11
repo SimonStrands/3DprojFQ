@@ -1,5 +1,5 @@
 #include "Mouse.h"
-
+//use sfml
 Mouse::Mouse()
 {
 	mouseSense = 1;
