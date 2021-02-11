@@ -1,9 +1,9 @@
 #pragma once
 #include "Vec.h"
 
-class mouse {
+class Mouse {
 public:
-	mouse();
+	Mouse();
 	void changeSense(float newSence);
 	void OnRawDelta(int deltaX , int deltaY);
 	vec2 getDeltaPos();

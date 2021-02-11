@@ -131,6 +131,7 @@ public:
 	//get things
 	Vcb *getVcb();
 	Pcb *getPcb();
+
 	void setObjects(object** obj, int nrOfObjects);
 
 	//help create vertexbuffer
@@ -142,7 +143,6 @@ public:
 private:
 	//Debug shit
 	float c = 0;
-	//void getVertexBuffer();
 	void debugcd();
 	void keyboardDebug();
 	bool pressed = false;

@@ -2,11 +2,12 @@
 #include <iostream>
 //git
 
-Camera::Camera(Graphics *&gfx)
+Camera::Camera(Graphics *&gfx, Mouse* mus)
 {
 	this->gfx = gfx;
 	this->Pcbd = gfx->getPcb();
 	this->Vcbd = gfx->getVcb();
+	this->mus = mus;
 
 	this->speed = 10.0f;
 	this->mouseSensitivity = 5.0f;
@@ -99,7 +100,7 @@ bool once = false;
 void Camera::handleEvent(float dt)
 {
 	translation = DirectX::XMFLOAT3(0, 0, 0);
-	
+	//movement
 	if (getkey('W') && !once) {
 		translation = DirectX::XMFLOAT3(0, 0, (float)dt);
 		Translate(dt);
@@ -123,18 +124,24 @@ void Camera::handleEvent(float dt)
 		yCamPos += movementspeed * (float)dt;
 	}
 	
-	
-	if (GetKeyState(VK_RIGHT) & 0x8000) {
-		xCamRot += mouseSensitivity * (float)dt;
+	//rot
+	if (mus == nullptr) {
+		if (GetKeyState(VK_RIGHT) & 0x8000) {
+			xCamRot += mouseSensitivity * (float)dt;
+		}
+		if (GetKeyState(VK_LEFT) & 0x8000) {
+			xCamRot -= mouseSensitivity * (float)dt;
+		}
+		if (GetKeyState(VK_UP) & 0x8000) {
+			yCamRot += mouseSensitivity * (float)dt;
+		}
+		if (GetKeyState(VK_DOWN) & 0x8000) {
+			yCamRot -= mouseSensitivity * (float)dt;
+		}
 	}
-	if (GetKeyState(VK_LEFT) & 0x8000) {
-		xCamRot -= mouseSensitivity * (float)dt;
-	}
-	if (GetKeyState(VK_UP) & 0x8000) {
-		yCamRot += mouseSensitivity * (float)dt;
-	}
-	if (GetKeyState(VK_DOWN) & 0x8000) {
-		yCamRot -= mouseSensitivity * (float)dt;
+	else {
+		xCamRot += mus->getDeltaPos().x * mus->getSense();
+		yCamRot += mus->getDeltaPos().y * mus->getSense();
 	}
 }
 

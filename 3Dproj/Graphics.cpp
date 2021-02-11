@@ -155,6 +155,9 @@ Graphics::Graphics(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	//setting matrixes
 	Projection();
 	//if delete this happens it will get an error and program will stop working(I want this to happen when I debug)
+	if (!setUpWindow(hInstance, WIDTH, HEIGHT, nCmdShow, wnd)) {
+		std::cerr << "failed" << std::endl;
+	}
 	if (!SetupD3D11(WIDTH, HEIGHT, wnd, device, immediateContext, swapChain, renderTarget, dsTexture, dsView, viewPort, pRS))
 	{
 		std::cerr << "cant set up" << std::endl;
