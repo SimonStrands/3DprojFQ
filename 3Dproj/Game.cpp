@@ -5,9 +5,11 @@ Game::Game(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWS
 	
 	gfx = new Graphics(hInstance, hPrevInstance, lpCmdLine, nCmdShow);
 	camera = new Camera(gfx);
-	if (!setUpWindow(hInstance, WIDTH, HEIGHT, nCmdShow, wnd)) {
-		std::cerr << "failed" << std::endl;
-	}
+	UINT WIDTH = 800;
+	UINT HEIGHT = 600;
+	//if (!setUpWindow(hInstance, WIDTH, HEIGHT, nCmdShow, wnd)) {
+	//	std::cerr << "failed" << std::endl;
+	//}
 
 
 	nrOfObj = 4;
