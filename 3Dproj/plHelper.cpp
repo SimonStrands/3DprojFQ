@@ -14,7 +14,8 @@ bool loadShader(ID3D11Device* device, ID3D11VertexShader*& vShader, ID3D11PixelS
 	std::string shaderData;
 	std::ifstream reader;
 	//open/make a file VertexShader 
-	reader.open("../Debug/VertexShader.cso", std::ios::binary | std::ios::ate);
+	reader.open("../x64/Debug/VertexShader.cso", std::ios::binary | std::ios::ate);
+	//reader.open("VertexShader.cso", std::ios::binary | std::ios::ate);
 	if (!reader.is_open()) 
 	{
 		std::cerr << "cannot open vertex file" << std::endl;
@@ -36,7 +37,7 @@ bool loadShader(ID3D11Device* device, ID3D11VertexShader*& vShader, ID3D11PixelS
 	vShaderByteCode = shaderData;
 	shaderData.clear();
 	reader.close();
-	reader.open("../Debug/PixelShader.cso", std::ios::binary | std::ios::ate);
+	reader.open("../x64/Debug/PixelShader.cso", std::ios::binary | std::ios::ate);
 	if (!reader.is_open()) 
 	{
 		std::cerr << "cannot open pixel file" << std::endl;
@@ -76,14 +77,6 @@ bool CreateInputLayout(ID3D11Device* device, ID3D11InputLayout*& inputLayout, st
 		return false;
 	}
 
-	D3D11_INPUT_ELEMENT_DESC inputDescPixel[1] =
-	{
-		{"TEXCHORD", 0,  DXGI_FORMAT_R32G32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA ,0}
-	};
-    //hr = device->CreateInputLayout(inputDesc, 3, PbyteCode.c_str(), PbyteCode.length(), &inputLayout);
-	if (FAILED(hr)) {
-		return false;
-	}
 
 	return !FAILED(hr);
 }

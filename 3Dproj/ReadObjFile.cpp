@@ -60,6 +60,7 @@ void FileReader::readObjFile(std::vector<std::vector<vertex>>& objP, std::string
 					delete[] sTemp;
 				}
 				nrOfVertexes += 3;
+				nrOfVertexes++;
 				sTemp = getDest(sTemp2[3]);
 				objP[objIndex].push_back(vertex(vPos[std::stoi(sTemp[0]) - 1], vUv[std::stoi(sTemp[1]) - 1], vNorm[std::stoi(sTemp[2]) - 1]));
 				delete[] sTemp;

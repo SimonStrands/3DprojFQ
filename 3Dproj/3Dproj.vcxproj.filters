@@ -154,12 +154,6 @@
     <None Include="README.md">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="PixelShader.cso">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="VertexShader.cso">
-      <Filter>Resource Files</Filter>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="PixelShader.hlsl">

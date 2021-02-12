@@ -18,7 +18,7 @@ std::string* getDest(std::string destPath, char splitchar)
 
 		}
 	}
-	end[endp] = end[2] = workStr.length() - starts[2];
+	end[endp] = end[2] = (int)workStr.length() - starts[2];
 	for (int i = 0; i < 3; i++) {
 		if (end[i] == 0) {
 			returnStr[i] = "1";

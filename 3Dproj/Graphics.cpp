@@ -35,7 +35,6 @@ bool Graphics::CreateVertexBuffer(object &obj, std::string fileName)
 	bDesc.StructureByteStride = 0;
 
 	D3D11_SUBRESOURCE_DATA data;
-	//data.pSysMem = obj.getVertecies()[0].data();
 	data.pSysMem = vertices[0].data();
 	data.SysMemPitch = 0;
 	data.SysMemSlicePitch = 0;
@@ -46,6 +45,7 @@ bool Graphics::CreateVertexBuffer(object &obj, std::string fileName)
 		printf("failed");
 		return false;
 	}
+
 	//create vertexConstantBuffer
 	D3D11_BUFFER_DESC CbDesc;
 	CbDesc.ByteWidth = sizeof(Vcb);
@@ -142,7 +142,7 @@ void Graphics::Projection()
 
 Graphics::Graphics(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine, _In_ int nCmdShow) :
 	speed(1.5f),
-	light(vec3(0.5, 0, -2.f)),
+	light(vec3(0.f, 0.f, 0.f)),
 	reader()
 {
 	fov = 45.f;
@@ -152,7 +152,7 @@ Graphics::Graphics(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	nrOfObject = 0;
 
 	Pg_pConstantBuffer = NULL;
-	inputLayout = nullptr; pShader = nullptr; vShader = nullptr; //texSRV = nullptr;
+	inputLayout = nullptr; pShader = nullptr; vShader = nullptr;
 	//setting matrixes
 	Projection();
 	//if delete this happens it will get an error and program will stop working(I want this to happen when I debug)
