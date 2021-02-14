@@ -1,15 +1,10 @@
 #include "ReadObjFile.h"
 //#thisNeedFix
-//get to use assimp
+
 FileReader::FileReader()
 {
 
 }
-//
-//std::string FileReader::getmtl()
-//{
-//	return mtl[0];
-//}
 
 void FileReader::readObjFile(std::vector<std::vector<vertex>>& objP, std::string fileName, int& nrOfVertexes)
 {

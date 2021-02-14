@@ -9,8 +9,8 @@ Game::Game(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWS
 	obj = new object * [nrOfObj];
 	//obj[0] = new object("obj/objtest.obj", *gfx, "WallStone", vec3(5,0,0), vec3(0,0,0));
 	obj[0] = new object("obj/stol.obj", *gfx, "WallStone", vec3(0,0,5), vec3(0,0,0));
-	//obj[2] = new object("obj/stol.obj", *gfx, "", vec3(0,0,-10),vec3(0,0,0));
-	//obj[3] = new object("obj/stol.obj", *gfx, "babyyoda.jpg", vec3(-10,0,0),vec3(0,0,0));
+	////obj[2] = new object("obj/stol.obj", *gfx, "", vec3(0,0,-10),vec3(0,0,0));
+	////obj[3] = new object("obj/stol.obj", *gfx, "babyyoda.jpg", vec3(-10,0,0),vec3(0,0,0));
 	gfx->createBuffer();
 	gfx->setObjects(obj, nrOfObj);
 }
@@ -18,12 +18,12 @@ Game::Game(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWS
 Game::~Game()
 {
 	delete gfx;
+	delete mus;
 	delete camera;
 	for (int i = 0; i < nrOfObj; i++) {
 		delete obj[i];
 	}
 	delete[] obj;
-	delete mus;
 }
 
 void Game::run()

@@ -70,7 +70,6 @@ private:
 	ID3D11InputLayout* inputLayout;
 	ID3D11VertexShader* vShader;
 	ID3D11PixelShader* pShader;
-	//ID3D11Buffer* Vg_pConstantBuffer;
 	ID3D11Buffer* Pg_pConstantBuffer;
 	ID3D11RasterizerState* pRS;
 	////////////////////////
@@ -112,7 +111,6 @@ private:
 	//textures
 	//gonna clean up here later
 	ID3D11Texture2D* tex;
-	ID3D11ShaderResourceView* texSRV;
 	ID3D11SamplerState* sampler;
 	//not yet done
 	ID3D11Texture2D* diffuse;
@@ -149,7 +147,6 @@ public:
 	void updateShaders(object& obj);
 private:
 	//Debug shit
-	float c = 0;
 	void debugcd();
 	void keyboardDebug();
 	bool pressed = false;

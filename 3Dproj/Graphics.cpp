@@ -63,7 +63,6 @@ bool Graphics::CreateVertexBuffer(object &obj, std::string fileName)
 	InitData.SysMemSlicePitch = 0;
 
 	hr = device->CreateBuffer(&CbDesc, &InitData, &obj.getVertexConstBuffer());
-	//hr = device->CreateBuffer(&CbDesc, &InitData, &obj.Vg_pConstantBuffer);
 	if (FAILED(hr)) {
 		printf("failed");
 		return false;
@@ -75,7 +74,6 @@ bool Graphics::CreateVertexBuffer(object &obj, std::string fileName)
 	UINT strid = sizeof(vertex);
 	UINT offset = 0;
 
-	//immediateContext->VSSetConstantBuffers(nrOfObject, 1, &Vg_pConstantBuffer);
 	immediateContext->PSSetConstantBuffers(0, 1, &Pg_pConstantBuffer);
 	nrOfObject++;
 
@@ -86,7 +84,6 @@ bool Graphics::CreateVertexBuffer(object &obj, std::string fileName)
 	return !FAILED(hr);
 
 }
-
 
 void Graphics::updateShaders(object& obj)
 {
@@ -140,7 +137,6 @@ void Graphics::Projection()
 	vcbd.projection.element = DirectX::XMMatrixPerspectiveFovLH(DirectX::XMConvertToRadians(fov), ratio, nearPlane, farPlane);
 }
 
-
 Graphics::Graphics(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine, _In_ int nCmdShow) :
 	speed(1.5f),
 	light(vec3(0.f, 0.f, 0.f)),
@@ -166,13 +162,13 @@ Graphics::Graphics(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 		std::cerr << "cant set up" << std::endl;
 		delete this;
 	}
-	if (!SetupPipeline(device, vShader, pShader, inputLayout, tex, texSRV, sampler))
+	if (!SetupPipeline(device, vShader, pShader, inputLayout, tex, sampler))
 	{
 		std::cerr << "cant set up" << std::endl;
 		delete this;
 	}
-	ImGui_ImplDX11_Init(device, immediateContext);
-
+	
+	
 	//set settings up
 	immediateContext->PSSetSamplers(0, 1, &sampler);
 	immediateContext->VSSetShader(vShader, nullptr, 0);
@@ -182,6 +178,7 @@ Graphics::Graphics(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	immediateContext->RSSetState(pRS);
 	immediateContext->IASetInputLayout(inputLayout);
 	immediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	ImGui_ImplDX11_Init(device, immediateContext);
 }
 
 Graphics::~Graphics()
@@ -221,12 +218,6 @@ Graphics::~Graphics()
 	if (pRS != nullptr) {
 		pRS->Release();
 	}
-	//if (tex != nullptr) {
-	//	tex->Release();
-	//}
-	//if (texSRV != nullptr) {
-	//	texSRV->Release();
-	//}
 	if (sampler != nullptr) {
 		sampler->Release();
 	}
@@ -268,6 +259,7 @@ vec2 Graphics::getWH()
 {
 	return vec2((float)WIDTH, (float)HEIGHT);
 }
+
 void Graphics::Render()
 {
 	//clear background
@@ -295,7 +287,7 @@ void Graphics::Render()
 		ImGui::ShowDemoWindow(&show_demo_window);
 	}*/
 	if (ImGui::Begin("rotation on obj")) {
-		ImGui::SliderFloat("Rot", &objects[0]->getxRot(), 6.34, -6.34);
+		ImGui::SliderFloat("Rot", &objects[0]->getxRot(), 6.34f, -6.34f);
 		ImGui::Text("yeet");
 	}
 	ImGui::End();

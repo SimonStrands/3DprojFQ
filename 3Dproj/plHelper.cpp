@@ -4,6 +4,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <dxgidebug.h>
 //git
 #define STB_IMAGE_IMPLEMENTATION 
 #define STB_IMAGE_IMPLEMENTATION
@@ -101,19 +102,22 @@ bool CreateTexture(std::string file, ID3D11Device* device, ID3D11Texture2D*& tex
 	desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
 	desc.CPUAccessFlags = 0;
 	desc.MiscFlags = 0;
-
+	
 	D3D11_SUBRESOURCE_DATA data;
 	data.pSysMem = (void*)textureData;
 	data.SysMemPitch = textureWidth * 4;
 	data.SysMemSlicePitch = textureWidth * textureHeight * 4;
-
+	
 	if (FAILED(device->CreateTexture2D(&desc, &data, &tex))) {
 		printf("cannot create texture");
 		return false;
 	}
 	HRESULT hr = device->CreateShaderResourceView(tex, nullptr, &texSRV);
 	delete[] textureData;
-	return !FAILED(hr);
+	tex->Release();
+
+	//return !FAILED(hr);
+	return true;
 }
 
 bool CreateSamplerState(ID3D11Device* device, ID3D11SamplerState*& sampler) 
@@ -136,7 +140,7 @@ bool CreateSamplerState(ID3D11Device* device, ID3D11SamplerState*& sampler)
 bool SetupPipeline(ID3D11Device* device, ID3D11VertexShader*& vShader, 
 	ID3D11PixelShader*& pShader, 
 	ID3D11InputLayout*& inputLayout, ID3D11Texture2D*& tex, 
-	ID3D11ShaderResourceView*& textureRSV, ID3D11SamplerState*& sampler)
+	ID3D11SamplerState*& sampler)
 {
 	std::string vShaderByteCode;
 	std::string PShaderByteCode;
@@ -151,11 +155,11 @@ bool SetupPipeline(ID3D11Device* device, ID3D11VertexShader*& vShader,
 		std::cerr << "cant load inputlayout" << std::endl;
 		return false;
 	}
-	if (!CreateTexture("Textures/babyyoda.jpg", device, tex, textureRSV))
-	{
-		std::cerr << "cant load texture" << std::endl;
-		return false;
-	}
+	//if (!CreateTexture("Textures/babyyoda.jpg", device, tex, textureRSV))
+	//{
+	//	std::cerr << "cant load texture" << std::endl;
+	//	return false;
+	//}
 	if (!CreateSamplerState(device, sampler))
 	{
 		std::cerr << "cant load sampler" << std::endl;

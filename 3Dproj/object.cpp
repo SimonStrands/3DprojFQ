@@ -35,6 +35,7 @@ object::~object()
     for (int i = 0; i < 2; i++) {
         texSRV[i]->Release();
     }
+    delete[] texSRV;
 }
 
 const vec3 object::getPos()
