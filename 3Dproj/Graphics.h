@@ -24,6 +24,9 @@ struct Vcb {
 
 struct Pcb {
 	struct {
+		DirectX::XMMATRIX element;
+	}transform;
+	struct {
 		float element[4];
 	}lightPos;
 	struct {
@@ -41,6 +44,7 @@ struct Pcb {
 	struct {
 		float element[4];
 	}ks;
+	
 };
 
 
@@ -83,6 +87,8 @@ private:
 	};
 	//PixelConstantBuffer
 	Pcb pcbd = {
+		{//transform
+		},
 		{//lightPos
 			1,1,1,1,
 		},
@@ -93,7 +99,7 @@ private:
 			1,1,1,0
 		},
 		{//ka
-			0.5,0.5,0.5,0,
+			0.1f,0.1f,0.1f,0,
 		},
 		{//kd
 			1,1,1,0,
@@ -104,6 +110,7 @@ private:
 	};
 
 	//textures
+	//gonna clean up here later
 	ID3D11Texture2D* tex;
 	ID3D11ShaderResourceView* texSRV;
 	ID3D11SamplerState* sampler;
@@ -125,12 +132,12 @@ private:
 	//functions
 	void Projection();
 	void Render();
-	bool worldMatrix();
 
 public:
 	//get things
 	Vcb *getVcb();
 	Pcb *getPcb();
+	vec2 getWH();
 
 	void setObjects(object** obj, int nrOfObjects);
 
@@ -139,7 +146,7 @@ public:
 	
 	//update
 	void Update(float dt);
-	void updateWorldMatrix(object& obj);
+	void updateShaders(object& obj);
 private:
 	//Debug shit
 	float c = 0;

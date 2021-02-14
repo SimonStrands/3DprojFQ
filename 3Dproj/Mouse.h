@@ -1,14 +1,22 @@
 #pragma once
+#include <SFML/Window.hpp>
+#include "Keyboard.h"
 #include "Vec.h"
 
 class Mouse {
 public:
-	Mouse();
+	Mouse(vec2 WH);
 	void changeSense(float newSence);
-	void OnRawDelta(int deltaX , int deltaY);
+	void UpdateMouse();
 	vec2 getDeltaPos();
 	float getSense();
+	bool getMouseActive();
 private:
-	float pitch, yaw;
+	void activateMouse();
+	sf::Mouse mouse;
+	bool mouse_active;
+	bool once;
+	vec2 wndWH;
+	float x, y;
 	float mouseSense;
 };

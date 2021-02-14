@@ -41,42 +41,6 @@ void Camera::updateCamera(float dt)
 
 	DirectX::XMFLOAT4X4 p;
 	DirectX::XMStoreFloat4x4(&p, viewMatrix);
-	if (GetKeyState(VK_RETURN) & 0x8000) {
-		//printf("camRot: x: %f, y: %f  z: %f\n", p.m[0][0], p.m[1][1], p.m[2][2]);
-		printf("campos: %f, %f %f\n", xCamPos, yCamPos, zCamPos);
-	}
-	
-
-	
-
-	//Vcbd->view.element = viewMatrix;
-	/*DirectX::XMVECTOR forwardBaseVector = DirectX::XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
-	DirectX::XMVECTOR lookVector = DirectX::XMVector3Transform(forwardBaseVector,
-		DirectX::XMMatrixRotationRollPitchYaw(yCamRot, xCamRot, 0.0f)
-	);
-	DirectX::XMVECTOR camPosition = DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(xCamPos, yCamPos, zCamPos));
-	DirectX::XMVECTOR camTarget = DirectX::XMVectorSet((xCamPos + lookVector.m128_f32[0]), (yCamPos + lookVector.m128_f32[1]), (zCamPos + lookVector.m128_f32[2]), 1);
-	//DirectX::XMVECTOR camTarget(camPosition.m128_f32[0] + lookVector.m128_f32[0]);
-
-	Vcbd->view.element = DirectX::XMMatrixLookAtRH(camPosition, camTarget, DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f));
-	*/
-
-	/*
-	DirectX::XMStoreFloat3(&translation, DirectX::XMVector3Transform(
-		DirectX::XMLoadFloat3(&translation),
-		DirectX::XMMatrixRotationRollPitchYaw(xCamRot, yCamRot, 0.0) *
-		DirectX::XMMatrixScaling(speed, speed, speed)
-	));
-	
-	xCamPos += xCamPos + translation.x;
-	yCamPos += yCamPos + translation.y;
-	zCamPos += zCamPos + translation.z;
-
-	DirectX::XMMATRIX changes = DirectX::XMMatrixTranslation(-xCamPos, -yCamPos, -zCamPos)*
-	DirectX::XMMatrixRotationRollPitchYaw(-xCamRot, -yCamRot, 0.0f);
-	
-	viewMatrix = changes * viewMatrix;
-	*/
 }
 
 vec3 Camera::getPos()
@@ -125,7 +89,7 @@ void Camera::handleEvent(float dt)
 	}
 	
 	//rot
-	if (mus == nullptr) {
+	if (!mus->getMouseActive()) {
 		if (GetKeyState(VK_RIGHT) & 0x8000) {
 			xCamRot += mouseSensitivity * (float)dt;
 		}
@@ -140,8 +104,8 @@ void Camera::handleEvent(float dt)
 		}
 	}
 	else {
-		xCamRot += mus->getDeltaPos().x * mus->getSense();
-		yCamRot += mus->getDeltaPos().y * mus->getSense();
+		xCamRot += mus->getDeltaPos().x * mus->getSense() * (float)dt;
+		yCamRot -= mus->getDeltaPos().y * mus->getSense() * (float)dt;
 	}
 }
 

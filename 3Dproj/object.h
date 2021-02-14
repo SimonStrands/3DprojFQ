@@ -15,6 +15,11 @@ public:
 	const vec3 getPos();
 	const vec3 getRot();
 	const vec3 getScale();
+
+	void changePos(vec3 pos);
+	void changeRot(vec3 pos);
+	void changeScale(vec3 pos);
+
 	ID3D11Buffer*& getVertexBuffer();
 	ID3D11Buffer*& getVertexConstBuffer();
 	int& getNrOfVertex();

@@ -1,5 +1,5 @@
 -move around in space (done) (if not wanna move with mouse and direction)
--see so lightning is good//kinda 
+-see so lightning is good//bad must fix for culling none
 
 -skeletal Animation else see what deffered rendering is
 

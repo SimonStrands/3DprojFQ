@@ -9,6 +9,7 @@ struct PixelShaderInput
 //must change cbuf to pixelShader buf
 cbuffer CBuf
 {
+	row_major matrix transform;
 	float4 lightPos;
 	float4 cameraPos;
 	float4 lightColor;
@@ -23,17 +24,18 @@ SamplerState testSampler;
 
 float4 main(PixelShaderInput input) : SV_TARGET
 {
-	//const float3 normalSample = nMap.Sample(testSampler, input.uv).xyz;
-	//input.normal.x = normalSample.x * 2.0f - 1.0f;
-	//input.normal.y = -normalSample.y * 2.0f + 1.0f;
-	//input.normal.z = -normalSample.z;
+	const float3 normalSample = nMap.Sample(testSampler, input.uv).xyz;
+	input.normal.x = normalSample.x * 2.0f - 1.0f;
+	input.normal.y = -normalSample.y * 2.0f + 1.0f;
+	input.normal.z = -normalSample.z;
+	input.normal = mul(input.normal, (float3x3)transform);
 
 	//ambient
 	float3 ambient_light = ka.xyz * lightColor.xyz;
 
 	//defuse
 	float3 lightDir = normalize(input.fragpos.xyz - lightPos.xyz);
-	float ammount_diffuse = max(dot(input.normal.xyz, lightDir), 0.0f);
+	float ammount_diffuse = max(dot(-input.normal.xyz, lightDir), 0.0f);
 	float3 defuse_light = ammount_diffuse * kd.xyz * lightColor.xyz;
 
 	//specular

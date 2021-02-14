@@ -85,28 +85,9 @@ bool Graphics::CreateVertexBuffer(object &obj, std::string fileName)
 
 }
 
-bool Graphics::worldMatrix()
+
+void Graphics::updateShaders(object& obj)
 {
-	//giving pixelshade lightPos
-	pcbd.lightPos.element[0] = light.getPos().x;
-	pcbd.lightPos.element[1] = light.getPos().y;
-	pcbd.lightPos.element[2] = light.getPos().z;
-	pcbd.lightPos.element[3] = 1;
-
-	//changing constant buffer
-	D3D11_MAPPED_SUBRESOURCE resource;
-	
-	immediateContext->Map(Pg_pConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
-	memcpy(resource.pData, &pcbd, sizeof(Pcb));
-	immediateContext->Unmap(Pg_pConstantBuffer, 0);
-	ZeroMemory(&resource, sizeof(D3D11_MAPPED_SUBRESOURCE));
-
-	return true;
-}
-
-void Graphics::updateWorldMatrix(object& obj)
-{
-	
 	DirectX::XMMATRIX rot(DirectX::XMMatrixRotationRollPitchYaw(obj.getRot().x, obj.getRot().y, obj.getRot().z));
 
 	DirectX::XMMATRIX scal(
@@ -122,15 +103,33 @@ void Graphics::updateWorldMatrix(object& obj)
 		0.0f, 0.0f, 1.0f, 0.0f,
 		obj.getPos().x, obj.getPos().y, obj.getPos().z, 1.0f
 	);
+	DirectX::XMMATRIX rts = ((rot * trans) * scal);
 
-	vcbd.transform.element = ((rot * trans) * scal);
-
+	vcbd.transform.element = rts;
+	
+	//chanign vertex Shader cBuffer
 	D3D11_MAPPED_SUBRESOURCE resource;
 
 	immediateContext->Map(obj.getVertexConstBuffer(), 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
 	memcpy(resource.pData, &vcbd, sizeof(Vcb));
 	immediateContext->Unmap(obj.getVertexConstBuffer(), 0);
 	ZeroMemory(&resource, sizeof(D3D11_MAPPED_SUBRESOURCE));
+
+
+	//giving pixelshade lightPos
+	pcbd.lightPos.element[0] = light.getPos().x;
+	pcbd.lightPos.element[1] = light.getPos().y;
+	pcbd.lightPos.element[2] = light.getPos().z;
+	pcbd.lightPos.element[3] = 1;
+
+	pcbd.transform.element = rts;
+	//changing pixel shader cBuffer
+
+	immediateContext->Map(Pg_pConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
+	memcpy(resource.pData, &pcbd, sizeof(Pcb));
+	immediateContext->Unmap(Pg_pConstantBuffer, 0);
+	ZeroMemory(&resource, sizeof(D3D11_MAPPED_SUBRESOURCE));
+
 }
 
 void Graphics::Projection()
@@ -216,12 +215,12 @@ Graphics::~Graphics()
 	if (pRS != nullptr) {
 		pRS->Release();
 	}
-	if (tex != nullptr) {
-		tex->Release();
-	}
-	if (texSRV != nullptr) {
-		texSRV->Release();
-	}
+	//if (tex != nullptr) {
+	//	tex->Release();
+	//}
+	//if (texSRV != nullptr) {
+	//	texSRV->Release();
+	//}
 	if (sampler != nullptr) {
 		sampler->Release();
 	}
@@ -239,7 +238,6 @@ void Graphics::setObjects(object** obj, int nrOfObjects)
 float nextFpsUpdate = 0;
 void Graphics::Update(float dt)
 {
-	worldMatrix();
 	Render();
 	
 	nextFpsUpdate += (float)dt;
@@ -259,6 +257,10 @@ Vcb *Graphics::getVcb()
 Pcb* Graphics::getPcb()
 {
 	return &pcbd;
+}
+vec2 Graphics::getWH()
+{
+	return vec2((float)WIDTH, (float)HEIGHT);
 }
 void Graphics::Render()
 {

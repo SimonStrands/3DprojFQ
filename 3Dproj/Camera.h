@@ -4,6 +4,7 @@
 #include "rotation.h"
 #include "Keyboard.h"
 #include "Vec.h"
+#include "Mouse.h"
 
 class Camera {
 public:

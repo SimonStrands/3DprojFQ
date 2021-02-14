@@ -9,8 +9,15 @@ object::object(std::string file, Graphics& gfx, std::string texture, vec3 pos, v
     if(texture == ""){
         texture = "stripestest.png";
     }
-    fileName[0] = "Textures/" + texture + "_BaseColor.jpg";
-    fileName[1] = "Textures/" + texture + "_Normal.jpg";
+    if (texture != "none") {
+        fileName[0] = "Textures/" + texture + "_BaseColor.jpg";
+        fileName[1] = "Textures/" + texture + "_Normal.jpg";
+    }
+    else {
+        fileName[0] = "Texture/Default/white.png";
+        fileName[1] = "Texture/Default/white.png";
+    }
+
     gfx.CreateVertexBuffer(*this, file);
 }
 
@@ -40,6 +47,21 @@ const vec3 object::getRot()
 const vec3 object::getScale()
 {
     return this->scale;
+}
+
+void object::changePos(vec3 pos)
+{
+    this->pos = pos;
+}
+
+void object::changeRot(vec3 rot)
+{
+    this->rot = rot;
+}
+
+void object::changeScale(vec3 scale)
+{
+    this->scale = scale;
 }
 
 int& object::getNrOfVertex()
