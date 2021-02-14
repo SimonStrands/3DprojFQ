@@ -290,12 +290,19 @@ void Graphics::Render()
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
 	
-	static bool show_demo_window = true;
+	/*static bool show_demo_window = true;
 	if (show_demo_window) {
 		ImGui::ShowDemoWindow(&show_demo_window);
+	}*/
+	if (ImGui::Begin("rotation on obj")) {
+		ImGui::SliderFloat("Rot", &objects[0]->getxRot(), 6.34, -6.34);
+		ImGui::Text("yeet");
 	}
+	ImGui::End();
 	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+
+	
 
 	//show the "picture"
 	swapChain->Present(0, 0);

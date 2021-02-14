@@ -32,6 +32,9 @@ object::~object()
     if (Pg_pConstantBuffer != nullptr) {
         Pg_pConstantBuffer->Release();
     }
+    for (int i = 0; i < 2; i++) {
+        texSRV[i]->Release();
+    }
 }
 
 const vec3 object::getPos()
@@ -67,6 +70,11 @@ void object::changeScale(vec3 scale)
 int& object::getNrOfVertex()
 {
     return this->nrOfVertexes;
+}
+
+float& object::getxRot()
+{
+    return this->rot.y;
 }
 
 ID3D11Buffer*& object::getVertexBuffer()

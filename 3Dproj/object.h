@@ -26,6 +26,10 @@ public:
 
 	ID3D11ShaderResourceView** texSRV = new ID3D11ShaderResourceView*[2];
 	std::string fileName[2];//color, normal
+
+	//debug and should be deleted before realease
+	float &getxRot();
+
 private:
 	//object data
 	vec3 pos;
