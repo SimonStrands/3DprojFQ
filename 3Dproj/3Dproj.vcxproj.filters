@@ -93,25 +93,25 @@
     <ClCompile Include="Mouse.cpp">
       <Filter>Source Files\Events</Filter>
     </ClCompile>
-    <ClCompile Include="imgui-master\imgui.cpp">
+    <ClCompile Include="imgui.cpp">
       <Filter>Header Files\IMGUI</Filter>
     </ClCompile>
-    <ClCompile Include="imgui-master\imgui_demo.cpp">
+    <ClCompile Include="imgui_demo.cpp">
       <Filter>Header Files\IMGUI</Filter>
     </ClCompile>
-    <ClCompile Include="imgui-master\imgui_draw.cpp">
+    <ClCompile Include="imgui_draw.cpp">
       <Filter>Header Files\IMGUI</Filter>
     </ClCompile>
-    <ClCompile Include="imgui-master\imgui_tables.cpp">
+    <ClCompile Include="imgui_impl_dx11.cpp">
       <Filter>Header Files\IMGUI</Filter>
     </ClCompile>
-    <ClCompile Include="imgui-master\imgui_widgets.cpp">
+    <ClCompile Include="imgui_tables.cpp">
       <Filter>Header Files\IMGUI</Filter>
     </ClCompile>
-    <ClCompile Include="imgui-master\backends\imgui_impl_dx11.cpp">
+    <ClCompile Include="imgui_widgets.cpp">
       <Filter>Header Files\IMGUI</Filter>
     </ClCompile>
-    <ClCompile Include="imgui-master\backends\imgui_impl_win32.cpp">
+    <ClCompile Include="imgui_impl_win32.cpp">
       <Filter>Header Files\IMGUI</Filter>
     </ClCompile>
   </ItemGroup>
@@ -173,25 +173,28 @@
     <ClInclude Include="Mouse.h">
       <Filter>Header Files\Events</Filter>
     </ClInclude>
-    <ClInclude Include="imgui-master\imgui.h">
+    <ClInclude Include="imconfig.h">
       <Filter>Header Files\IMGUI</Filter>
     </ClInclude>
-    <ClInclude Include="imgui-master\imgui_internal.h">
+    <ClInclude Include="imgui.h">
       <Filter>Header Files\IMGUI</Filter>
     </ClInclude>
-    <ClInclude Include="imgui-master\imconfig.h">
+    <ClInclude Include="imgui_impl_dx11.h">
       <Filter>Header Files\IMGUI</Filter>
     </ClInclude>
-    <ClInclude Include="imgui-master\backends\imgui_impl_dx11.h">
+    <ClInclude Include="imgui_internal.h">
       <Filter>Header Files\IMGUI</Filter>
     </ClInclude>
-    <ClInclude Include="imgui-master\backends\imgui_impl_win32.h">
+    <ClInclude Include="imstb_rectpack.h">
       <Filter>Header Files\IMGUI</Filter>
     </ClInclude>
-    <ClInclude Include="imgui-master\imstb_textedit.h">
+    <ClInclude Include="imstb_textedit.h">
       <Filter>Header Files\IMGUI</Filter>
     </ClInclude>
-    <ClInclude Include="imgui-master\imstb_truetype.h">
+    <ClInclude Include="imstb_truetype.h">
+      <Filter>Header Files\IMGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui_impl_win32.h">
       <Filter>Header Files\IMGUI</Filter>
     </ClInclude>
   </ItemGroup>
