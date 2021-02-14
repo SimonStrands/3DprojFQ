@@ -18,12 +18,16 @@ void Mouse::changeSense(float newSence)
 int x = 0;
 void Mouse::UpdateMouse()
 {
-	::ShowCursor(FALSE);
+	
 	activateMouse();
 	if (mouse_active) {
+		::ShowCursor(FALSE);
 		x = mouse.getPosition().x - this->wndWH.x/2;
 		y = mouse.getPosition().y - this->wndWH.y/2;
 		mouse.setPosition(sf::Vector2i(this->wndWH.x/2, this->wndWH.y/2));
+	}
+	else {
+		::ShowCursor(TRUE);
 	}
 }
 

@@ -1,8 +1,13 @@
 #include "WindowHelper.h"
 #include <iostream>
+#include "imgui_impl_win32.h"
 //git
 LRESULT CALLBACK WindowProc(HWND wnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
+	if (ImGui_ImplWin32_WndProcHandler(wnd, msg, wParam, lParam))
+	{
+		return true;
+	}
 	switch (msg) {
 	case WM_DESTROY:
 		PostQuitMessage(0);
@@ -18,7 +23,6 @@ bool setUpWindow(HINSTANCE hInstance, UINT WIDTH, UINT HEIGHT, int nCmdShow, HWN
 	const wchar_t CLASS_NAME[] = L"WinClass";
 
 	WNDCLASS wc = {};
-
 	wc.lpfnWndProc = WindowProc;
 	wc.hInstance = hInstance;
 	wc.lpszClassName = CLASS_NAME;
@@ -34,7 +38,14 @@ bool setUpWindow(HINSTANCE hInstance, UINT WIDTH, UINT HEIGHT, int nCmdShow, HWN
 
 	ShowWindow(wnd, nCmdShow);
 
+	ImGui_ImplWin32_Init(wnd);
+
 	return true;
+}
+
+void shutDownWindow()
+{
+	ImGui_ImplWin32_Shutdown();
 }
 
 

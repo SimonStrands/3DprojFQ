@@ -3,6 +3,7 @@
 #include "Graphics.h"
 #include "deltaTime.h"
 #include "Camera.h"
+#include "imguiManager.h"
 //git
 class Game {
 public:
@@ -15,8 +16,9 @@ private:
 	Graphics *gfx;
 	void Update();
 private:
-	//logic
+	//logic and others
 	DeltaTime dt;
+	ImguiManager UIManager;
 
 	//game objects
 	Camera *camera;

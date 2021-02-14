@@ -1,6 +1,8 @@
 #include "Graphics.h"
 #include <vector>
 #include "Keyboard.h"
+#include "imgui_impl_dx11.h"
+#include "imgui_impl_win32.h"
 
 //debug nothing to look here at
 void Graphics::debugcd()
@@ -149,9 +151,10 @@ Graphics::Graphics(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	farPlane = 40;
 	nearPlane = 0.1f;
 	nrOfObject = 0;
-
 	Pg_pConstantBuffer = NULL;
 	inputLayout = nullptr; pShader = nullptr; vShader = nullptr;
+
+	
 	//setting matrixes
 	Projection();
 	//if delete this happens it will get an error and program will stop working(I want this to happen when I debug)
@@ -168,7 +171,8 @@ Graphics::Graphics(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 		std::cerr << "cant set up" << std::endl;
 		delete this;
 	}
-	
+	ImGui_ImplDX11_Init(device, immediateContext);
+
 	//set settings up
 	immediateContext->PSSetSamplers(0, 1, &sampler);
 	immediateContext->VSSetShader(vShader, nullptr, 0);
@@ -182,6 +186,8 @@ Graphics::Graphics(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 Graphics::~Graphics()
 {
+	ImGui_ImplDX11_Shutdown();
+	shutDownWindow();
 	if (inputLayout != nullptr) {
 		inputLayout->Release();
 	}
@@ -279,6 +285,17 @@ void Graphics::Render()
 		immediateContext->IASetVertexBuffers(0, 1, &objects[i]->getVertexBuffer(), &strid, &offset);
 		immediateContext->Draw((int)objects[i]->getNrOfVertex(), 0);
 	}
+
+	ImGui_ImplDX11_NewFrame();
+	ImGui_ImplWin32_NewFrame();
+	ImGui::NewFrame();
+	
+	static bool show_demo_window = true;
+	if (show_demo_window) {
+		ImGui::ShowDemoWindow(&show_demo_window);
+	}
+	ImGui::Render();
+	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 
 	//show the "picture"
 	swapChain->Present(0, 0);

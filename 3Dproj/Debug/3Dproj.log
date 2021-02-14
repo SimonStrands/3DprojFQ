@@ -1,5 +1,6 @@
 ﻿  Graphics.cpp
-C:\Users\etta1\source\repos\3Dproj\3Dproj\Graphics.cpp(265,26): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
-  ReadObjFile.cpp
+  imgui_impl_win32.cpp
+  Main.cpp
+  WindowHelper.cpp
   Generating Code...
-  3Dproj.vcxproj -> C:\Users\etta1\source\repos\3Dproj\Debug\3Dproj.exe
+sfml-window-d.lib(sfml-window-d-2.dll) : fatal error LNK1112: module machine type 'x64' conflicts with target machine type 'x86'
