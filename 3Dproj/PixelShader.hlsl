@@ -16,6 +16,7 @@ cbuffer CBuf
 	float4 ka;
 	float4 kd;
 	float4 ks;
+	bool nMapping;
 };
 
 Texture2D testTex : register(t0);
@@ -24,11 +25,13 @@ SamplerState testSampler;
 
 float4 main(PixelShaderInput input) : SV_TARGET
 {
-	const float3 normalSample = nMap.Sample(testSampler, input.uv).xyz;
-	input.normal.x = normalSample.x * 2.0f - 1.0f;
-	input.normal.y = -normalSample.y * 2.0f + 1.0f;
-	input.normal.z = -normalSample.z;
-	input.normal = mul(input.normal, (float3x3)transform);
+	if (nMapping) {
+		const float3 normalSample = nMap.Sample(testSampler, input.uv).xyz;
+		input.normal.x = (normalSample.x * 2.0f - 1.0f);
+		input.normal.y = (-normalSample.y * 2.0f + 1.0f);
+		input.normal.z = -normalSample.z * -input.normal.z;
+		input.normal = mul(input.normal, (float3x3)transform);
+	}
 
 	//ambient
 	float3 ambient_light = ka.xyz * lightColor.xyz;
@@ -45,6 +48,7 @@ float4 main(PixelShaderInput input) : SV_TARGET
 	float3 posToView = normalize(input.fragpos.xyz - cameraPos.xyz);
 	float spec = pow(max(dot(posToView, reflection), 0.f), 32);
 	float3 specular = const_spec * spec * ks.xyz * lightColor.xyz;
+
 	//get final lightning
 	float3 lightning = (ambient_light + defuse_light) + specular;
 	//add the texture

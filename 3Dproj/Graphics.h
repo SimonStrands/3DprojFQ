@@ -44,6 +44,9 @@ struct Pcb {
 	struct {
 		float element[4];
 	}ks;
+	struct {
+		bool element;
+	}nMapping;
 	
 };
 
@@ -106,6 +109,9 @@ private:
 		{//ks
 			1,1,1,0,
 		},
+		{//normal mapping
+			true,
+		}
 	};
 
 	//textures
@@ -150,6 +156,7 @@ private:
 	void debugcd();
 	void keyboardDebug();
 	bool pressed = false;
+	bool normalMapping = true;
 public:
 	void createBuffer();
 };

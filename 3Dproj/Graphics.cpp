@@ -11,7 +11,21 @@ void Graphics::debugcd()
 //keyboard buttons + rotation
 void Graphics::keyboardDebug()
 {
-
+	if (getkey('N') && !pressed) {
+		pressed = true;
+		if (normalMapping == true) {
+			normalMapping = false;
+		}
+		else {
+			normalMapping = true;
+		}
+		printf("%s \n", normalMapping ? "true" : "false");
+		pcbd.nMapping.element = normalMapping;
+	}
+	else {
+		pressed = false;
+	}
+	
 }
 
 void Graphics::createBuffer()
@@ -282,19 +296,15 @@ void Graphics::Render()
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
 	
-	/*static bool show_demo_window = true;
-	if (show_demo_window) {
-		ImGui::ShowDemoWindow(&show_demo_window);
-	}*/
 	if (ImGui::Begin("rotation on obj")) {
 		ImGui::SliderFloat("Rot", &objects[0]->getxRot(), 6.34f, -6.34f);
+		ImGui::SliderFloat("XPos", &objects[0]->getxPos(), -10, 10);
+		ImGui::SliderFloat("ZPos", &objects[0]->getzPos(), -10, 10);
 		ImGui::Text("yeet");
 	}
 	ImGui::End();
 	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
-
-	
 
 	//show the "picture"
 	swapChain->Present(0, 0);

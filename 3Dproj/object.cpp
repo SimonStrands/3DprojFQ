@@ -78,6 +78,16 @@ float& object::getxRot()
     return this->rot.y;
 }
 
+float& object::getxPos()
+{
+    return this->pos.x;
+}
+
+float& object::getzPos()
+{
+    return this->pos.z;
+}
+
 ID3D11Buffer*& object::getVertexBuffer()
 {
     return this->vertexBuffer;

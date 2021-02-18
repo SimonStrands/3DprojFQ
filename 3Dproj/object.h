@@ -29,6 +29,8 @@ public:
 
 	//debug and should be deleted before realease
 	float &getxRot();
+	float &getxPos();
+	float& getzPos();
 
 private:
 	//object data

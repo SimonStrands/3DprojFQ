@@ -1,8 +1,41 @@
 #include "ReadObjFile.h"
+#include <DirectXMath.h>
 //#thisNeedFix
 
 FileReader::FileReader()
 {
+
+}
+								//3 vertecies      3 uv kordinater
+vec4 FileReader::calcTangent(std::array<float, 3> va[3], std::array<float, 2> uva[3]) 
+{
+	//get all vars we need
+	DirectX::XMFLOAT3 e[2];
+	DirectX::XMFLOAT2 deltaUV[2];
+	vec3 v[3]; arrayToVec(va, v);
+	vec2 uv[3]; arrayToVec(uva, uv);
+	vec3 dae = v[1] - v[0];
+	e[0] = DirectX::XMFLOAT3(dae.x, dae.y, dae.z);
+	dae = (v[2] - v[1]);
+	e[1] = DirectX::XMFLOAT3(dae.x, dae.y, dae.z);
+	//x = u    y = v
+	deltaUV[0] = DirectX::XMFLOAT2(uv[1].x - uv[0].x, uv[1].y - uv[0].y);
+	deltaUV[1] = DirectX::XMFLOAT2(uv[2].x - uv[0].x, uv[2].y - uv[0].y);
+	DirectX::XMMATRIX a(//the delta
+		deltaUV[0].x, -deltaUV[0].y, 0, 0,
+		-deltaUV[1].x, deltaUV[1].y, 0, 0,
+		0, 0, 0, 0,
+		0, 0, 0, 0);
+	DirectX::XMMATRIX b(//the E:s
+		e[0].x, e[0].y, e[0].z, 0,
+		e[1].x, e[1].y, e[1].z, 0,
+		0, 0, 0, 0,
+		0, 0, 0, 0);
+	DirectX::XMMATRIX res = 1 / (deltaUV[0].x * deltaUV[1].y - deltaUV[0].y * deltaUV[1].x) * a * b;
+	DirectX::XMFLOAT4X4 theReturn;
+	DirectX::XMStoreFloat4x4(&theReturn, res);
+	
+	return vec4(theReturn._11, theReturn._12, theReturn._13, 0);
 
 }
 
@@ -14,6 +47,8 @@ void FileReader::readObjFile(std::vector<std::vector<vertex>>& objP, std::string
 	std::vector<std::array<float, 3>>vPos;
 	std::vector<std::array<float, 2>>vUv;
 	std::vector<std::array<float, 4>>vNorm;
+	//(%2 = 0) = vertecies (%2 = 1) = uv 
+	std::vector<int> whereinarray;
 
 	std::ifstream infile(fileName);
 	std::string readWord;
@@ -52,18 +87,26 @@ void FileReader::readObjFile(std::vector<std::vector<vertex>>& objP, std::string
 					nrOfVertexes++;
 					sTemp = getDest(sTemp2[i]);
 					objP[objIndex].push_back(vertex(vPos[std::stoi(sTemp[0]) - 1], vUv[std::stoi(sTemp[1]) - 1], vNorm[std::stoi(sTemp[2]) - 1]));
+					whereinarray.push_back(std::stoi(sTemp[0]) - 1);
+					whereinarray.push_back(std::stoi(sTemp[1]) - 1);
 					delete[] sTemp;
 				}
 				nrOfVertexes += 3;
 				nrOfVertexes++;
 				sTemp = getDest(sTemp2[3]);
 				objP[objIndex].push_back(vertex(vPos[std::stoi(sTemp[0]) - 1], vUv[std::stoi(sTemp[1]) - 1], vNorm[std::stoi(sTemp[2]) - 1]));
+				whereinarray.push_back(std::stoi(sTemp[0]) - 1);
+				whereinarray.push_back(std::stoi(sTemp[1]) - 1);
 				delete[] sTemp;
 				sTemp = getDest(sTemp2[2]);
 				objP[objIndex].push_back(vertex(vPos[std::stoi(sTemp[0]) - 1], vUv[std::stoi(sTemp[1]) - 1], vNorm[std::stoi(sTemp[2]) - 1]));
+				whereinarray.push_back(std::stoi(sTemp[0]) - 1);
+				whereinarray.push_back(std::stoi(sTemp[1]) - 1);
 				delete[] sTemp;
 				sTemp = getDest(sTemp2[0]);
 				objP[objIndex].push_back(vertex(vPos[std::stoi(sTemp[0]) - 1], vUv[std::stoi(sTemp[1]) - 1], vNorm[std::stoi(sTemp[2]) - 1]));
+				whereinarray.push_back(std::stoi(sTemp[0]) - 1);
+				whereinarray.push_back(std::stoi(sTemp[1]) - 1);
 				delete[] sTemp;
 			}
 			else {
@@ -88,9 +131,17 @@ void FileReader::readObjFile(std::vector<std::vector<vertex>>& objP, std::string
 			objP.resize(objP.size() + 1);
 		}
 	}
+	fixtangent(objP, whereinarray, vPos, vUv);
 }
 
-//void FileReader::readMtlFile()
-//{
-//	
-//}
+void FileReader::fixtangent(std::vector<std::vector<vertex>>& objP, std::vector<int>& whereinarray, std::vector<std::array<float, 3>>& vPos, std::vector <std::array<float, 2>>& uv)
+{
+	vec4 tangent(0,0,0,0);
+	int objI = 0;
+	for (int i = 0;  i < whereinarray.size();) {
+		int n = i;
+		tangent = calcTangent(&vPos[whereinarray[i++]], &uv[whereinarray[i++]]);
+		objP[0][objI].fixtang(tangent);
+	}
+}
+

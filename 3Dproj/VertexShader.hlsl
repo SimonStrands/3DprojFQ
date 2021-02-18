@@ -3,6 +3,7 @@ struct VertexShaderInput {
 	float3 position : POSITION;
 	float2 uv : UV;
 	float4 normal : NORMAL;
+	float4 tangent : TANGENT;
 };
 
 struct VertexShaderOutput {
