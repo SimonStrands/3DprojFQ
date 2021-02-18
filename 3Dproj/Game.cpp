@@ -9,8 +9,8 @@ Game::Game(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWS
 	obj = new object * [nrOfObj];
 	//obj[1] = new object("obj/objtest.obj", *gfx, "WallStone", vec3(5,0,0), vec3(0,0,0));
 	obj[0] = new object("obj/stol.obj", *gfx, "WallStone", vec3(0,0,5), vec3(0,0,0), vec3(1,1,1));
-	////obj[2] = new object("obj/stol.obj", *gfx, "", vec3(0,0,-10),vec3(0,0,0));
-	////obj[3] = new object("obj/stol.obj", *gfx, "babyyoda.jpg", vec3(-10,0,0),vec3(0,0,0));
+	//obj[2] = new object("obj/stol.obj", *gfx, "", vec3(0,0,-10),vec3(0,0,0));
+	//obj[3] = new object("obj/stol.obj", *gfx, "babyyoda.jpg", vec3(-10,0,0),vec3(0,0,0));
 	gfx->createBuffer();
 	gfx->setObjects(obj, nrOfObj);
 }

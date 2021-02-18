@@ -10,7 +10,7 @@ FileReader::FileReader()
 vec4 FileReader::calcTangent(std::array<float, 3> va[3], std::array<float, 2> uva[3]) 
 {
 	//get all vars we need
-	DirectX::XMFLOAT3 e[2];
+	/*DirectX::XMFLOAT3 e[2];
 	DirectX::XMFLOAT2 deltaUV[2];
 	vec3 v[3]; arrayToVec(va, v);
 	vec2 uv[3]; arrayToVec(uva, uv);
@@ -35,7 +35,8 @@ vec4 FileReader::calcTangent(std::array<float, 3> va[3], std::array<float, 2> uv
 	DirectX::XMFLOAT4X4 theReturn;
 	DirectX::XMStoreFloat4x4(&theReturn, res);
 	
-	return vec4(theReturn._11, theReturn._12, theReturn._13, 0);
+	return vec4(theReturn._11, theReturn._12, theReturn._13, 0);*/
+	return vec4(0, 0, 0, 0);
 
 }
 
@@ -136,12 +137,12 @@ void FileReader::readObjFile(std::vector<std::vector<vertex>>& objP, std::string
 
 void FileReader::fixtangent(std::vector<std::vector<vertex>>& objP, std::vector<int>& whereinarray, std::vector<std::array<float, 3>>& vPos, std::vector <std::array<float, 2>>& uv)
 {
-	vec4 tangent(0,0,0,0);
-	int objI = 0;
-	for (int i = 0;  i < whereinarray.size();) {
-		int n = i;
-		tangent = calcTangent(&vPos[whereinarray[i++]], &uv[whereinarray[i++]]);
-		objP[0][objI].fixtang(tangent);
-	}
+	//vec4 tangent(0,0,0,0);
+	//int objI = 0;
+	//for (int i = 0;  i < whereinarray.size();) {
+	//	int n = i;
+	//	tangent = calcTangent(&vPos[whereinarray[i++]], &uv[whereinarray[i++]]);
+	//	objP[0][objI].fixtang(tangent);
+	//}
 }
 

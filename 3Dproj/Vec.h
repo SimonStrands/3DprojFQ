@@ -67,18 +67,18 @@ struct vec4 {
 	float w;
 };
 
-void arrayToVec(std::array<float, 3> arr[3], vec3 vec[3])
-{
-	for (int i = 0; i < 3; i++) {
-		vec[i].x = arr[i][0];
-		vec[i].y = arr[i][1];
-		vec[i].z = arr[i][2];
-	}
-}
-void arrayToVec(std::array<float, 2> arr[3], vec2 vec[3])
-{
-	for (int i = 0; i < 3; i++) {
-		vec[i].x = arr[i][0];
-		vec[i].y = arr[i][1];
-	}
-}
+//void arrayToVec(std::array<float, 3> arr[3], vec3 vec[3])
+//{
+//	for (int i = 0; i < 3; i++) {
+//		vec[i].x = arr[i][0];
+//		vec[i].y = arr[i][1];
+//		vec[i].z = arr[i][2];
+//	}
+//}
+//void arrayToVec(std::array<float, 2> arr[3], vec2 vec[3])
+//{
+//	for (int i = 0; i < 3; i++) {
+//		vec[i].x = arr[i][0];
+//		vec[i].y = arr[i][1];
+//	}
+//}

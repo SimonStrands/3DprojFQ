@@ -289,6 +289,7 @@ void Graphics::Render()
 		immediateContext->PSSetShaderResources(1, 1, &objects[i]->texSRV[1]);
 		immediateContext->VSSetConstantBuffers(0, 1, &objects[i]->getVertexConstBuffer());
 		immediateContext->IASetVertexBuffers(0, 1, &objects[i]->getVertexBuffer(), &strid, &offset);
+		//this line right here
 		immediateContext->Draw((int)objects[i]->getNrOfVertex(), 0);
 	}
 

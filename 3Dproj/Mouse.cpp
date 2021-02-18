@@ -24,7 +24,7 @@ void Mouse::UpdateMouse()
 		::ShowCursor(FALSE);
 		x = mouse.getPosition().x - this->wndWH.x/2;
 		y = mouse.getPosition().y - this->wndWH.y/2;
-		mouse.setPosition(sf::Vector2i(this->wndWH.x/2, this->wndWH.y/2));
+		mouse.setPosition(sf::Vector2i((int)this->wndWH.x/2, (int)this->wndWH.y/2));
 	}
 	else {
 		::ShowCursor(TRUE);

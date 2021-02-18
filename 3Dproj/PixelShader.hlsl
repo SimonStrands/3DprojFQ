@@ -2,8 +2,10 @@ struct PixelShaderInput
 {
 	float4 position : SV_POSITION;
 	float2 uv : UV;
-	float3 normal : NORMAL;
 	float4 fragpos: FRAG_POS;
+	float4 normal : NORMAL;
+	//float4 tangent : TANGENT;
+	//float4 bitangent : BITANGENT;
 };
 
 //must change cbuf to pixelShader buf
@@ -30,16 +32,17 @@ float4 main(PixelShaderInput input) : SV_TARGET
 		input.normal.x = (normalSample.x * 2.0f - 1.0f);
 		input.normal.y = (-normalSample.y * 2.0f + 1.0f);
 		input.normal.z = -normalSample.z * -input.normal.z;
-		input.normal = mul(input.normal, (float3x3)transform);
+		//input.normal = float4(mul(input.normal.xyz, (float3x3)transform),0.0f);
 	}
 
 	//ambient
 	float3 ambient_light = ka.xyz * lightColor.xyz;
 
 	//defuse
-	float3 lightDir = normalize(input.fragpos.xyz - lightPos.xyz);
-	float ammount_diffuse = max(dot(-input.normal.xyz, lightDir), 0.0f);
-	float3 defuse_light = ammount_diffuse * kd.xyz * lightColor.xyz;
+	//float3 lightDir = normalize(input.fragpos.xyz - lightPos.xyz);
+	//float ammount_diffuse = max(dot(-input.normal.xyz, lightDir), 0.0f);
+	//float3 defuse_light = ammount_diffuse * kd.xyz * lightColor.xyz;
+	float3 defuse_light = float3(1, 1, 1);
 
 	//specular
 	float const_spec = 2.0f;
