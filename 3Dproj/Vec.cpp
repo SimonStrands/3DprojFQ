@@ -1,4 +1,30 @@
 #include "Vec.h"
+void arrayToVec(std::array<float, 3> arr[3], vec3 vec[3])
+{
+	for (int i = 0; i < 3; i++) {
+		vec[i].x = arr[i][0];
+		vec[i].y = arr[i][1];
+		vec[i].z = arr[i][2];
+	}
+}
+void arrayToVec(float arr[3], vec3 &vec)
+{
+	vec.x = arr[0];
+	vec.y = arr[1];
+	vec.z = arr[2];
+}
+void arrayToVec(float arr[2], vec2 &vec)
+{
+	vec.x = arr[0];
+	vec.y = arr[1];
+}
+void arrayToVec(std::array<float, 2> arr[3], vec2 vec[3])
+{
+	for (int i = 0; i < 3; i++) {
+		vec[i].x = arr[i][0];
+		vec[i].y = arr[i][1];
+	}
+}
 //git
 void vec3::Normalize()
 {
@@ -40,7 +66,7 @@ bool vec3::operator==(vec3& other)
 	return (this->x == other.x && this->y == other.y && this->z == other.z);
 }
 
-void vec3::operator=(vec3& other)
+void vec3::operator=(vec3 other)
 {
 	this->x = other.x;
 	this->y = other.y;

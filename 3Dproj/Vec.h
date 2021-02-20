@@ -1,10 +1,15 @@
 #pragma once
 #include <math.h>
+#include <array>
 //git
 struct vec2 {
 	vec2(float x, float y) {
 		this->x = x;
 		this->y = y;
+	}
+	vec2() {
+		this->x = 0;
+		this->y = 0;
 	}
 	float legth() {
 		return (float)sqrt(x * x + y * y);
@@ -27,13 +32,14 @@ struct vec3 {
 		this->y = 0;
 		this->z = 0;
 	}
+
 	void Normalize();
 	vec3 X(const vec3& other);
 	float operator*(vec3& other);
 	vec3 operator+(vec3& other);
 	vec3 operator-(vec3& other);
 	bool operator==(vec3& other);
-	void operator=(vec3& other);
+	void operator=(vec3 other);
 	float length();
 
 	float x;
@@ -58,3 +64,8 @@ struct vec4 {
 	vec3 xyz;
 	float w;
 };
+void arrayToVec(std::array<float, 3> arr[3], vec3 vec[3]);
+void arrayToVec(float arr[3], vec3 &vec);
+void arrayToVec(float arr[2], vec2 &vec);
+
+void arrayToVec(std::array<float, 2> arr[3], vec2 vec[3]);

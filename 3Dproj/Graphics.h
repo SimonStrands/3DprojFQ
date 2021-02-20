@@ -44,6 +44,9 @@ struct Pcb {
 	struct {
 		float element[4];
 	}ks;
+	struct {
+		bool element;
+	}nMapping;
 	
 };
 
@@ -52,8 +55,8 @@ class Graphics {
 
 private:
 	//window
-	const UINT WIDTH = 1080;
-	const UINT HEIGHT = 720;
+	const UINT WIDTH = 1920;
+	const UINT HEIGHT = 1080;
 	HWND wnd;
 public:
 	Graphics(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine, _In_ int nCmdShow);
@@ -106,6 +109,9 @@ private:
 		{//ks
 			1,1,1,0,
 		},
+		{
+			true
+		},
 	};
 
 	//textures
@@ -150,6 +156,7 @@ private:
 	void debugcd();
 	void keyboardDebug();
 	bool pressed = false;
+	bool normalMapping;
 public:
 	void createBuffer();
 };

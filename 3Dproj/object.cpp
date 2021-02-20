@@ -1,5 +1,6 @@
 #include "object.h"
 #include "Graphics.h"
+#include <array>
 
 object::object(std::string file, Graphics& gfx, std::string texture, vec3 pos, vec3 rot, vec3 scale)
 {
@@ -78,8 +79,16 @@ float& object::getxRot()
     return this->rot.y;
 }
 
+float& object::getxPos() {
+    return this->pos.x;
+}
+float& object::getzPos() {
+    return this->pos.z;
+}
+
 ID3D11Buffer*& object::getVertexBuffer()
 {
+    
     return this->vertexBuffer;
 } 
 

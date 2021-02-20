@@ -2,13 +2,17 @@
 struct VertexShaderInput {
 	float3 position : POSITION;
 	float2 uv : UV;
-	float4 normal : NORMAL;
+	float3 normal : NORMAL;
+	float3 tangent : TANGENT;
+	float3 bitangent : BITANGENT;
 };
 
 struct VertexShaderOutput {
 	float4 position : SV_POSITION;
 	float2 uv : UV;
 	float3 normal : NORMAL;
+	float3 tangent : TANGENT;
+	float3 bitangent : BITANGENT;
 	float4 fragpos: FRAG_POS;
 };
 
@@ -26,7 +30,9 @@ VertexShaderOutput main(VertexShaderInput input) {
 	output.fragpos = mul(float4(input.position,1.0f), transform);
 	output.position = mul((float4((input.position), 1.0f)), MVP);
 	output.uv = input.uv;
-	output.normal = normalize((mul(input.normal, transform)).xyz);
-	
+	output.normal = normalize(mul(input.normal, (float3x3)transform));
+	output.tangent = normalize(mul(input.tangent, (float3x3)transform));
+	output.bitangent = normalize(mul(input.bitangent, (float3x3)transform));
+
 	return output;
 }

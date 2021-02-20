@@ -66,14 +66,18 @@ bool loadShader(ID3D11Device* device, ID3D11VertexShader*& vShader, ID3D11PixelS
 
 bool CreateInputLayout(ID3D11Device* device, ID3D11InputLayout*& inputLayout, std::string& VbyteCode, std::string &PbyteCode) 
 {
-	D3D11_INPUT_ELEMENT_DESC inputDesc[3] = 
+	const int nrOfEl = 5;
+	D3D11_INPUT_ELEMENT_DESC inputDesc[nrOfEl] =
 	{
 		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"UV", 0, DXGI_FORMAT_R32G32_FLOAT, 0,12, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"NORMAL", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 20, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"UV", 0, DXGI_FORMAT_R32G32_FLOAT, 0,D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"TANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"BITANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		
 	};
 
-	HRESULT hr = device->CreateInputLayout(inputDesc, 3, VbyteCode.c_str(), VbyteCode.length(), &inputLayout);
+	HRESULT hr = device->CreateInputLayout(inputDesc, nrOfEl, VbyteCode.c_str(), VbyteCode.length(), &inputLayout);
 	if (FAILED(hr)) {
 		return false;
 	}
@@ -155,11 +159,6 @@ bool SetupPipeline(ID3D11Device* device, ID3D11VertexShader*& vShader,
 		std::cerr << "cant load inputlayout" << std::endl;
 		return false;
 	}
-	//if (!CreateTexture("Textures/babyyoda.jpg", device, tex, textureRSV))
-	//{
-	//	std::cerr << "cant load texture" << std::endl;
-	//	return false;
-	//}
 	if (!CreateSamplerState(device, sampler))
 	{
 		std::cerr << "cant load sampler" << std::endl;

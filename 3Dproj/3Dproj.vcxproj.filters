@@ -40,6 +40,9 @@
     <Filter Include="Header Files\IMGUI">
       <UniqueIdentifier>{65f2766b-5edb-4629-b4e9-ac211c83f786}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Graphic\Animation">
+      <UniqueIdentifier>{5ca20437-c167-4b8d-9fc1-4590dc42298a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -115,6 +118,9 @@
       <Filter>Header Files\IMGUI</Filter>
     </ClCompile>
     <ClCompile Include="imguiManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Bone.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -202,6 +208,9 @@
     </ClInclude>
     <ClInclude Include="imguiManager.h">
       <Filter>Header Files\IMGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Bone.h">
+      <Filter>Header Files\Graphic\Animation</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

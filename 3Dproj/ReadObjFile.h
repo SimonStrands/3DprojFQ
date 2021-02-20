@@ -3,19 +3,17 @@
 #include <sstream>
 #include "otherHelps.h"
 #include "Vec.h"
+#include <DirectXMath.h>
 //git
-struct mtl {
-	vec3 ka;
-	vec3 kd;
-	vec3 ks;
 
-};
 class FileReader {
 public:
 	FileReader();
 	void readObjFile(std::vector<std::vector<vertex>>& objP, std::string fileName, int& nrOfVertexes);
-	//void readMtlFile();
+
 private:
+	std::vector<vec3> calcTangent(vertex *vex1, vertex *vex2, vertex *vex3);
+	void fixtangent(std::vector<std::vector<vertex>>& objP);
 	std::vector<std::string> mtl;
 };
 

@@ -3,6 +3,8 @@ struct PixelShaderInput
 	float4 position : SV_POSITION;
 	float2 uv : UV;
 	float3 normal : NORMAL;
+	float3 tangent : TANGENT;
+	float3 bitangent : BITANGENT;
 	float4 fragpos: FRAG_POS;
 };
 
@@ -16,6 +18,7 @@ cbuffer CBuf
 	float4 ka;
 	float4 kd;
 	float4 ks;
+	bool nMapping;
 };
 
 Texture2D testTex : register(t0);
@@ -24,18 +27,26 @@ SamplerState testSampler;
 
 float4 main(PixelShaderInput input) : SV_TARGET
 {
-	const float3 normalSample = nMap.Sample(testSampler, input.uv).xyz;
-	input.normal.x = normalSample.x * 2.0f - 1.0f;
-	input.normal.y = -normalSample.y * 2.0f + 1.0f;
-	input.normal.z = -normalSample.z;
-	input.normal = mul(input.normal, (float3x3)transform);
+	if (nMapping) {
+		float3 nMapNormal;
+		float3x3 TBN = float3x3(
+			input.tangent.xyz,
+			input.bitangent.xyz,
+			input.normal.xyz
+			);
+		const float3 normalSample = nMap.Sample(testSampler, input.uv).xyz;
+		nMapNormal.x = normalSample.x * 2.0f - 1.0f;
+		nMapNormal.y = -normalSample.y * 2.0f + 1.0f;
+		nMapNormal.z = -normalSample.z * 2.0f + 1.0f;
+		input.normal = float4(normalize(mul(nMapNormal, TBN)),0.0f);
+	}
 
 	//ambient
 	float3 ambient_light = ka.xyz * lightColor.xyz;
 
 	//defuse
 	float3 lightDir = normalize(input.fragpos.xyz - lightPos.xyz);
-	float ammount_diffuse = max(dot(-input.normal.xyz, lightDir), 0.0f);
+	float ammount_diffuse = max(dot(abs(input.normal.xyz), lightDir), 0.0f);
 	float3 defuse_light = ammount_diffuse * kd.xyz * lightColor.xyz;
 
 	//specular

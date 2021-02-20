@@ -11,7 +11,20 @@ void Graphics::debugcd()
 //keyboard buttons + rotation
 void Graphics::keyboardDebug()
 {
-
+	if (getkey('N') && !pressed) {
+		pressed = true;
+		if (normalMapping == true) {
+			normalMapping = false;
+		}
+		else {
+			normalMapping = true;
+		}
+		//printf("%s \n", normalMapping ? "true" : "false");
+		pcbd.nMapping.element = normalMapping;
+	}
+	else {
+		pressed = false;
+	}
 }
 
 void Graphics::createBuffer()
@@ -19,10 +32,6 @@ void Graphics::createBuffer()
 	//immediateContext->VSSetConstantBuffers(0, 2, &Vg_pConstantBuffer);
 }
 
-//not longer debug things
-//#thisNeedFix
-//going to make a vertexbuffer for each object?
-//going to create multiple Vg_pConstantBuffer?
 bool Graphics::CreateVertexBuffer(object &obj, std::string fileName)
 {
 	std::vector<std::vector<vertex>> vertices;
@@ -149,7 +158,7 @@ Graphics::Graphics(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	nrOfObject = 0;
 	Pg_pConstantBuffer = NULL;
 	inputLayout = nullptr; pShader = nullptr; vShader = nullptr;
-
+	normalMapping = true;
 	
 	//setting matrixes
 	Projection();
@@ -282,12 +291,12 @@ void Graphics::Render()
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
 	
-	/*static bool show_demo_window = true;
-	if (show_demo_window) {
-		ImGui::ShowDemoWindow(&show_demo_window);
-	}*/
 	if (ImGui::Begin("rotation on obj")) {
 		ImGui::SliderFloat("Rot", &objects[0]->getxRot(), 6.34f, -6.34f);
+		ImGui::SliderFloat("Xpos", &objects[0]->getxPos(), 10.0f, -10.0f);
+		ImGui::SliderFloat("Ypos", &objects[0]->getzPos(), 10.0f, -10.0f);
+		ImGui::Checkbox("nMap", &normalMapping);
+		pcbd.nMapping.element = normalMapping;
 		ImGui::Text("yeet");
 	}
 	ImGui::End();
