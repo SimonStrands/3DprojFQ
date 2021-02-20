@@ -1,4 +1,5 @@
 #include "ReadObjFile.h"
+#include <DirectXMath.h>
 //#thisNeedFix
 
 FileReader::FileReader()

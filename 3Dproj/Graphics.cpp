@@ -1,4 +1,4 @@
-#include "Graphics.h"
+ï»¿#include "Graphics.h"
 #include <vector>
 #include "Keyboard.h"
 #include "imgui_impl_dx11.h"
@@ -76,7 +76,7 @@ bool Graphics::CreateVertexBuffer(object &obj, std::string fileName)
 		printf("failed");
 		return false;
 	}
-	//create PixelConstantBuffer (lånar vertexBuffern desc)
+	//create PixelConstantBuffer (lï¿½nar vertexBuffern desc)
 	CbDesc.ByteWidth = sizeof(Pcb);
 	InitData.pSysMem = &pcbd;
 	hr = device->CreateBuffer(&CbDesc, &InitData, &Pg_pConstantBuffer);
@@ -284,6 +284,7 @@ void Graphics::Render()
 		immediateContext->PSSetShaderResources(1, 1, &objects[i]->texSRV[1]);
 		immediateContext->VSSetConstantBuffers(0, 1, &objects[i]->getVertexConstBuffer());
 		immediateContext->IASetVertexBuffers(0, 1, &objects[i]->getVertexBuffer(), &strid, &offset);
+		//this line right here
 		immediateContext->Draw((int)objects[i]->getNrOfVertex(), 0);
 	}
 
@@ -302,8 +303,6 @@ void Graphics::Render()
 	ImGui::End();
 	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
-
-	
 
 	//show the "picture"
 	swapChain->Present(0, 0);

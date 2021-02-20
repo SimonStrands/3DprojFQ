@@ -73,6 +73,13 @@ void vec3::operator=(vec3 other)
 	this->z = other.z;
 }
 
+void vec3::operator=(std::array<float, 3> other)
+{
+	this->x = other[0];
+	this->y = other[1];
+	this->z = other[2];
+}
+
 float vec3::length()
 {
 	return (float)sqrt((double)(x * x + y * y + z * z));
@@ -112,7 +119,7 @@ bool vec4::operator==(vec4& other)
 	return (this->xyz.x == other.xyz.x && this->xyz.y == other.xyz.y && this->xyz.z == other.xyz.z && this->w == other.w);
 }
 
-void vec4::operator=(vec4& other)
+void vec4::operator=(vec4 other)
 {
 	this->xyz.x = other.xyz.x;
 	this->xyz.y = other.xyz.y;

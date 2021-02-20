@@ -2,7 +2,13 @@
 #include <math.h>
 #include <array>
 //git
+
+
 struct vec2 {
+	vec2() {
+		this->x = 0;
+		this->y = 0;
+	}
 	vec2(float x, float y) {
 		this->x = x;
 		this->y = y;
@@ -58,7 +64,7 @@ struct vec4 {
 	vec4 operator+(vec4& other);
 	vec4 operator-(vec4& other);
 	bool operator==(vec4& other);
-	void operator=(vec4& other);
+	void operator=(vec4 other);
 	float length();
 
 	vec3 xyz;

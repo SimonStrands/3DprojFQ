@@ -56,6 +56,7 @@ float4 main(PixelShaderInput input) : SV_TARGET
 	float3 posToView = normalize(input.fragpos.xyz - cameraPos.xyz);
 	float spec = pow(max(dot(posToView, reflection), 0.f), 32);
 	float3 specular = const_spec * spec * ks.xyz * lightColor.xyz;
+
 	//get final lightning
 	float3 lightning = (ambient_light + defuse_light) + specular;
 	//add the texture

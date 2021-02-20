@@ -109,9 +109,9 @@ private:
 		{//ks
 			1,1,1,0,
 		},
-		{
-			true
-		},
+		{//normal mapping
+			true,
+		}
 	};
 
 	//textures
