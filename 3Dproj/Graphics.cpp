@@ -76,7 +76,7 @@ bool Graphics::CreateVertexBuffer(object &obj, std::string fileName)
 		printf("failed");
 		return false;
 	}
-	//create PixelConstantBuffer (l�nar vertexBuffern desc)
+	//create PixelConstantBuffer (lånar vertexBuffern desc)
 	CbDesc.ByteWidth = sizeof(Pcb);
 	InitData.pSysMem = &pcbd;
 	hr = device->CreateBuffer(&CbDesc, &InitData, &Pg_pConstantBuffer);

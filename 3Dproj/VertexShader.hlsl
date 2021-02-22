@@ -30,6 +30,8 @@ VertexShaderOutput main(VertexShaderInput input) {
 	output.fragpos = mul(float4(input.position,1.0f), transform);
 	output.position = mul((float4((input.position), 1.0f)), MVP);
 	output.uv = input.uv;
+	output.bitangent = normalize((mul(input.bitangent, transform)).xyz);
+	output.tangent = normalize((mul(input.tangent, transform)).xyz);
 	output.normal = normalize((mul(input.normal, transform)).xyz);
 	
 	return output;

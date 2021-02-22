@@ -13,10 +13,6 @@ struct vec2 {
 		this->x = x;
 		this->y = y;
 	}
-	vec2() {
-		this->x = 0;
-		this->y = 0;
-	}
 	float legth() {
 		return (float)sqrt(x * x + y * y);
 	}
@@ -46,6 +42,7 @@ struct vec3 {
 	vec3 operator-(vec3& other);
 	bool operator==(vec3& other);
 	void operator=(vec3 other);
+	void operator=(std::array<float, 3> other);
 	float length();
 
 	float x;
