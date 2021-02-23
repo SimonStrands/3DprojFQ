@@ -22,10 +22,13 @@ public:
 
 	ID3D11Buffer*& getVertexBuffer();
 	ID3D11Buffer*& getVertexConstBuffer();
+	ID3D11Buffer*& getPixelConstBuffer();
+	bool normalMapping();
 	int& getNrOfVertex();
 
+	//should be change to private
 	ID3D11ShaderResourceView** texSRV = new ID3D11ShaderResourceView*[2];
-	std::string fileName[2];//color, normal
+	
 
 	//debug and should be deleted before realease
 	float &getxRot();
@@ -37,7 +40,9 @@ private:
 	vec3 rot;
 	vec3 scale;
 	int nrOfVertexes;
+	std::string fileName[2];//color, normal
 	ID3D11Buffer* vertexBuffer;
 	ID3D11Buffer* Vg_pConstantBuffer;
 	ID3D11Buffer* Pg_pConstantBuffer;
+	bool normalMap;
 };

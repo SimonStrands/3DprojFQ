@@ -9,7 +9,7 @@
 class FileReader {
 public:
 	FileReader();
-	void readObjFile(std::vector<std::vector<vertex>>& objP, std::string fileName, int& nrOfVertexes);
+	bool readObjFile(std::vector<std::vector<vertex>>& objP, std::string fileName, int& nrOfVertexes);
 
 private:
 	std::vector<vec3> calcTangent(vertex *vex1, vertex *vex2, vertex *vex3);

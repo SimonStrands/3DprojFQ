@@ -42,8 +42,12 @@ std::vector<vec3> FileReader::calcTangent(vertex *vex1, vertex *vex2, vertex *ve
 		e[1].x, e[1].y, e[1].z, 0,
 		0, 0, 0, 0,
 		0, 0, 0, 0);
+	float div = (deltaUV[0].x * deltaUV[1].y - deltaUV[0].y * deltaUV[1].x);
+	if (div == 0) {
+		div = 0.0001f;
+	}
 	DirectX::XMMATRIX res =
-		1 / (deltaUV[0].x * deltaUV[1].y - deltaUV[0].y * deltaUV[1].x)
+		1 / div
 		* a * b;
 	DirectX::XMFLOAT4X4 mtheReturn;
 	DirectX::XMStoreFloat4x4(&mtheReturn, res);
@@ -54,7 +58,20 @@ std::vector<vec3> FileReader::calcTangent(vertex *vex1, vertex *vex2, vertex *ve
 	return theReturn;
 }
 
-void FileReader::readObjFile(std::vector<std::vector<vertex>>& objP, std::string fileName, int& nrOfVertexes)
+void FileReader::fixtangent(std::vector<std::vector<vertex>>& objP)
+{
+	for (int objI = 0; objI < objP.size(); objI++) {
+		for (int i = 0; i < objP[objI].size();) {
+			std::vector<vec3> tanbi = calcTangent(&objP[objI][i], &objP[objI][i + 1], &objP[objI][i + 2]);
+			for (int p = 0; p < 3; p++) {
+				objP[objI][i + p].fixtang(tanbi[0], tanbi[1]);
+			}
+			i += 3;
+		}
+	}
+}
+
+bool FileReader::readObjFile(std::vector<std::vector<vertex>>& objP, std::string fileName, int& nrOfVertexes)
 {
 	std::string* sTemp;
 	std::string sTemp2[4];
@@ -69,6 +86,9 @@ void FileReader::readObjFile(std::vector<std::vector<vertex>>& objP, std::string
 	std::string readWord;
 	std::string trash;
 	int objIndex = -1;
+	if (!infile.is_open()) {
+		return false;
+	}
 
 	while (std::getline(infile, readWord)) {
 		//get all data
@@ -146,17 +166,7 @@ void FileReader::readObjFile(std::vector<std::vector<vertex>>& objP, std::string
 		}
 	}
 	fixtangent(objP);
+	return true;
 }
 
-void FileReader::fixtangent(std::vector<std::vector<vertex>>& objP)
-{
-	for (int objI = 0; objI < objP.size(); objI++) {
-		for (int i = 0; i < objP[objI].size();) {
-			std::vector<vec3> tanbi = calcTangent(&objP[objI][i], &objP[objI][i+1], &objP[objI][i+2]);
-			for (int p = 0; p < 3; p++) {
-				objP[objI][i + p].fixtang(tanbi[0], tanbi[1]);
-			}
-			i += 3;
-		}
-	}
-}
+

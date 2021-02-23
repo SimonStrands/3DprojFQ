@@ -43,6 +43,12 @@
     <Filter Include="Header Files\Graphic\Animation">
       <UniqueIdentifier>{5ca20437-c167-4b8d-9fc1-4590dc42298a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Graphic\Particle">
+      <UniqueIdentifier>{eca78a50-2288-49b2-a3c8-216a00da14de}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Graphic\Paricle">
+      <UniqueIdentifier>{76b250a2-9755-4e96-951d-af0fb06089f7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -122,6 +128,9 @@
     </ClCompile>
     <ClCompile Include="Bone.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BillBoard.cpp">
+      <Filter>Source Files\Graphic\Paricle</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -211,6 +220,9 @@
     </ClInclude>
     <ClInclude Include="Bone.h">
       <Filter>Header Files\Graphic\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="BillBoard.h">
+      <Filter>Header Files\Graphic\Particle</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

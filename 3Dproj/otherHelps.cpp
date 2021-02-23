@@ -36,3 +36,25 @@ void swap(std::vector<vertex>& a)
 	a[a.size() - 1] = a[a.size() - 2];
 	a[a.size() - 2] = temp;
 }
+
+//only searches in Textures
+FileInfo seeIfFileExist(std::string fileName)
+{
+	FileInfo theReturn; theReturn.exist = false;
+	std::string extensions[4]{
+		".jpg",
+		".png",
+		".bmp",
+		".jpeg"
+	};
+	for (int i = 0; i < 4 && theReturn.exist == false; i++) {
+		std::string search = "Textures/" + fileName + extensions[i];
+		std::ifstream f(search.c_str());
+		if (f.good())
+		{
+			theReturn.ending = extensions[i];
+			theReturn.exist = true;
+		}
+	}
+	return theReturn;
+}

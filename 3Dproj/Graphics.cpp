@@ -35,7 +35,9 @@ void Graphics::createBuffer()
 bool Graphics::CreateVertexBuffer(object &obj, std::string fileName)
 {
 	std::vector<std::vector<vertex>> vertices;
-	reader.readObjFile(vertices, fileName, obj.getNrOfVertex());
+	if (!reader.readObjFile(vertices, fileName, obj.getNrOfVertex())) {
+		return false;
+	}
 
 	D3D11_BUFFER_DESC bDesc = {};
 	bDesc.ByteWidth = sizeof(vertex) * (UINT)obj.getNrOfVertex();
@@ -79,19 +81,19 @@ bool Graphics::CreateVertexBuffer(object &obj, std::string fileName)
 	//create PixelConstantBuffer (lånar vertexBuffern desc)
 	CbDesc.ByteWidth = sizeof(Pcb);
 	InitData.pSysMem = &pcbd;
-	hr = device->CreateBuffer(&CbDesc, &InitData, &Pg_pConstantBuffer);
+	hr = device->CreateBuffer(&CbDesc, &InitData, &obj.getPixelConstBuffer());
 	UINT strid = sizeof(vertex);
 	UINT offset = 0;
 
-	immediateContext->PSSetConstantBuffers(0, 1, &Pg_pConstantBuffer);
 	nrOfObject++;
-
-	//debug thing
-	CreateTexture(obj.fileName[0], device, tex, obj.texSRV[0]);
-	CreateTexture(obj.fileName[1], device, tex, obj.texSRV[1]);
 
 	return !FAILED(hr);
 
+}
+
+bool Graphics::MakeTexture(object& obj, std::string texName, int texId)
+{
+	return CreateTexture(texName, device, tex, obj.texSRV[texId]);
 }
 
 void Graphics::updateShaders(object& obj)
@@ -115,7 +117,7 @@ void Graphics::updateShaders(object& obj)
 
 	vcbd.transform.element = rts;
 	
-	//chanign vertex Shader cBuffer
+	//changing vertex Shader cBuffer
 	D3D11_MAPPED_SUBRESOURCE resource;
 
 	immediateContext->Map(obj.getVertexConstBuffer(), 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
@@ -129,15 +131,15 @@ void Graphics::updateShaders(object& obj)
 	pcbd.lightPos.element[1] = light.getPos().y;
 	pcbd.lightPos.element[2] = light.getPos().z;
 	pcbd.lightPos.element[3] = 1;
+	pcbd.nMapping.element = obj.normalMapping();
 
 	pcbd.transform.element = rts;
 	//changing pixel shader cBuffer
 
-	immediateContext->Map(Pg_pConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
+	immediateContext->Map(obj.getPixelConstBuffer(), 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
 	memcpy(resource.pData, &pcbd, sizeof(Pcb));
-	immediateContext->Unmap(Pg_pConstantBuffer, 0);
+	immediateContext->Unmap(obj.getPixelConstBuffer(), 0);
 	ZeroMemory(&resource, sizeof(D3D11_MAPPED_SUBRESOURCE));
-
 }
 
 void Graphics::Projection()
@@ -281,8 +283,12 @@ void Graphics::Render()
 
 	for (int i = 0; i < nrOfObject; i++) {
 		immediateContext->PSSetShaderResources(0, 1, &objects[i]->texSRV[0]);
-		immediateContext->PSSetShaderResources(1, 1, &objects[i]->texSRV[1]);
+		if (objects[i]->normalMapping()) {
+			immediateContext->PSSetShaderResources(1, 1, &objects[i]->texSRV[1]);
+		}
+		//set index buffer
 		immediateContext->VSSetConstantBuffers(0, 1, &objects[i]->getVertexConstBuffer());
+		immediateContext->PSSetConstantBuffers(0, 1, &objects[i]->getPixelConstBuffer());
 		immediateContext->IASetVertexBuffers(0, 1, &objects[i]->getVertexBuffer(), &strid, &offset);
 		//this line right here
 		immediateContext->Draw((int)objects[i]->getNrOfVertex(), 0);

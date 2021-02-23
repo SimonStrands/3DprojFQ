@@ -39,8 +39,6 @@ float4 main(PixelShaderInput input) : SV_TARGET
 		nMapNormal.y = -normalSample.y * 2.0f + 1.0f;
 		nMapNormal.z = -normalSample.z * 2.0f + 1.0f;
 		input.normal = mul(nMapNormal, (float3x3)TBN);
-		//input.normal = float4(normalize(mul(nMapNormal, TBN)),0.0f);
-		//input.normal = nMapNormal;
 	}
 
 	//ambient

@@ -1,25 +1,48 @@
 #include "object.h"
 #include "Graphics.h"
 #include <array>
+#include "otherHelps.h"
 
 object::object(std::string file, Graphics& gfx, std::string texture, vec3 pos, vec3 rot, vec3 scale)
 {
     this->pos = pos;
     this->rot = rot;
     this->scale = scale;
-    if(texture == ""){
-        texture = "stripestest.png";
-    }
-    if (texture != "none") {
-        fileName[0] = "Textures/" + texture + "_BaseColor.jpg";
-        fileName[1] = "Textures/" + texture + "_Normal.jpg";
+    normalMap = true;
+    if (gfx.CreateVertexBuffer(*this, file)) {
+        if (texture == "") {
+            texture = "stripestest.png";
+        }
+        if (texture != "none") {
+            FileInfo fileInfo;
+            fileInfo = seeIfFileExist(texture);
+            if (fileInfo.exist) {
+                fileName[0] = "Textures/" + texture + fileInfo.ending;
+                normalMap = false;
+            }
+            else  {
+                fileInfo = seeIfFileExist(texture + "_BaseColor");
+                if (fileInfo.exist) {
+                    fileName[0] = "Textures/" + texture + "_BaseColor" + fileInfo.ending;
+                    fileName[1] = "Textures/" + texture + "_Normal" + fileInfo.ending;
+                }
+                else {
+                    fileName[0] = "Texture/Default/white.png";
+                    fileName[1] = "Texture/Default/white.png";
+                    normalMap = false;
+                }
+            }
+            
+        }
+        
     }
     else {
-        fileName[0] = "Texture/Default/white.png";
-        fileName[1] = "Texture/Default/white.png";
+        printf("file doesnt exist");
     }
-
-    gfx.CreateVertexBuffer(*this, file);
+    gfx.MakeTexture(*this, fileName[0], 0);
+    if (!gfx.MakeTexture(*this, fileName[1], 1)) {
+        normalMap = false;
+    }
 }
 
 object::~object()
@@ -33,8 +56,9 @@ object::~object()
     if (Pg_pConstantBuffer != nullptr) {
         Pg_pConstantBuffer->Release();
     }
-    for (int i = 0; i < 2; i++) {
-        texSRV[i]->Release();
+    texSRV[0]->Release();
+    if (normalMap) {
+        texSRV[1]->Release();
     }
     delete[] texSRV;
 }
@@ -87,14 +111,23 @@ float& object::getzPos() {
 }
 
 ID3D11Buffer*& object::getVertexBuffer()
-{
-    
+{ 
     return this->vertexBuffer;
 } 
 
 ID3D11Buffer*& object::getVertexConstBuffer()
 {
     return this->Vg_pConstantBuffer;
+}
+
+ID3D11Buffer*& object::getPixelConstBuffer()
+{
+    return this->Pg_pConstantBuffer;
+}
+
+bool object::normalMapping()
+{
+    return normalMap;
 }
 
 

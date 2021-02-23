@@ -147,7 +147,8 @@ public:
 
 	//help create vertexbuffer
 	bool CreateVertexBuffer(object& obj, std::string fileName);
-	
+	bool MakeTexture(object& obj, std::string texName, int texId);
+
 	//update
 	void Update(float dt);
 	void updateShaders(object& obj);

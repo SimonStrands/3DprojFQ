@@ -120,8 +120,7 @@ bool CreateTexture(std::string file, ID3D11Device* device, ID3D11Texture2D*& tex
 	delete[] textureData;
 	tex->Release();
 
-	//return !FAILED(hr);
-	return true;
+	return !FAILED(hr);
 }
 
 bool CreateSamplerState(ID3D11Device* device, ID3D11SamplerState*& sampler) 
