@@ -23,7 +23,7 @@ public:
 	ID3D11Buffer*& getVertexBuffer();
 	ID3D11Buffer*& getVertexConstBuffer();
 	ID3D11Buffer*& getPixelConstBuffer();
-	bool normalMapping();
+	bool& normalMapping();
 	int& getNrOfVertex();
 
 	//should be change to private

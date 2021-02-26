@@ -79,8 +79,6 @@ bool FileReader::readObjFile(std::vector<std::vector<vertex>>& objP, std::string
 	std::vector<std::array<float, 3>>vPos;
 	std::vector<std::array<float, 2>>vUv;
 	std::vector<std::array<float, 4>>vNorm;
-	//(%2 = 0) = vertecies (%2 = 1) = uv 
-	std::vector<int> whereinarray;
 
 	std::ifstream infile(fileName);
 	std::string readWord;
@@ -121,26 +119,19 @@ bool FileReader::readObjFile(std::vector<std::vector<vertex>>& objP, std::string
 				for (int i = 0; i < 3; i++) {
 					nrOfVertexes++;
 					sTemp = getDest(sTemp2[i]);
+					//när jag läser in faces så får dem första sex alltid samma p.g.a det är så dem har skrivit det på obj filen
 					objP[objIndex].push_back(vertex(vPos[std::stoi(sTemp[0]) - 1], vUv[std::stoi(sTemp[1]) - 1], vNorm[std::stoi(sTemp[2]) - 1]));
-					whereinarray.push_back(std::stoi(sTemp[0]) - 1);
-					whereinarray.push_back(std::stoi(sTemp[1]) - 1);
 					delete[] sTemp;
 				}
 				nrOfVertexes += 3;
 				sTemp = getDest(sTemp2[3]);
 				objP[objIndex].push_back(vertex(vPos[std::stoi(sTemp[0]) - 1], vUv[std::stoi(sTemp[1]) - 1], vNorm[std::stoi(sTemp[2]) - 1]));
-				whereinarray.push_back(std::stoi(sTemp[0]) - 1);
-				whereinarray.push_back(std::stoi(sTemp[1]) - 1);
 				delete[] sTemp;
 				sTemp = getDest(sTemp2[2]);
 				objP[objIndex].push_back(vertex(vPos[std::stoi(sTemp[0]) - 1], vUv[std::stoi(sTemp[1]) - 1], vNorm[std::stoi(sTemp[2]) - 1]));
-				whereinarray.push_back(std::stoi(sTemp[0]) - 1);
-				whereinarray.push_back(std::stoi(sTemp[1]) - 1);
 				delete[] sTemp;
 				sTemp = getDest(sTemp2[0]);
 				objP[objIndex].push_back(vertex(vPos[std::stoi(sTemp[0]) - 1], vUv[std::stoi(sTemp[1]) - 1], vNorm[std::stoi(sTemp[2]) - 1]));
-				whereinarray.push_back(std::stoi(sTemp[0]) - 1);
-				whereinarray.push_back(std::stoi(sTemp[1]) - 1);
 				delete[] sTemp;
 			}
 			else {
@@ -164,6 +155,9 @@ bool FileReader::readObjFile(std::vector<std::vector<vertex>>& objP, std::string
 			objIndex++;
 			objP.resize(objP.size() + 1);
 		}
+	}
+	for (int i = 0; i < objP[0].size(); i++) {
+		printf("%f , %f, %f\n",objP[0][i].norm[0], objP[0][i].norm[1], objP[0][i].norm[2]);
 	}
 	fixtangent(objP);
 	return true;

@@ -4,7 +4,7 @@
 class PointLight {
 public:
 	PointLight(vec3 pos);
-	vec3 getPos();
+	vec3 &getPos();
 private:
 	vec3 pos;
 };

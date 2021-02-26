@@ -31,10 +31,8 @@ object::object(std::string file, Graphics& gfx, std::string texture, vec3 pos, v
                     fileName[1] = "Texture/Default/white.png";
                     normalMap = false;
                 }
-            }
-            
+            }   
         }
-        
     }
     else {
         printf("file doesnt exist");
@@ -125,7 +123,7 @@ ID3D11Buffer*& object::getPixelConstBuffer()
     return this->Pg_pConstantBuffer;
 }
 
-bool object::normalMapping()
+bool &object::normalMapping()
 {
     return normalMap;
 }

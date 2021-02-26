@@ -130,7 +130,7 @@ void Graphics::updateShaders(object& obj)
 	pcbd.lightPos.element[0] = light.getPos().x;
 	pcbd.lightPos.element[1] = light.getPos().y;
 	pcbd.lightPos.element[2] = light.getPos().z;
-	pcbd.lightPos.element[3] = 1;
+	pcbd.lightPos.element[3] = 1;	
 	pcbd.nMapping.element = obj.normalMapping();
 
 	pcbd.transform.element = rts;
@@ -282,10 +282,10 @@ void Graphics::Render()
 	UINT offset = 0;
 
 	for (int i = 0; i < nrOfObject; i++) {
-		immediateContext->PSSetShaderResources(0, 1, &objects[i]->texSRV[0]);
-		if (objects[i]->normalMapping()) {
-			immediateContext->PSSetShaderResources(1, 1, &objects[i]->texSRV[1]);
-		}
+		immediateContext->PSSetShaderResources(0, 2, objects[i]->texSRV);
+		//if (objects[i]->normalMapping()) {
+		//	immediateContext->PSSetShaderResources(1, 1, &objects[i]->texSRV[1]);
+		//}
 		//set index buffer
 		immediateContext->VSSetConstantBuffers(0, 1, &objects[i]->getVertexConstBuffer());
 		immediateContext->PSSetConstantBuffers(0, 1, &objects[i]->getPixelConstBuffer());
@@ -297,14 +297,18 @@ void Graphics::Render()
 	ImGui_ImplDX11_NewFrame();
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
-	
-	if (ImGui::Begin("rotation on obj")) {
+	if (ImGui::Begin("obj 0")) {
 		ImGui::SliderFloat("Rot", &objects[0]->getxRot(), 6.34f, -6.34f);
 		ImGui::SliderFloat("Xpos", &objects[0]->getxPos(), 10.0f, -10.0f);
-		ImGui::SliderFloat("Ypos", &objects[0]->getzPos(), 10.0f, -10.0f);
-		ImGui::Checkbox("nMap", &normalMapping);
+		ImGui::SliderFloat("Zpos", &objects[0]->getzPos(), 10.0f, -10.0f);
+		ImGui::Checkbox("nMap", &objects[0]->normalMapping());
 		pcbd.nMapping.element = normalMapping;
 		ImGui::Text("yeet");
+	}
+	ImGui::End();
+	if (ImGui::Begin("Light")) {
+		ImGui::SliderFloat("Xpos", &light.getPos().x, 10.0f, -10.0f);
+		ImGui::SliderFloat("Zpos", &light.getPos().z, 10.0f, -10.0f);
 	}
 	ImGui::End();
 	ImGui::Render();

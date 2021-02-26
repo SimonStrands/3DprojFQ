@@ -5,7 +5,7 @@ pos(pos)
 {
 }
 
-vec3 PointLight::getPos()
+vec3 &PointLight::getPos()
 {
 	return this->pos;
 }
