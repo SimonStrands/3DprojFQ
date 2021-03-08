@@ -62,16 +62,19 @@ void Game::Update()
 void Game::Render()
 {
 	gfx->clearScreen();
-	gfx->get_IC()->VSSetShader(gfx->getVS(), nullptr, 0);
-	gfx->get_IC()->GSSetShader(gfx->getGS(), nullptr, 0);
-	gfx->get_IC()->PSSetShader(gfx->getPS(), nullptr, 0);
+	gfx->get_IC()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	gfx->get_IC()->IASetInputLayout(gfx->getInputL()[0]);
+	gfx->get_IC()->VSSetShader(gfx->getVS()[0], nullptr, 0);
+	gfx->get_IC()->GSSetShader(nullptr, nullptr, 0);
+	gfx->get_IC()->PSSetShader(gfx->getPS()[0], nullptr, 0);
 
 	for (int i = 0; i < nrOfObj; i++) {
 		obj[i]->draw(gfx->get_IC());
 	}
-	
-
-	gfx->get_IC()->GSSetShader(nullptr, nullptr, 0);
+	gfx->get_IC()->IASetInputLayout(gfx->getInputL()[1]);
+	gfx->get_IC()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
+	gfx->get_IC()->VSSetShader(gfx->getVS()[1], nullptr, 0);
+	gfx->get_IC()->GSSetShader(gfx->getGS()[0], nullptr, 0);
 	bill->draw(gfx->get_IC());
 
 	gfx->present();

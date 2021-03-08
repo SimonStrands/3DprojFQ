@@ -156,6 +156,9 @@ Graphics::Graphics(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	inputLayout = nullptr; pShader = nullptr; vShader = nullptr;
 	normalMapping = true;
 	inputLayout = new ID3D11InputLayout * [2];
+	vShader = new ID3D11VertexShader * [2];
+	gShader = new ID3D11GeometryShader * [1];
+	pShader = new ID3D11PixelShader * [1];
 
 	//setting matrixes
 	Projection();
@@ -177,9 +180,9 @@ Graphics::Graphics(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	
 	//set settings up
 	immediateContext->PSSetSamplers(0, 1, &sampler);
-	immediateContext->VSSetShader(vShader, nullptr, 0);
-	immediateContext->GSSetShader(gShader, nullptr, 0);
-	immediateContext->PSSetShader(pShader, nullptr, 0);
+	immediateContext->VSSetShader(vShader[0], nullptr, 0);
+	immediateContext->GSSetShader(gShader[0], nullptr, 0);
+	immediateContext->PSSetShader(pShader[0], nullptr, 0);
 	immediateContext->RSSetViewports(1, &viewPort);
 	immediateContext->OMSetRenderTargets(1, &renderTarget, dsView);
 	immediateContext->RSSetState(pRS);
@@ -192,18 +195,21 @@ Graphics::~Graphics()
 {
 	ImGui_ImplDX11_Shutdown();
 	shutDownWindow();
-	if (inputLayout[0] != nullptr) {
-		inputLayout[0]->Release();
-		//inputLayout[1]->Release();
-	}
-	if (vShader != nullptr) {
-		vShader->Release();
-	}
+	
 	if (pShader != nullptr) {
-		pShader->Release();
+		pShader[0]->Release();
 	}
 	if (gShader != nullptr) {
-		gShader->Release();
+		gShader[0]->Release();
+	}
+	for (int i = 0; i < 2; i++) {
+		if (vShader[i] != nullptr) {
+			vShader[i]->Release();
+		}
+		if (inputLayout[i] != nullptr) {
+			inputLayout[i]->Release();
+		}
+		
 	}
 	if (dsView != nullptr) {
 		dsView->Release();
@@ -268,17 +274,21 @@ ID3D11Texture2D*& Graphics::getTexture()
 {
 	return tex;
 }
-ID3D11VertexShader* Graphics::getVS()
+ID3D11VertexShader** Graphics::getVS()
 {
 	return this->vShader;
 }
-ID3D11PixelShader* Graphics::getPS()
+ID3D11PixelShader** Graphics::getPS()
 {
 	return this->pShader;
 }
-ID3D11GeometryShader* Graphics::getGS()
+ID3D11GeometryShader** Graphics::getGS()
 {
 	return this->gShader;
+}
+ID3D11InputLayout** Graphics::getInputL()
+{
+	return this->inputLayout;
 }
 vec2 Graphics::getWH()
 {

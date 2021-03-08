@@ -78,9 +78,9 @@ private:
 	ID3D11DepthStencilView* dsView;
 	D3D11_VIEWPORT viewPort;
 	ID3D11InputLayout** inputLayout;
-	ID3D11VertexShader* vShader;
-	ID3D11PixelShader* pShader;
-	ID3D11GeometryShader* gShader;
+	ID3D11VertexShader** vShader;
+	ID3D11PixelShader** pShader;
+	ID3D11GeometryShader** gShader;
 	ID3D11Buffer* Pg_pConstantBuffer;
 	ID3D11RasterizerState* pRS;
 	////////////////////////
@@ -152,13 +152,12 @@ public:
 	ID3D11Device* getDevice();
 	ID3D11DeviceContext*& get_IC();
 	ID3D11Texture2D*& getTexture();
-	ID3D11VertexShader* getVS();
-	ID3D11PixelShader* getPS();
-	ID3D11GeometryShader* getGS();
+	ID3D11VertexShader** getVS();
+	ID3D11PixelShader** getPS();
+	ID3D11GeometryShader** getGS();
+	ID3D11InputLayout** getInputL();
 
 	vec2 getWH();
-
-	//void setObjects(object** obj, int nrOfObjects);
 
 	//update
 	void Update(float dt);

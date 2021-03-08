@@ -11,7 +11,7 @@
 #include "stb_image.h"
 //load shader
 
-bool loadVShader(std::string name, ID3D11Device* device, ID3D11VertexShader*& vShader, std::string* vShaderByteCode, int shaderint) {
+bool loadVShader(std::string name, ID3D11Device* device, ID3D11VertexShader*& vShader, std::string &vShaderByteCode) {
 	std::string shaderData;
 	std::ifstream reader;
 	reader.open("../x64/Debug/" + name, std::ios::binary | std::ios::ate);
@@ -33,11 +33,11 @@ bool loadVShader(std::string name, ID3D11Device* device, ID3D11VertexShader*& vS
 		return false;
 	}
 
-	vShaderByteCode[shaderint] = shaderData;
+	vShaderByteCode = shaderData;
 	shaderData.clear();
 	reader.close();
 }
-bool loadGShader(std::string name, ID3D11Device* device, ID3D11GeometryShader**& gShader) {
+bool loadGShader(std::string name, ID3D11Device* device, ID3D11GeometryShader*& gShader) {
 	std::string shaderData;
 	std::ifstream reader;
 	reader.open("../x64/Debug/" + name, std::ios::binary | std::ios::ate);
@@ -53,21 +53,40 @@ bool loadGShader(std::string name, ID3D11Device* device, ID3D11GeometryShader**&
 
 	shaderData.assign((std::istreambuf_iterator<char>(reader)), std::istreambuf_iterator<char>());
 
-	if (FAILED(device->CreateVertexShader(shaderData.c_str(), shaderData.length(), nullptr, &gShader)))
+	if (FAILED(device->CreateGeometryShader(shaderData.c_str(), shaderData.length(), nullptr, &gShader)))
 	{
-		std::cerr << "cannot create vertexShader" << std::endl;
+		std::cerr << "cannot create GShader" << std::endl;
 		return false;
 	}
 
-	vShaderByteCode[shaderint] = shaderData;
 	shaderData.clear();
 	reader.close();
 }
-bool loadPShader(std::string name, ID3D11Device* device, ID3D11PixelShader**& pShader) {
+bool loadPShader(std::string name, ID3D11Device* device, ID3D11PixelShader*& pShader) {
+	std::string shaderData;
+	std::ifstream reader;
+	reader.open("../x64/Debug/" + name, std::ios::binary | std::ios::ate);
+	if (!reader.is_open())
+	{
+		std::cerr << "cannot open pixel file" << std::endl;
+		return false;
+	}
 
+	reader.seekg(0, std::ios::end);
+	shaderData.reserve(static_cast<unsigned int>(reader.tellg()));
+	reader.seekg(0, std::ios::beg);
+
+	shaderData.assign((std::istreambuf_iterator<char>(reader)),
+		std::istreambuf_iterator<char>());
+
+	if (FAILED(device->CreatePixelShader(shaderData.c_str(), shaderData.length(), nullptr, &pShader)))
+	{
+		std::cerr << "cannot create pixelShader" << std::endl;
+		return false;
+	}
 }
 
-bool loadShader(ID3D11Device* device, ID3D11VertexShader**& vShader, ID3D11PixelShader**& pShader, 
+/*bool loadShader(ID3D11Device* device, ID3D11VertexShader**& vShader, ID3D11PixelShader**& pShader, 
 	ID3D11GeometryShader**& gShader, std::string *vShaderByteCode)
 {
 	std::string shaderData;
@@ -98,7 +117,7 @@ bool loadShader(ID3D11Device* device, ID3D11VertexShader**& vShader, ID3D11Pixel
 	shaderData.clear();
 	reader.close();
 
-	/*//open/make a file VertexShader 2
+	//open/make a file VertexShader 2
 	reader.open("../x64/Debug/VertexBillBoard.cso", std::ios::binary | std::ios::ate);
 	if (!reader.is_open())
 	{
@@ -120,7 +139,7 @@ bool loadShader(ID3D11Device* device, ID3D11VertexShader**& vShader, ID3D11Pixel
 
 	vShaderByteCode[1] = shaderData;
 	shaderData.clear();
-	reader.close();*/
+	reader.close();
 #pragma endregion
 
 #pragma region geoShader
@@ -171,7 +190,7 @@ bool loadShader(ID3D11Device* device, ID3D11VertexShader**& vShader, ID3D11Pixel
 
 	return true;
 
-}
+}*/
 
 //bool ID3D11DeviceChild
 /*bool loadShader(ID3D11Device* device, ID3D11VertexShader*& vShader, ID3D11PixelShader*& pShader,
@@ -282,11 +301,20 @@ bool SetupPipeline(ID3D11Device* device, ID3D11VertexShader**& vShader,
 	ID3D11Texture2D*& tex, ID3D11SamplerState*& sampler)
 {
 	std::string vShaderByteCode[2];
-	if (!loadShader(device, vShader, pShader, gShader, vShaderByteCode)) 
+#pragma region shaderloading
+	if (loadVShader("VertexShader.cso", device, vShader[0], vShaderByteCode[0]) &&
+		loadVShader("VertexBillBoard.cso", device, vShader[1], vShaderByteCode[1]) &&
+		loadGShader("GeometryShader.cso", device, gShader[0]) &&
+		loadPShader("PixelShader.cso", device, pShader[0]))
 	{
+		//continoue
+	}
+	else {
 		std::cerr << "cant load shaders" << std::endl;
 		return false;
 	}
+#pragma endregion
+	
 	if (!CreateInputLayout(device, inputLayout[0], vShaderByteCode[0]))
 	{
 		std::cerr << "cant load inputlayout" << std::endl;
