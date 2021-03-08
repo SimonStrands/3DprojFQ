@@ -3,65 +3,20 @@
 #include <array>
 #include "otherHelps.h"
 
-object::object(std::string file, Graphics& gfx, std::string texture, vec3 pos, vec3 rot, vec3 scale)
+object::object()
+{
+}
+
+object::object(vec3 pos)
 {
     this->pos = pos;
-    this->rot = rot;
-    this->scale = scale;
-    normalMap = true;
-    if (gfx.CreateVertexBuffer(*this, file)) {
-        if (texture == "") {
-            texture = "stripestest.png";
-        }
-        if (texture != "none") {
-            FileInfo fileInfo;
-            fileInfo = seeIfFileExist(texture);
-            if (fileInfo.exist) {
-                fileName[0] = "Textures/" + texture + fileInfo.ending;
-                normalMap = false;
-            }
-            else  {
-                fileInfo = seeIfFileExist(texture + "_BaseColor");
-                if (fileInfo.exist) {
-                    fileName[0] = "Textures/" + texture + "_BaseColor" + fileInfo.ending;
-                    fileName[1] = "Textures/" + texture + "_Normal" + fileInfo.ending;
-                }
-                else {
-                    fileName[0] = "Texture/Default/white.png";
-                    fileName[1] = "Texture/Default/white.png";
-                    normalMap = false;
-                }
-            }   
-        }
-    }
-    else {
-        printf("file doesnt exist");
-    }
-    gfx.MakeTexture(*this, fileName[0], 0);
-    if (!gfx.MakeTexture(*this, fileName[1], 1)) {
-        normalMap = false;
-    }
 }
 
 object::~object()
 {
-    if (vertexBuffer != nullptr) {
-        vertexBuffer->Release();
-    }
-    if (Vg_pConstantBuffer != nullptr) {
-        Vg_pConstantBuffer->Release();
-    }
-    if (Pg_pConstantBuffer != nullptr) {
-        Pg_pConstantBuffer->Release();
-    }
-    texSRV[0]->Release();
-    if (normalMap) {
-        texSRV[1]->Release();
-    }
-    delete[] texSRV;
 }
 
-const vec3 object::getPos()
+vec3 object::getPos()
 {
     return this->pos;
 }
@@ -91,10 +46,30 @@ void object::changeScale(vec3 scale)
     this->scale = scale;
 }
 
-int& object::getNrOfVertex()
+void object::addPos(vec3 pos)
+{
+    this->pos = this->pos + pos;
+}
+
+void object::addRot(vec3 rot)
+{
+    this->rot = this->rot + rot;
+}
+
+void object::addScale(vec3 scale)
+{
+    this->scale = this->scale + scale;
+}
+
+/*int& object::getNrOfVertex()
 {
     return this->nrOfVertexes;
-}
+}*/
+
+/*Mesh& object::getMesh()
+{
+    return mesh;
+}*/
 
 float& object::getxRot()
 {
@@ -108,7 +83,7 @@ float& object::getzPos() {
     return this->pos.z;
 }
 
-ID3D11Buffer*& object::getVertexBuffer()
+/*ID3D11Buffer*& object::getVertexBuffer()
 { 
     return this->vertexBuffer;
 } 
@@ -126,6 +101,6 @@ ID3D11Buffer*& object::getPixelConstBuffer()
 bool &object::normalMapping()
 {
     return normalMap;
-}
+}*/
 
 

@@ -8,10 +8,8 @@ struct PixelShaderInput
 	float4 fragpos: FRAG_POS;
 };
 
-//must change cbuf to pixelShader buf
 cbuffer CBuf
 {
-	row_major matrix transform;
 	float4 lightPos;
 	float4 cameraPos;
 	float4 lightColor;
@@ -21,14 +19,15 @@ cbuffer CBuf
 	bool nMapping;
 };
 
-Texture2D testTex : register(t0);
-Texture2D nMap : register(t1);
+Texture2D ambientTex : register(t0);
+Texture2D testTex : register(t1);
+Texture2D nMap : register(t2);
 SamplerState testSampler;
 
 float4 main(PixelShaderInput input) : SV_TARGET
 {
 	float3 inputnormal = input.normal;
-	if (nMapping) {
+	if (true) {
 		float3 nMapNormal;
 		float3x3 TBN = float3x3(
 			input.tangent.xyz,
@@ -40,9 +39,8 @@ float4 main(PixelShaderInput input) : SV_TARGET
 		nMapNormal.y = normalSample.y * 2.0f - 1.0f;
 		nMapNormal.z = normalSample.z * 2.0f - 1.0f;
 		input.normal = mul(nMapNormal, (float3x3)TBN);
+		//return float4(input.normal, 1.0f);
 	}
-	//input.normal = input.normal * 0.5 + 0.5;
-	//return float4(input.normal, 1.0f);
 
 	//ambient
 	float3 ambient_light = ka.xyz * lightColor.xyz;

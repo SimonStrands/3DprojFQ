@@ -1,14 +1,8 @@
 #include "ReadObjFile.h"
 #include <DirectXMath.h>
-//#thisNeedFix
-
-FileReader::FileReader()
-{
-
-}
 
 
-std::vector<vec3> FileReader::calcTangent(vertex *vex1, vertex *vex2, vertex *vex3)
+std::vector<vec3> calcTangent(vertex *vex1, vertex *vex2, vertex *vex3)
 {
 	vertex vex[3]{ *vex1, *vex2, *vex3 };
 	//get all vars we need
@@ -58,7 +52,7 @@ std::vector<vec3> FileReader::calcTangent(vertex *vex1, vertex *vex2, vertex *ve
 	return theReturn;
 }
 
-void FileReader::fixtangent(std::vector<std::vector<vertex>>& objP)
+void fixtangent(std::vector<std::vector<vertex>>& objP)
 {
 	for (int objI = 0; objI < objP.size(); objI++) {
 		for (int i = 0; i < objP[objI].size();) {
@@ -71,7 +65,76 @@ void FileReader::fixtangent(std::vector<std::vector<vertex>>& objP)
 	}
 }
 
-bool FileReader::readObjFile(std::vector<std::vector<vertex>>& objP, std::string fileName, int& nrOfVertexes)
+std::vector<std::string> getTextureNames(std::string fileName)
+{
+	std::ifstream infile(fileName);
+	std::string readWord;
+	std::string trash;
+	std::string mtlname;
+	std::string TextureName;
+	std::vector<std::string> theReturn;
+	theReturn.resize(5);
+	if (!infile.is_open()) {
+		return std::vector<std::string>();
+	}
+	bool done = false;
+	while (std::getline(infile, readWord) && !done) {
+		if (readWord.substr(0, 6) == "mtllib") {
+			std::istringstream a;
+			a.str(readWord);
+			a >> trash >> mtlname;
+			done = true;
+		}
+	}
+	infile.close();
+	infile.open("obj/" + mtlname);
+	if (done && infile.is_open()) {
+		while (std::getline(infile, readWord)) {
+			if (readWord.substr(0, 2) == "Ka") {
+				//ambient
+				std::istringstream a;
+				std::string b[3];
+				a.str(readWord);
+				a >> trash >> b[0] >> b[1] >> b[2];
+				theReturn[0] = b[0] + " " + b[1] + " " + b[2];
+			}
+			if (readWord.substr(0, 2) == "Kd") {
+				//deffuse
+				std::istringstream a;
+				std::string b[3];
+				a.str(readWord);
+				a >> trash >> b[0] >> b[1] >> b[2];
+				theReturn[1] = b[0] + " " + b[1] + " " + b[2];
+			}
+			if (readWord.substr(0, 6) == "map_Ka") {
+				//map_ambient
+				std::istringstream a;
+				a.str(readWord);
+				a >> trash >> theReturn[2];
+			}
+			if (readWord.substr(0, 6) == "map_Kd") {
+				//map_deffuse
+				std::istringstream a;
+				a.str(readWord);
+				a >> trash >> theReturn[3];
+			}
+			if (readWord.substr(0, 8) == "map_Bump") {
+				//map_normal
+				std::istringstream a;
+				a.str(readWord);
+				a >> trash >> theReturn[4];
+			}
+		}
+	}
+	else {
+		//we didnt get what we wanted
+		return std::vector<std::string>();
+	}
+
+	return theReturn;
+}
+
+bool readObjFile(std::vector<std::vector<vertex>>& objP, std::string fileName, int& nrOfVertexes)
 {
 	std::string* sTemp;
 	std::string sTemp2[4];
@@ -149,18 +212,18 @@ bool FileReader::readObjFile(std::vector<std::vector<vertex>>& objP, std::string
 			a.str(readWord);
 			std::string mtlname;
 			a >> trash >> mtlname;
-			mtl.push_back(mtlname);
+			//mtl.push_back(mtlname);
 		}
 		else if (readWord.substr(0, 2) == "o ") {
 			objIndex++;
 			objP.resize(objP.size() + 1);
 		}
 	}
-	for (int i = 0; i < objP[0].size(); i++) {
-		printf("%f , %f, %f\n",objP[0][i].norm[0], objP[0][i].norm[1], objP[0][i].norm[2]);
-	}
 	fixtangent(objP);
 	return true;
 }
 
-
+//bool readObjFile(std::vector<std::vector<vertex>>& objP, std::string fileName, int& nrOfVertexes)
+//{
+//	return false;
+//}

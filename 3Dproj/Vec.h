@@ -70,5 +70,4 @@ struct vec4 {
 void arrayToVec(std::array<float, 3> arr[3], vec3 vec[3]);
 void arrayToVec(float arr[3], vec3 &vec);
 void arrayToVec(float arr[2], vec2 &vec);
-
 void arrayToVec(std::array<float, 2> arr[3], vec2 vec[3]);

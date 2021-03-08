@@ -4,7 +4,6 @@
 
 Camera::Camera(Graphics *&gfx, Mouse* mus)
 {
-	this->gfx = gfx;
 	this->Pcbd = gfx->getPcb();
 	this->Vcbd = gfx->getVcb();
 	this->mus = mus;

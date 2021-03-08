@@ -19,7 +19,6 @@ private:
 	void rotaiton(DirectX::XMMATRIX &matrix);
 	void movement();
 	void handleEvent(float dt);
-	Graphics* gfx;
 	float speed;
 	float mouseSensitivity;
 	float xCamPos;

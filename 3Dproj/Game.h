@@ -2,8 +2,14 @@
 #include <Windows.h>
 #include "Graphics.h"
 #include "deltaTime.h"
+#include "Mouse.h"
 #include "Camera.h"
 #include "imguiManager.h"
+#include "ResourceManager.h"
+
+#include "GameObject.h"
+#include "BillBoard.h"
+
 //git
 class Game {
 public:
@@ -14,7 +20,9 @@ private:
 	//width and height of window
 	MSG msg = {};
 	Graphics *gfx;
+	ResourceManager* rm;
 	void Update();
+	void Render();
 private:
 	//logic and others
 	DeltaTime dt;
@@ -22,7 +30,8 @@ private:
 
 	//game objects
 	Camera *camera;
-	object** obj;
+	GameObject** obj;
+	BillBoard *bill;
 	Mouse* mus;
 
 	//var

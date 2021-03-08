@@ -6,9 +6,10 @@
 #include <DirectXMath.h>
 #include "WindowHelper.h"
 #include "deltaTime.h"
-#include "ReadObjFile.h"
-#include "object.h"
+#include "GameObject.h"
+#include "BillBoard.h"
 #include "rotation.h"
+#include "Keyboard.h"
 //git
 struct Vcb {
 	struct {
@@ -23,9 +24,6 @@ struct Vcb {
 };
 
 struct Pcb {
-	struct {
-		DirectX::XMMATRIX element;
-	}transform;
 	struct {
 		float element[4];
 	}lightPos;
@@ -44,12 +42,21 @@ struct Pcb {
 	struct {
 		float element[4];
 	}ks;
-	struct {
-		bool element;
-	}nMapping;
-	
 };
 
+struct Gcb {
+	struct {
+		float element[4];
+	}cameraPos;
+	struct {
+		float element[2];
+	}uvCords;
+	struct {
+		float element[2];
+	}padding;
+};
+
+class Camera;
 
 class Graphics {
 
@@ -70,9 +77,10 @@ private:
 	ID3D11Texture2D* dsTexture;
 	ID3D11DepthStencilView* dsView;
 	D3D11_VIEWPORT viewPort;
-	ID3D11InputLayout* inputLayout;
+	ID3D11InputLayout** inputLayout;
 	ID3D11VertexShader* vShader;
 	ID3D11PixelShader* pShader;
+	ID3D11GeometryShader* gShader;
 	ID3D11Buffer* Pg_pConstantBuffer;
 	ID3D11RasterizerState* pRS;
 	////////////////////////
@@ -89,8 +97,6 @@ private:
 	};
 	//PixelConstantBuffer
 	Pcb pcbd = {
-		{//transform
-		},
 		{//lightPos
 			1,1,1,1,
 		},
@@ -109,9 +115,12 @@ private:
 		{//ks
 			1,1,1,0,
 		},
-		{//normal mapping
-			true,
-		}
+	};
+	//GeometryConstantBuffer
+	Gcb gcbd = {
+		{0,0,0,0},
+		{0,0},
+		{0,0},
 	};
 
 	//textures
@@ -124,7 +133,6 @@ private:
 
 	//objects
 	PointLight light;
-	FileReader reader;
 	object** objects;
 
 	//variables
@@ -141,23 +149,31 @@ public:
 	//get things
 	Vcb *getVcb();
 	Pcb *getPcb();
+	ID3D11Device* getDevice();
+	ID3D11DeviceContext*& get_IC();
+	ID3D11Texture2D*& getTexture();
+	ID3D11VertexShader* getVS();
+	ID3D11PixelShader* getPS();
+	ID3D11GeometryShader* getGS();
+
 	vec2 getWH();
 
-	void setObjects(object** obj, int nrOfObjects);
-
-	//help create vertexbuffer
-	bool CreateVertexBuffer(object& obj, std::string fileName);
-	bool MakeTexture(object& obj, std::string texName, int texId);
+	//void setObjects(object** obj, int nrOfObjects);
 
 	//update
 	void Update(float dt);
-	void updateShaders(object& obj);
+	void updateShaders(GameObject& obj);
+	void updateVertexShader(GameObject& obj);
+	void updateGeometryShader(BillBoard& obj, Camera cam);
+	void updatePixelShader(GameObject& obj);
+
+	void clearScreen();
+	void draw(GameObject& obj);
+	void present();
 private:
 	//Debug shit
 	void debugcd();
 	void keyboardDebug();
 	bool pressed = false;
 	bool normalMapping;
-public:
-	void createBuffer();
 };

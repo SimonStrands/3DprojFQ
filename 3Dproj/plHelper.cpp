@@ -10,10 +10,69 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 //load shader
-bool loadShader(ID3D11Device* device, ID3D11VertexShader*& vShader, ID3D11PixelShader*& pShader, std::string& vShaderByteCode, std::string& pShaderByteCode)
+
+bool loadVShader(std::string name, ID3D11Device* device, ID3D11VertexShader*& vShader, std::string* vShaderByteCode, int shaderint) {
+	std::string shaderData;
+	std::ifstream reader;
+	reader.open("../x64/Debug/" + name, std::ios::binary | std::ios::ate);
+	if (!reader.is_open())
+	{
+		std::cerr << "cannot open vertex file" << std::endl;
+		return false;
+	}
+
+	reader.seekg(0, std::ios::end);
+	shaderData.reserve(static_cast<unsigned int>(reader.tellg()));
+	reader.seekg(0, std::ios::beg);
+
+	shaderData.assign((std::istreambuf_iterator<char>(reader)), std::istreambuf_iterator<char>());
+
+	if (FAILED(device->CreateVertexShader(shaderData.c_str(), shaderData.length(), nullptr, &vShader)))
+	{
+		std::cerr << "cannot create vertexShader" << std::endl;
+		return false;
+	}
+
+	vShaderByteCode[shaderint] = shaderData;
+	shaderData.clear();
+	reader.close();
+}
+bool loadGShader(std::string name, ID3D11Device* device, ID3D11GeometryShader**& gShader) {
+	std::string shaderData;
+	std::ifstream reader;
+	reader.open("../x64/Debug/" + name, std::ios::binary | std::ios::ate);
+	if (!reader.is_open())
+	{
+		std::cerr << "cannot open vertex file" << std::endl;
+		return false;
+	}
+
+	reader.seekg(0, std::ios::end);
+	shaderData.reserve(static_cast<unsigned int>(reader.tellg()));
+	reader.seekg(0, std::ios::beg);
+
+	shaderData.assign((std::istreambuf_iterator<char>(reader)), std::istreambuf_iterator<char>());
+
+	if (FAILED(device->CreateVertexShader(shaderData.c_str(), shaderData.length(), nullptr, &gShader)))
+	{
+		std::cerr << "cannot create vertexShader" << std::endl;
+		return false;
+	}
+
+	vShaderByteCode[shaderint] = shaderData;
+	shaderData.clear();
+	reader.close();
+}
+bool loadPShader(std::string name, ID3D11Device* device, ID3D11PixelShader**& pShader) {
+
+}
+
+bool loadShader(ID3D11Device* device, ID3D11VertexShader**& vShader, ID3D11PixelShader**& pShader, 
+	ID3D11GeometryShader**& gShader, std::string *vShaderByteCode)
 {
 	std::string shaderData;
 	std::ifstream reader;
+#pragma region vertexShader
 	//open/make a file VertexShader 
 	reader.open("../x64/Debug/VertexShader.cso", std::ios::binary | std::ios::ate);
 	//reader.open("VertexShader.cso", std::ios::binary | std::ios::ate);
@@ -29,15 +88,66 @@ bool loadShader(ID3D11Device* device, ID3D11VertexShader*& vShader, ID3D11PixelS
 
 	shaderData.assign((std::istreambuf_iterator<char>(reader)), std::istreambuf_iterator<char>());
 
-	if (FAILED(device->CreateVertexShader(shaderData.c_str(), shaderData.length(), nullptr, &vShader))) 
+	if (FAILED(device->CreateVertexShader(shaderData.c_str(), shaderData.length(), nullptr, &vShader[0]))) 
 	{
 		std::cerr << "cannot create vertexShader" << std::endl;
 		return false;
 	}
 
-	vShaderByteCode = shaderData;
+	vShaderByteCode[0] = shaderData;
 	shaderData.clear();
 	reader.close();
+
+	/*//open/make a file VertexShader 2
+	reader.open("../x64/Debug/VertexBillBoard.cso", std::ios::binary | std::ios::ate);
+	if (!reader.is_open())
+	{
+		std::cerr << "cannot open vertex file" << std::endl;
+		return false;
+	}
+
+	reader.seekg(0, std::ios::end);
+	shaderData.reserve(static_cast<unsigned int>(reader.tellg()));
+	reader.seekg(0, std::ios::beg);
+
+	shaderData.assign((std::istreambuf_iterator<char>(reader)), std::istreambuf_iterator<char>());
+
+	if (FAILED(device->CreateVertexShader(shaderData.c_str(), shaderData.length(), nullptr, &vShader)))
+	{
+		std::cerr << "cannot create vertexShader" << std::endl;
+		return false;
+	}
+
+	vShaderByteCode[1] = shaderData;
+	shaderData.clear();
+	reader.close();*/
+#pragma endregion
+
+#pragma region geoShader
+	reader.open("../x64/Debug/GeometryShader.cso", std::ios::binary | std::ios::ate);
+	if (!reader.is_open())
+	{
+		std::cerr << "cannot open geometry file" << std::endl;
+		return false;
+	}
+
+	reader.seekg(0, std::ios::end);
+	shaderData.reserve(static_cast<unsigned int>(reader.tellg()));
+	reader.seekg(0, std::ios::beg);
+
+	shaderData.assign((std::istreambuf_iterator<char>(reader)), std::istreambuf_iterator<char>());
+
+	if (FAILED(device->CreateGeometryShader(shaderData.c_str(), shaderData.length(), nullptr, &gShader)))
+	{
+		std::cerr << "cannot create geometryshader" << std::endl;
+		return false;
+	}
+
+	shaderData.clear();
+	reader.close();
+#pragma endregion
+
+#pragma region pixelShader
 	reader.open("../x64/Debug/PixelShader.cso", std::ios::binary | std::ios::ate);
 	if (!reader.is_open()) 
 	{
@@ -57,14 +167,19 @@ bool loadShader(ID3D11Device* device, ID3D11VertexShader*& vShader, ID3D11PixelS
 		std::cerr << "cannot create pixelShader" << std::endl;
 		return false;
 	}
-	pShaderByteCode = shaderData;
-
+#pragma endregion
 
 	return true;
 
 }
 
-bool CreateInputLayout(ID3D11Device* device, ID3D11InputLayout*& inputLayout, std::string& VbyteCode, std::string &PbyteCode) 
+//bool ID3D11DeviceChild
+/*bool loadShader(ID3D11Device* device, ID3D11VertexShader*& vShader, ID3D11PixelShader*& pShader,
+	ID3D11GeometryShader*& gShader, std::string& vShaderByteCode, std::string& pShaderByteCode)
+{
+};*/
+
+bool CreateInputLayout(ID3D11Device* device, ID3D11InputLayout*& inputLayout, std::string& VbyteCode) 
 {
 	const int nrOfEl = 5;
 	D3D11_INPUT_ELEMENT_DESC inputDesc[nrOfEl] =
@@ -78,7 +193,25 @@ bool CreateInputLayout(ID3D11Device* device, ID3D11InputLayout*& inputLayout, st
 	};
 
 	HRESULT hr = device->CreateInputLayout(inputDesc, nrOfEl, VbyteCode.c_str(), VbyteCode.length(), &inputLayout);
-	if (FAILED(hr)) {
+	if (FAILED(hr) || hr != S_OK) {
+		printf("input layout 1");
+		return false;
+	}
+
+
+	return !FAILED(hr);
+} 
+
+bool CreateInputLayoutBill(ID3D11Device* device, ID3D11InputLayout*& inputLayout, std::string& VbyteCode) {
+	const int nrOfEl = 1;
+	D3D11_INPUT_ELEMENT_DESC inputDesc[nrOfEl] =
+	{
+		{"POSITION", 0, DXGI_FORMAT_R32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
+	};
+
+	HRESULT hr = device->CreateInputLayout(inputDesc, nrOfEl, VbyteCode.c_str(), VbyteCode.length(), &inputLayout);
+	if (FAILED(hr) || hr != S_OK) {
+		printf("input layout 2");
 		return false;
 	}
 
@@ -88,6 +221,9 @@ bool CreateInputLayout(ID3D11Device* device, ID3D11InputLayout*& inputLayout, st
 
 bool CreateTexture(std::string file, ID3D11Device* device, ID3D11Texture2D*& tex, ID3D11ShaderResourceView*& texSRV) 
 {
+	if (file == "") {
+		return false;
+	}
 	int textureWidth;
 	int textureHeight;
 	int channels;
@@ -111,7 +247,7 @@ bool CreateTexture(std::string file, ID3D11Device* device, ID3D11Texture2D*& tex
 	data.pSysMem = (void*)textureData;
 	data.SysMemPitch = textureWidth * 4;
 	data.SysMemSlicePitch = textureWidth * textureHeight * 4;
-	
+
 	if (FAILED(device->CreateTexture2D(&desc, &data, &tex))) {
 		printf("cannot create texture");
 		return false;
@@ -140,22 +276,25 @@ bool CreateSamplerState(ID3D11Device* device, ID3D11SamplerState*& sampler)
 	return !FAILED(hr);
 }
 
-bool SetupPipeline(ID3D11Device* device, ID3D11VertexShader*& vShader, 
-	ID3D11PixelShader*& pShader, 
-	ID3D11InputLayout*& inputLayout, ID3D11Texture2D*& tex, 
-	ID3D11SamplerState*& sampler)
+bool SetupPipeline(ID3D11Device* device, ID3D11VertexShader**& vShader,
+	ID3D11PixelShader**& pShader, ID3D11GeometryShader**& gShader,
+	ID3D11InputLayout**& inputLayout,
+	ID3D11Texture2D*& tex, ID3D11SamplerState*& sampler)
 {
-	std::string vShaderByteCode;
-	std::string PShaderByteCode;
-	if (!loadShader(device, vShader, pShader, vShaderByteCode, PShaderByteCode)) 
+	std::string vShaderByteCode[2];
+	if (!loadShader(device, vShader, pShader, gShader, vShaderByteCode)) 
 	{
 		std::cerr << "cant load shaders" << std::endl;
 		return false;
 	}
-
-	if (!CreateInputLayout(device, inputLayout, vShaderByteCode, PShaderByteCode))
+	if (!CreateInputLayout(device, inputLayout[0], vShaderByteCode[0]))
 	{
 		std::cerr << "cant load inputlayout" << std::endl;
+		return false;
+	}
+	if (!CreateInputLayoutBill(device, inputLayout[1], vShaderByteCode[1]))
+	{
+		std::cerr << "cant load inputlayout2" << std::endl;
 		return false;
 	}
 	if (!CreateSamplerState(device, sampler))

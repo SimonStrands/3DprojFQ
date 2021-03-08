@@ -1,48 +1,31 @@
 #pragma once
-#include <vector>
-#include "vertex.h"
-#include <string>
-#include "Vec.h"
 #include <d3d11.h>
+#include "Vec.h"
 
-//#thisNeedFix
-//git
-class Graphics;
-class object{
+class object {
 public:
-	object(std::string file, Graphics &gfx, std::string texture = "stripestest.png", vec3 pos = vec3(0, 0, 0), vec3 rot = vec3(0, 0, 0), vec3 scale = vec3(1, 1, 1));
+	object();
+	object(vec3 pos);
 	virtual ~object();
-	const vec3 getPos();
+	virtual void draw(ID3D11DeviceContext*& immediateContext) = 0;
+
+	vec3 getPos();
 	const vec3 getRot();
 	const vec3 getScale();
 
 	void changePos(vec3 pos);
 	void changeRot(vec3 pos);
 	void changeScale(vec3 pos);
+	void addPos(vec3 pos);
+	void addRot(vec3 rot);
+	void addScale(vec3 scale);
 
-	ID3D11Buffer*& getVertexBuffer();
-	ID3D11Buffer*& getVertexConstBuffer();
-	ID3D11Buffer*& getPixelConstBuffer();
-	bool& normalMapping();
-	int& getNrOfVertex();
-
-	//should be change to private
-	ID3D11ShaderResourceView** texSRV = new ID3D11ShaderResourceView*[2];
-	
-
-	//debug and should be deleted before realease
-	float &getxRot();
+	//debug
+	float& getxRot();
 	float& getxPos();
 	float& getzPos();
 private:
-	//object data
 	vec3 pos;
 	vec3 rot;
 	vec3 scale;
-	int nrOfVertexes;
-	std::string fileName[2];//color, normal
-	ID3D11Buffer* vertexBuffer;
-	ID3D11Buffer* Vg_pConstantBuffer;
-	ID3D11Buffer* Pg_pConstantBuffer;
-	bool normalMap;
 };
