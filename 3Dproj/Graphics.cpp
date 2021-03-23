@@ -72,7 +72,7 @@ void Graphics::updateShaders(GameObject& obj)
 	ZeroMemory(&resource, sizeof(D3D11_MAPPED_SUBRESOURCE));
 }
 
-void Graphics::updateVertexShader(GameObject& obj)
+void Graphics::updateVertexShader(object& obj)
 {
 	DirectX::XMMATRIX rot(DirectX::XMMatrixRotationRollPitchYaw(obj.getRot().x, obj.getRot().y, obj.getRot().z));
 
@@ -89,7 +89,13 @@ void Graphics::updateVertexShader(GameObject& obj)
 		0.0f, 0.0f, 1.0f, 0.0f,
 		obj.getPos().x, obj.getPos().y, obj.getPos().z, 1.0f
 	);
-	DirectX::XMMATRIX rts = ((rot * trans) * scal);
+	DirectX::XMMATRIX point(
+		1.0f, 0.0f, 0.0f, 0.0f,
+		0.0f, 1.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 1.0f, 0.0f,
+		0.0f, 0.0f, 0.0f, 1.0f
+	);
+	DirectX::XMMATRIX rts = point * (scal*(rot * trans));
 
 	vcbd.transform.element = rts;
 
@@ -104,9 +110,15 @@ void Graphics::updateVertexShader(GameObject& obj)
 
 void Graphics::updateGeometryShader(BillBoard& obj, Camera cam)
 {
-	gcbd.cameraPos.element[0] = cam.getPos().x;
-	gcbd.cameraPos.element[1] = cam.getPos().y;
-	gcbd.cameraPos.element[2] = cam.getPos().z;
+	gcbd.cameraPos.element[0] = -cam.getPos().x;
+	gcbd.cameraPos.element[1] = -cam.getPos().y;
+	gcbd.cameraPos.element[2] = -cam.getPos().z;
+
+	//uv
+	gcbd.uvCords.element[0] = anim.uv().xyz.x;
+	gcbd.uvCords.element[1] = 6.f;
+	gcbd.uvCords.element[2] = 1.f;
+	gcbd.uvCords.element[3] = 1.f;
 
 	D3D11_MAPPED_SUBRESOURCE resource;
 	immediateContext->Map(obj.getGCB(), 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
@@ -115,18 +127,14 @@ void Graphics::updateGeometryShader(BillBoard& obj, Camera cam)
 	ZeroMemory(&resource, sizeof(D3D11_MAPPED_SUBRESOURCE));
 }
 
-//void Graphics::updateGeometryShader(BillBoard& obj, Camera cam)
-//{
-
-//}
-
-void Graphics::updatePixelShader(GameObject& obj)
+void Graphics::updatePixelShader(object& obj)
 {
 	pcbd.lightPos.element[0] = light.getPos().x;
 	pcbd.lightPos.element[1] = light.getPos().y;
 	pcbd.lightPos.element[2] = light.getPos().z;
 	pcbd.lightPos.element[3] = 1;
-	//pcbd.nMapping.element = true;
+
+	obj.getKdKa(pcbd.kd.element, pcbd.ka.element);
 
 	//changing pixel shader cBuffer
 	D3D11_MAPPED_SUBRESOURCE resource;
@@ -145,21 +153,20 @@ void Graphics::Projection()
 
 Graphics::Graphics(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine, _In_ int nCmdShow) :
 	speed(1.5f),
-	light(vec3(0.f, 0.f, 0.f))
+	light(vec3(0.f, 0.f, 40.f)),
+	anim(1,6)
 {
 	fov = 45.f;
 	ratio = 16.f / 9.f;
-	farPlane = 40;
+	farPlane = 200.f;
 	nearPlane = 0.1f;
 	nrOfObject = 0;
 	Pg_pConstantBuffer = NULL;
-	inputLayout = nullptr; pShader = nullptr; vShader = nullptr;
 	normalMapping = true;
 	inputLayout = new ID3D11InputLayout * [2];
 	vShader = new ID3D11VertexShader * [2];
 	gShader = new ID3D11GeometryShader * [1];
 	pShader = new ID3D11PixelShader * [1];
-
 	//setting matrixes
 	Projection();
 	//if delete this happens it will get an error and program will stop working(I want this to happen when I debug)
@@ -176,7 +183,19 @@ Graphics::Graphics(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 		std::cerr << "cant set up" << std::endl;
 		delete this;
 	}
-	
+	D3D11_BLEND_DESC bd = {};
+	bs = nullptr;
+	bd.RenderTarget[0].BlendEnable = TRUE;
+	bd.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+	bd.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+	bd.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+	bd.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ZERO;
+	bd.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+	bd.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+	bd.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+	device->CreateBlendState(&bd, &bs);
+	UINT a = 0xFFFFFFFFu;
+	immediateContext->OMSetBlendState(bs, nullptr, 0xFFFFFFFFu);
 	
 	//set settings up
 	immediateContext->PSSetSamplers(0, 1, &sampler);
@@ -239,6 +258,9 @@ Graphics::~Graphics()
 		sampler->Release();
 	}
 	delete[] objects;
+	if (bs != nullptr) {
+		bs->Release();
+	}
 }
 
 float nextFpsUpdate = 0;
@@ -249,8 +271,9 @@ void Graphics::Update(float dt)
 		nextFpsUpdate = 0;
 		float fps = 1.f / (float)dt;
 		SetWindowTextA(wnd, std::to_string(fps).c_str());
+		//SetWindowTextA(wnd, std::to_string().c_str());
 	}
-
+	anim.update(dt);
 	keyboardDebug();
 }
 
@@ -314,25 +337,7 @@ void Graphics::Render()
 	//	immediateContext->Draw((int)objects[i]->getNrOfVertex(), 0);
 	//}
 
-	//ImGui_ImplDX11_NewFrame();
-	//ImGui_ImplWin32_NewFrame();
-	//ImGui::NewFrame();
-	//if (ImGui::Begin("obj 0")) {
-	//	ImGui::SliderFloat("Rot", &objects[0]->getxRot(), 6.34f, -6.34f);
-	//	ImGui::SliderFloat("Xpos", &objects[0]->getxPos(), 10.0f, -10.0f);
-	//	ImGui::SliderFloat("Zpos", &objects[0]->getzPos(), 10.0f, -10.0f);
-	//	ImGui::Checkbox("nMap", &objects[0]->normalMapping());
-	//	pcbd.nMapping.element = normalMapping;
-	//	ImGui::Text("yeet");
-	//}
-	//ImGui::End();
-	//if (ImGui::Begin("Light")) {
-	//	ImGui::SliderFloat("Xpos", &light.getPos().x, 10.0f, -10.0f);
-	//	ImGui::SliderFloat("Zpos", &light.getPos().z, 10.0f, -10.0f);
-	//}
-	//ImGui::End();
-	//ImGui::Render();
-	//ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+	
 
 	//show the "picture"
 	swapChain->Present(0, 0);
@@ -343,6 +348,7 @@ void Graphics::clearScreen()
 	float clearColor[4] = { 0.1f,0.1f,0.1f,0 };
 	immediateContext->ClearRenderTargetView(renderTarget, clearColor);
 	immediateContext->ClearDepthStencilView(dsView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1, 0);
+
 }
 
 void Graphics::draw(GameObject& obj)
@@ -357,5 +363,17 @@ void Graphics::draw(GameObject& obj)
 
 void Graphics::present()
 {
+	//some other stuff
+	ImGui_ImplDX11_NewFrame();
+	ImGui_ImplWin32_NewFrame();
+	ImGui::NewFrame();
+	if (ImGui::Begin("Light")) {
+		ImGui::SliderFloat("Xpos", &light.getPos().x, 40.0f, -40.0f);
+		ImGui::SliderFloat("Zpos", &light.getPos().z, 40.0f, -40.0f);
+	}
+	ImGui::End();
+	ImGui::Render();
+	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+
 	swapChain->Present(0, 0);
 }

@@ -7,8 +7,10 @@ ResourceManager::ResourceManager(Graphics*& gfx)
 
 ResourceManager::~ResourceManager()
 {
-	if (def != nullptr) {
-		def->Release();
+	for (int i = 0; i < 2; i++) {
+		if (def[i] != nullptr) {
+			def[i]->Release();
+		}
 	}
 	if (Fire != nullptr) {
 		Fire->Release();
@@ -21,8 +23,12 @@ ResourceManager::~ResourceManager()
 void ResourceManager::loadThings(Graphics*& gfx)
 {
 	//default tex
-	if (!CreateTexture("Textures/Default/KdDef.png", gfx->getDevice(), gfx->getTexture(), def)) {
+	def = new ID3D11ShaderResourceView * [2];
+	if (!CreateTexture("Textures/Default/KdDef.png", gfx->getDevice(), gfx->getTexture(), def[0])) {
 		cantLoad(L"kddef cant load");
+	}
+	if (!CreateTexture("Textures/Default/normalDef.jpg", gfx->getDevice(), gfx->getTexture(), def[1])) {
+		cantLoad(L"NDef cant load");
 	}
 	if (!CreateTexture("Textures/Fire.png", gfx->getDevice(), gfx->getTexture(), Fire)) {
 		cantLoad(L"Fire cant load");
@@ -31,6 +37,7 @@ void ResourceManager::loadThings(Graphics*& gfx)
 	ball = new Mesh(gfx, "obj/newsun.obj", def);
 	stol = new Mesh(gfx, "obj/stol.obj", def);
 	IDK = new Mesh(gfx, "obj/untitled.obj", def);
+	starwars = new Mesh(gfx, "obj/stormtrooper.obj", def);
 }
 
 Mesh *ResourceManager::get_Ball()
@@ -48,7 +55,12 @@ Mesh *ResourceManager::get_IDK()
 	return IDK;
 }
 
-ID3D11ShaderResourceView* ResourceManager::getDef()
+Mesh* ResourceManager::get_starwars()
+{
+	return this->starwars;
+}
+
+ID3D11ShaderResourceView** ResourceManager::getDef()
 {
 	return this->def;
 }

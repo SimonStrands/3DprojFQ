@@ -36,6 +36,7 @@ bool loadVShader(std::string name, ID3D11Device* device, ID3D11VertexShader*& vS
 	vShaderByteCode = shaderData;
 	shaderData.clear();
 	reader.close();
+	return true;
 }
 bool loadGShader(std::string name, ID3D11Device* device, ID3D11GeometryShader*& gShader) {
 	std::string shaderData;
@@ -61,6 +62,7 @@ bool loadGShader(std::string name, ID3D11Device* device, ID3D11GeometryShader*& 
 
 	shaderData.clear();
 	reader.close();
+	return true;
 }
 bool loadPShader(std::string name, ID3D11Device* device, ID3D11PixelShader*& pShader) {
 	std::string shaderData;
@@ -84,6 +86,7 @@ bool loadPShader(std::string name, ID3D11Device* device, ID3D11PixelShader*& pSh
 		std::cerr << "cannot create pixelShader" << std::endl;
 		return false;
 	}
+	return true;
 }
 
 /*bool loadShader(ID3D11Device* device, ID3D11VertexShader**& vShader, ID3D11PixelShader**& pShader, 
@@ -225,7 +228,7 @@ bool CreateInputLayoutBill(ID3D11Device* device, ID3D11InputLayout*& inputLayout
 	const int nrOfEl = 1;
 	D3D11_INPUT_ELEMENT_DESC inputDesc[nrOfEl] =
 	{
-		{"POSITION", 0, DXGI_FORMAT_R32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0}
 	};
 
 	HRESULT hr = device->CreateInputLayout(inputDesc, nrOfEl, VbyteCode.c_str(), VbyteCode.length(), &inputLayout);

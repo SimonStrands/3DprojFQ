@@ -4,7 +4,9 @@ struct VertexShaderInput {
 
 struct VertexShaderOutput {
 	float4 position : SV_POSITION;
-	float4 fragpos: FRAG_POS;
+	row_major float4x4 modelView : MV;
+	row_major float4x4 model : MODEL;
+	row_major float4x4 modelViewProj: MVP;
 };
 
 cbuffer CBuf
@@ -18,8 +20,13 @@ VertexShaderOutput main(VertexShaderInput input) {
 	VertexShaderOutput output;
 
 	float4x4 MVP = mul(mul(transform, view), projection);
-	output.fragpos = mul(float4(input.position, 1.0f), transform);
-	output.position = mul((float4((input.position), 1.0f)), MVP);
+	//output.position = mul(float4(input.position, 1.0f), transform);
+	//output.fragpos = mul(float4(input.position, 1.0f), MVP);
+
+	output.position = float4(input.position, 1.f);
+	output.model = transform;
+	output.modelView = mul(transform, view);
+	output.modelViewProj = MVP;
 
 	return output;
 }

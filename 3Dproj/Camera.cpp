@@ -23,7 +23,7 @@ Camera::~Camera()
 
 void Camera::updateCamera(float dt)
 {	
-
+	//printf("x :%f y :%f\n", xCamPos, yCamPos);
 	handleEvent(dt);
 	DirectX::XMMATRIX viewMatrix = DirectX::XMMATRIX(
 		1.0f,0.0f,0.0f,0.0f,

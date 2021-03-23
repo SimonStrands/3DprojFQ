@@ -150,6 +150,9 @@
     <ClCompile Include="Mesh.cpp">
       <Filter>Source Files\Graphic\mesh loading</Filter>
     </ClCompile>
+    <ClCompile Include="TileAnimation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ConstantBuffer.h">
@@ -259,6 +262,9 @@
     </ClInclude>
     <ClInclude Include="point.h">
       <Filter>Header Files\Other</Filter>
+    </ClInclude>
+    <ClInclude Include="TileAnimation.h">
+      <Filter>Header Files\Graphic\Animation</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

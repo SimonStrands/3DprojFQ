@@ -5,7 +5,7 @@
 
 class Mesh {
 public:
-	Mesh(Graphics*& gfx, std::string fileToLoad, ID3D11ShaderResourceView* def);
+	Mesh(Graphics*& gfx, std::string fileToLoad, ID3D11ShaderResourceView** def);
 	virtual ~Mesh();
 	ID3D11Buffer*& getVertexBuffer();
 	ID3D11ShaderResourceView** getTextures();

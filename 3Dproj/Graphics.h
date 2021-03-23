@@ -10,6 +10,9 @@
 #include "BillBoard.h"
 #include "rotation.h"
 #include "Keyboard.h"
+#include "TileAnimation.h"
+
+#include <wrl.h>
 //git
 struct Vcb {
 	struct {
@@ -49,11 +52,8 @@ struct Gcb {
 		float element[4];
 	}cameraPos;
 	struct {
-		float element[2];
+		float element[4];
 	}uvCords;
-	struct {
-		float element[2];
-	}padding;
 };
 
 class Camera;
@@ -83,6 +83,8 @@ private:
 	ID3D11GeometryShader** gShader;
 	ID3D11Buffer* Pg_pConstantBuffer;
 	ID3D11RasterizerState* pRS;
+	ID3D11BlendState* bs;
+	TileAnimation anim;
 	////////////////////////
 
 	//VertexConstantBuffer
@@ -107,10 +109,10 @@ private:
 			1,1,1,0
 		},
 		{//ka
-			0.5f,0.5f,0.5f,0,
+			0.5f,0.5f,0.5f,0
 		},
 		{//kd
-			1.f,1.f,1.f,0,
+			1.f,1.f,1.f,0
 		},
 		{//ks
 			1,1,1,0,
@@ -119,8 +121,7 @@ private:
 	//GeometryConstantBuffer
 	Gcb gcbd = {
 		{0,0,0,0},
-		{0,0},
-		{0,0},
+		{0,0,0,0},
 	};
 
 	//textures
@@ -162,9 +163,9 @@ public:
 	//update
 	void Update(float dt);
 	void updateShaders(GameObject& obj);
-	void updateVertexShader(GameObject& obj);
+	void updateVertexShader(object& obj);
 	void updateGeometryShader(BillBoard& obj, Camera cam);
-	void updatePixelShader(GameObject& obj);
+	void updatePixelShader(object& obj);
 
 	void clearScreen();
 	void draw(GameObject& obj);

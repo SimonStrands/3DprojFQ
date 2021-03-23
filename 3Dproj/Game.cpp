@@ -8,16 +8,23 @@ Game::Game(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWS
 	camera = new Camera(gfx, mus);
 	nrOfObj = 2;
 	obj = new GameObject * [nrOfObj];
+	//int i = 0; 
+	//for (int x = 0; x < 5; x++) {
+	//	for (int y = 0; y < 1000; y++) {
+	//		obj[i] = new GameObject(rm->get_starwars(), gfx, vec3(x, 0, y), vec3(0, 0, 0), vec3(0.4, 0.4, 0.4));
+	//		i++;
+	//	}
+	//}
 	obj[0] = new GameObject(rm->get_IDK(), gfx, vec3(0,0,5), vec3(0,0,0), vec3(1,1,1));
-	obj[1] = new GameObject(rm->get_IDK(), gfx, vec3(5,0,5), vec3(0,0,0), vec3(1,1,1));
-	bill = new BillBoard(gfx, vec3(-5, 0, 5), rm->getFire());
+	obj[1] = new GameObject(rm->get_Stol(), gfx, vec3(2,0,0), vec3(0,0,0), vec3(1,1,1));
+	bill = new BillBoard(gfx, vec3(0.f, 1.2, 5), rm->getFire(), rm->getDef()[1]);
 }
 
-Game::~Game()
+Game::~Game() 
 {
 	delete gfx;
 	delete mus;
-	delete camera;
+	delete camera; 
 	delete rm;
 	for (int i = 0; i < nrOfObj; i++) {
 		delete obj[i];
@@ -43,6 +50,9 @@ void Game::run()
 			gfx->updateVertexShader(*obj[i]);
 			gfx->updatePixelShader(*obj[i]);
 		}
+		gfx->updateVertexShader(*bill);
+		gfx->updateGeometryShader(*bill, *camera);
+		gfx->updatePixelShader(*bill);
 	}
 }
 
@@ -50,7 +60,8 @@ void Game::Update()
 {
 	dt.restartClock();
 	//keyboard
-	obj[0]->addRot(vec3(0, 1 * dt.dt(), 0));
+	//obj[0]->addRot(vec3(0, 1 * dt.dt(), 0));
+	//obj[1]->addRot(vec3(0, 1 * dt.dt(), 0));
 	//update
 	camera->updateCamera((float)dt.dt());
 	mus->UpdateMouse();

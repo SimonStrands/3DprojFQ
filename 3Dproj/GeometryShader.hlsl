@@ -3,7 +3,9 @@
 struct GSInput
 {
 	float4 position : SV_POSITION;
-	float4 fragpos: FRAG_POS;
+	row_major float4x4 modelView : MV;
+	row_major float4x4 model : MODEL;
+	row_major float4x4 modelViewProj: MVP;
 };
 struct GSOutput
 {
@@ -18,48 +20,50 @@ struct GSOutput
 cbuffer CBuf
 {
 	float4 cameraPos;
-	float2 uv;
-	float2 padding;
+	float4 uv;//what x how much x what y how much y
 };
 
-[maxvertexcount(1)]
+[maxvertexcount(4)]
 void main(
 	point GSInput input[1],
 	inout TriangleStream< GSOutput > output
 )
 {
+	float size = 0.3;
+	float3 side = float3(input[0].modelView[0][0], input[0].modelView[1][0], input[0].modelView[2][0]);
+	float3 up = float3(input[0].modelView[0][1], input[0].modelView[1][1], input[0].modelView[2][1]);
+	float3 camToPos = float3(cameraPos.x, cameraPos.y, cameraPos.z)
+		- float3(input[0].position.x, input[0].position.y, input[0].position.z);
+
 	GSOutput element;
-	element.normal = float3(0, 0, -1);
-	element.tangent = float3(0, 1, 0);
-	element.bitangent = float3(1, 0, 0);
+	element.normal = normalize(float3(float3(input[0].modelView[0][2], input[0].modelView[1][2], input[0].modelView[2][2])));
+	element.tangent = normalize(side);
+	element.bitangent = normalize(up);
+	float4 v;
 
-	element.position = input[0].position + float4(0,0,0,1);
-	element.uv = float2(0,0);
-	element.fragpos = input[0].fragpos;
+	v = input[0].position - float4(side - up, 0.f) * size;
+	element.position = mul(v, input[0].modelViewProj);
+	element.fragpos = mul(v, input[0].model);
+	element.uv = float2((uv.x / uv.y), 0);
 	output.Append(element);
 
-	element.position = input[0].position + float4(1, 0, 0, 1);
-	element.uv = float2(1, 0);
+	v = input[0].position - float4(side + up, 0.f) * size;
+	element.position = mul(v, input[0].modelViewProj);
+	element.fragpos = mul(v, input[0].model);
+	element.uv = float2((uv.x / uv.y), 1);
 	output.Append(element);
 
-	element.position = input[0].position + float4(0, 1, 0, 1);
-	element.uv = float2(0, 1);
+	v = input[0].position + float4(side + up, 0.f) * size;
+	element.position = mul(v, input[0].modelViewProj);
+	element.fragpos = mul(v, input[0].model);
+	element.uv = float2(((uv.x + 1)/ uv.y), 0);
 	output.Append(element);
 
-	element.position = input[0].position + float4(1, 1, 0, 1);
-	element.uv = float2(1, 1);
+	v = input[0].position + float4(side - up, 0.f) * size;
+	element.position = mul(v, input[0].modelViewProj);
+	element.fragpos = mul(v, input[0].model);
+	element.uv = float2(((uv.x + 1) / uv.y), 1);
 	output.Append(element);
 
-	/*for (uint i = 0; i < 4; i++)
-	{
-		GSOutput element;
-		element.position = input[i].position;
-		element.uv = input[i].uv;
-		element.normal = input[i].normal;
-		element.tangent = input[i].tangent;
-		element.bitangent = input[i].bitangent;
-		element.fragpos = input[i].fragpos;
-		output.Append(element);
-	}*/
 
 }

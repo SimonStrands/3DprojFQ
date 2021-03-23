@@ -5,15 +5,25 @@
 
 object::object()
 {
+    Pg_pConstantBuffer = nullptr;
+    Vg_pConstantBuffer = nullptr;
 }
 
-object::object(vec3 pos)
+object::object(vec3 pos):
+    rot(0,0,0),
+    scale(1,1,1)
 {
     this->pos = pos;
 }
 
 object::~object()
 {
+    if (Vg_pConstantBuffer != nullptr) {
+        Vg_pConstantBuffer->Release();
+    };
+    if (Pg_pConstantBuffer != nullptr) {
+        Pg_pConstantBuffer->Release();
+    };
 }
 
 vec3 object::getPos()
@@ -61,15 +71,28 @@ void object::addScale(vec3 scale)
     this->scale = this->scale + scale;
 }
 
-/*int& object::getNrOfVertex()
+ID3D11Buffer*& object::getVertexConstBuffer()
 {
-    return this->nrOfVertexes;
-}*/
+    return this->Vg_pConstantBuffer;
+}
 
-/*Mesh& object::getMesh()
+ID3D11Buffer*& object::getPixelConstBuffer()
 {
-    return mesh;
-}*/
+    return this->Pg_pConstantBuffer;
+}
+
+float& object::normalMapping()
+{
+    return this->normalMap;
+}
+
+void object::getKdKa(float kd[4], float ka[4])
+{
+    for (int i = 0; i < 4; i++) {
+        kd[i] = this->kd[i];
+        ka[i] = this->ka[i];
+    }
+}
 
 float& object::getxRot()
 {
@@ -82,25 +105,5 @@ float& object::getxPos() {
 float& object::getzPos() {
     return this->pos.z;
 }
-
-/*ID3D11Buffer*& object::getVertexBuffer()
-{ 
-    return this->vertexBuffer;
-} 
-
-ID3D11Buffer*& object::getVertexConstBuffer()
-{
-    return this->Vg_pConstantBuffer;
-}
-
-ID3D11Buffer*& object::getPixelConstBuffer()
-{
-    return this->Pg_pConstantBuffer;
-}
-
-bool &object::normalMapping()
-{
-    return normalMap;
-}*/
 
 

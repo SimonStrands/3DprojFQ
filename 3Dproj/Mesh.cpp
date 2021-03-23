@@ -1,6 +1,6 @@
 #include "Mesh.h"
 
-Mesh::Mesh(Graphics*& gfx, std::string fileToLoad, ID3D11ShaderResourceView* def)
+Mesh::Mesh(Graphics*& gfx, std::string fileToLoad, ID3D11ShaderResourceView** def)
 {
 	nrOfVertexes = 0;
 	CreateVertexBuffer(gfx, *this, fileToLoad);
@@ -10,7 +10,13 @@ Mesh::Mesh(Graphics*& gfx, std::string fileToLoad, ID3D11ShaderResourceView* def
 	texSRV = new ID3D11ShaderResourceView * [nrOfTextures];
 	for (int i = 0; i < nrOfTextures; i++) {
 		if (!CreateTexture(fileNames[i + 2], gfx->getDevice(), gfx->getTexture(), texSRV[i])) {
-			texSRV[i] = def;
+			if (i == 2) {
+				texSRV[i] = def[1];
+			}
+			else {
+				texSRV[i] = def[0];
+			}
+			
 			defTexture[i] = true;
 		}
 	}

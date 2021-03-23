@@ -20,12 +20,23 @@ public:
 	void addRot(vec3 rot);
 	void addScale(vec3 scale);
 
+	ID3D11Buffer*& getVertexConstBuffer();
+	ID3D11Buffer*& getPixelConstBuffer();
+	float &normalMapping();
+	void getKdKa(float kd[4], float ka[4]);
+
 	//debug
 	float& getxRot();
 	float& getxPos();
 	float& getzPos();
+protected:
+	float normalMap;
+	float kd[4];
+	float ka[4];
 private:
 	vec3 pos;
 	vec3 rot;
 	vec3 scale;
+	ID3D11Buffer* Vg_pConstantBuffer;
+	ID3D11Buffer* Pg_pConstantBuffer;
 };
