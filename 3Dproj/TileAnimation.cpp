@@ -1,13 +1,11 @@
 #include "TileAnimation.h"
 
-TileAnimation::TileAnimation(int noah, int noaw, float timebeetween, float width, float height)
+TileAnimation::TileAnimation(int noaw, int noah, float timebeetween)
 {
 	this->noah = noah;
 	this->noaw = noaw;
 	this->timebeetween = timebeetween;
-	this->width = width;
-	this->height = height;
-	cpx = cpy = 0;
+	cpx = cpy = 1;
 	timeToNextFrame = 0;
 }
 
@@ -19,7 +17,7 @@ void TileAnimation::update(float dt)
 		timeToNextFrame = 0;
 		cpx++;
 		if (cpx >= noaw) {
-			cpx = 0;
+			cpx = 1;
 		}
 	}
 	
@@ -27,5 +25,5 @@ void TileAnimation::update(float dt)
 
 vec4 TileAnimation::uv()
 {
-	return vec4(cpx, cpy, cpx + (width / noaw), cpy + (height / noah));
+	return vec4(cpx, noaw, cpy, noah);
 }

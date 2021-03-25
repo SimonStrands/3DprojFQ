@@ -17,7 +17,7 @@ Game::Game(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWS
 	//}
 	obj[0] = new GameObject(rm->get_IDK(), gfx, vec3(0,0,5), vec3(0,0,0), vec3(1,1,1));
 	obj[1] = new GameObject(rm->get_Stol(), gfx, vec3(2,0,0), vec3(0,0,0), vec3(1,1,1));
-	bill = new BillBoard(gfx, vec3(0.f, 1.2, 5), rm->getFire(), rm->getDef()[1]);
+	bill = new BillBoard(gfx, vec3(0.f, 1.2, 5), rm->getFire(), rm->getDef()[1], 6);
 }
 
 Game::~Game() 
@@ -62,6 +62,7 @@ void Game::Update()
 	//keyboard
 	//obj[0]->addRot(vec3(0, 1 * dt.dt(), 0));
 	//obj[1]->addRot(vec3(0, 1 * dt.dt(), 0));
+	bill->update(dt.dt());
 	//update
 	camera->updateCamera((float)dt.dt());
 	mus->UpdateMouse();

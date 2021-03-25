@@ -1,9 +1,7 @@
 ﻿#include "Graphics.h"
-#include <vector>
 #include "imgui_impl_dx11.h"
 #include "imgui_impl_win32.h"
 #include "Camera.h"
-
 //debug nothing to look here at
 void Graphics::debugcd()
 {
@@ -115,10 +113,10 @@ void Graphics::updateGeometryShader(BillBoard& obj, Camera cam)
 	gcbd.cameraPos.element[2] = -cam.getPos().z;
 
 	//uv
-	gcbd.uvCords.element[0] = anim.uv().xyz.x;
-	gcbd.uvCords.element[1] = 6.f;
-	gcbd.uvCords.element[2] = 1.f;
-	gcbd.uvCords.element[3] = 1.f;
+	gcbd.uvCords.element[0] = obj.getTAnim().uv().xyz.x;
+	gcbd.uvCords.element[1] = obj.getTAnim().uv().xyz.y;
+	gcbd.uvCords.element[2] = obj.getTAnim().uv().xyz.z;
+	gcbd.uvCords.element[3] = obj.getTAnim().uv().w;
 
 	D3D11_MAPPED_SUBRESOURCE resource;
 	immediateContext->Map(obj.getGCB(), 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
@@ -153,8 +151,7 @@ void Graphics::Projection()
 
 Graphics::Graphics(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine, _In_ int nCmdShow) :
 	speed(1.5f),
-	light(vec3(0.f, 0.f, 40.f)),
-	anim(1,6)
+	light(vec3(0.f, 0.f, 40.f))
 {
 	fov = 45.f;
 	ratio = 16.f / 9.f;
@@ -271,9 +268,7 @@ void Graphics::Update(float dt)
 		nextFpsUpdate = 0;
 		float fps = 1.f / (float)dt;
 		SetWindowTextA(wnd, std::to_string(fps).c_str());
-		//SetWindowTextA(wnd, std::to_string().c_str());
 	}
-	anim.update(dt);
 	keyboardDebug();
 }
 
@@ -318,30 +313,6 @@ vec2 Graphics::getWH()
 	return vec2((float)WIDTH, (float)HEIGHT);
 }
 
-void Graphics::Render()
-{
-	//clear background
-	float clearColor[4] = { 0.1f,0.1f,0.1f,0 };
-	immediateContext->ClearRenderTargetView(renderTarget, clearColor);
-	immediateContext->ClearDepthStencilView(dsView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1, 0);
-	
-	UINT strid = sizeof(vertex);
-	UINT offset = 0;
-	
-	//for (int i = 0; i < nrOfObject; i++) {
-	//	immediateContext->PSSetShaderResources(0, 2, objects[i]->texSRV);
-	//	immediateContext->VSSetConstantBuffers(0, 1, &objects[i]->getVertexConstBuffer());
-	//	immediateContext->PSSetConstantBuffers(0, 1, &objects[i]->getPixelConstBuffer());
-	//	immediateContext->IASetVertexBuffers(0, 1, &objects[i]->getVertexBuffer(), &strid, &offset);
-	//	//this line right here
-	//	immediateContext->Draw((int)objects[i]->getNrOfVertex(), 0);
-	//}
-
-	
-
-	//show the "picture"
-	swapChain->Present(0, 0);
-}
 
 void Graphics::clearScreen()
 {

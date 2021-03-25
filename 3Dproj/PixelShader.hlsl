@@ -25,8 +25,11 @@ SamplerState testSampler;
 
 float4 main(PixelShaderInput input) : SV_TARGET
 {
-	//return float4(input.normal, 0.f);
-	float3 inputnormal = input.normal;
+	//for culling none
+	float3 posToView = normalize(input.fragpos.xyz - cameraPos.xyz);
+	if (dot(posToView, input.normal) > 0) {
+		input.normal = -input.normal;
+	}
 	if (true) {
 		float3 nMapNormal;
 		float3x3 TBN = float3x3(
@@ -46,21 +49,14 @@ float4 main(PixelShaderInput input) : SV_TARGET
 	float3 ambient_light = ka.xyz * lightColor.xyz;
 
 	//defuse
-	//for culling none
-	float3 posToView = normalize(input.fragpos.xyz - cameraPos.xyz);
-	float3 diffuseNormal = inputnormal.xyz;
-	if (dot(posToView, diffuseNormal) > 0) {
-		diffuseNormal = -diffuseNormal;
-	}
 	float3 lightDir = normalize(input.fragpos.xyz - lightPos.xyz);
-	float ammount_diffuse = max(dot(-diffuseNormal.xyz, lightDir), 0.0f);
+	float ammount_diffuse = max(dot(-input.normal.xyz, lightDir), 0.0f);
 	float3 defuse_light = ammount_diffuse * kd.xyz * lightColor.xyz;
 
 	//specular
-	float const_spec = 2.0f;
+	float const_spec = 1.0f;
 	float3 reflection = normalize(reflect(-lightDir, normalize(input.normal.xyz)));
 	float spec = pow(max(0.f, dot(posToView, reflection)), 32);
-	//float3 specular = const_spec * ks.xyz * lightColor.xyz * spec;
 	float3 specular = ks.xyz * (lightColor.xyz * ammount_diffuse) * const_spec * ks.xyz * spec;
 
 	

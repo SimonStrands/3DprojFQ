@@ -52,8 +52,8 @@ struct vec3 {
 struct vec4 {
 	vec4(float a, float b, float c, float d) {
 		xyz.x = a;
-		xyz.y = a;
-		xyz.z = a;
+		xyz.y = b;
+		xyz.z = c;
 		w = d;
 	}
 	void Normalize();

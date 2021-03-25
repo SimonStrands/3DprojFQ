@@ -1,4 +1,5 @@
 #pragma once
+#include <vector>
 #include <d3d11.h>
 #include "plHelper.h"
 #include "D311Helper.h"
@@ -10,9 +11,7 @@
 #include "BillBoard.h"
 #include "rotation.h"
 #include "Keyboard.h"
-#include "TileAnimation.h"
 
-#include <wrl.h>
 //git
 struct Vcb {
 	struct {
@@ -84,7 +83,6 @@ private:
 	ID3D11Buffer* Pg_pConstantBuffer;
 	ID3D11RasterizerState* pRS;
 	ID3D11BlendState* bs;
-	TileAnimation anim;
 	////////////////////////
 
 	//VertexConstantBuffer
@@ -144,7 +142,6 @@ private:
 
 	//functions
 	void Projection();
-	void Render();
 
 public:
 	//get things

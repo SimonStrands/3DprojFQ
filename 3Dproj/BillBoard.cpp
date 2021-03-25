@@ -3,7 +3,8 @@
 
 BillBoard::BillBoard(Graphics*& gfx, vec3 pos, ID3D11ShaderResourceView* texSRV, ID3D11ShaderResourceView* NDef, int nrOfCol, int nrOfRow) :
 	object(pos),
-	points(vec3(0,0,0))
+	points(vec3(0,0,0)),
+	anim(nrOfCol, nrOfRow)
 {
 	this->texSRV = texSRV;
 	this->NDef = NDef;
@@ -36,9 +37,9 @@ BillBoard::BillBoard(Graphics*& gfx, vec3 pos, ID3D11ShaderResourceView* texSRV,
 	this->normalMap = 0.f;
 }
 
-void BillBoard::update()
+void BillBoard::update(float dt)
 {
-
+	anim.update(dt);
 }
 
 void BillBoard::draw(ID3D11DeviceContext*& immediateContext)
@@ -58,4 +59,9 @@ void BillBoard::draw(ID3D11DeviceContext*& immediateContext)
 ID3D11Buffer* BillBoard::getGCB()
 {
 	return this->Gg_pConstantBuffer;
+}
+
+TileAnimation& BillBoard::getTAnim()
+{
+	return this->anim;
 }
