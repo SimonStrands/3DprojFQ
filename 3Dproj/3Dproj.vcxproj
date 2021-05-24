@@ -157,6 +157,7 @@
     <ClCompile Include="D311Helper.cpp" />
     <ClCompile Include="debug.cpp" />
     <ClCompile Include="deltaTime.cpp" />
+    <ClCompile Include="DepthStencil.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="Graphics.cpp" />
@@ -179,6 +180,7 @@
     <ClCompile Include="ReadObjFile.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="rotation.cpp" />
+    <ClCompile Include="ShadowMap.cpp" />
     <ClCompile Include="Textures.cpp" />
     <ClCompile Include="TileAnimation.cpp" />
     <ClCompile Include="Vec.cpp" />
@@ -192,6 +194,7 @@
     <ClInclude Include="D311Helper.h" />
     <ClInclude Include="debug.h" />
     <ClInclude Include="deltaTime.h" />
+    <ClInclude Include="DepthStencil.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="Graphics.h" />
@@ -216,6 +219,7 @@
     <ClInclude Include="ReadObjFile.h" />
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="rotation.h" />
+    <ClInclude Include="ShadowMap.h" />
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="Textures.h" />
     <ClInclude Include="TileAnimation.h" />

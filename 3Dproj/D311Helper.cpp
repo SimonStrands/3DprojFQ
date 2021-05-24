@@ -127,7 +127,7 @@ bool SetupD3D11(UINT width, UINT height,
         return false;
     }
 
-    if (!CreateDepthStencil(device, width, height, dsTexture, dsView))
+    if (!depth.CreateDepthStencil(device, width, height, dsTexture, dsView))
     {
         std::cerr << "create depth" << std::endl;
         return false;

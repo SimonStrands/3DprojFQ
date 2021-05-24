@@ -52,6 +52,21 @@
     <Filter Include="Source Files\Graphic\mesh loading">
       <UniqueIdentifier>{7221fbe7-5b3b-4ff5-a258-45365d4ffd64}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Graphic\Shadow">
+      <UniqueIdentifier>{7a0471e7-5453-409e-874f-041a93f2e038}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Shaders">
+      <UniqueIdentifier>{883de206-3f9d-4d66-bc94-5b19f044149f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Shaders\Vertex">
+      <UniqueIdentifier>{b25e0fd3-7d30-416c-aff1-c1833b1e7313}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Shaders\Pixel">
+      <UniqueIdentifier>{145c6bc5-468c-4d72-b0fd-2c04bbea29d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Shaders\Geometry">
+      <UniqueIdentifier>{a1a8980e-9083-4eac-a9f6-595f0de008d2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -151,6 +166,12 @@
       <Filter>Source Files\Graphic\mesh loading</Filter>
     </ClCompile>
     <ClCompile Include="TileAnimation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ShadowMap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DepthStencil.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -266,6 +287,12 @@
     <ClInclude Include="TileAnimation.h">
       <Filter>Header Files\Graphic\Animation</Filter>
     </ClInclude>
+    <ClInclude Include="ShadowMap.h">
+      <Filter>Header Files\Graphic\Shadow</Filter>
+    </ClInclude>
+    <ClInclude Include="DepthStencil.h">
+      <Filter>Header Files\Graphic\Shadow</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md">
@@ -273,20 +300,20 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="PixelShader.hlsl">
-      <Filter>Resource Files</Filter>
-    </FxCompile>
-    <FxCompile Include="VertexShader.hlsl">
-      <Filter>Resource Files</Filter>
-    </FxCompile>
     <FxCompile Include="GeometryShader.hlsl">
-      <Filter>Resource Files</Filter>
+      <Filter>Resource Files\Shaders\Geometry</Filter>
     </FxCompile>
     <FxCompile Include="GeometryShader1.hlsl">
-      <Filter>Resource Files</Filter>
+      <Filter>Resource Files\Shaders\Geometry</Filter>
+    </FxCompile>
+    <FxCompile Include="PixelShader.hlsl">
+      <Filter>Resource Files\Shaders\Pixel</Filter>
     </FxCompile>
     <FxCompile Include="VertexBillBoard.hlsl">
-      <Filter>Resource Files</Filter>
+      <Filter>Resource Files\Shaders\Vertex</Filter>
+    </FxCompile>
+    <FxCompile Include="VertexShader.hlsl">
+      <Filter>Resource Files\Shaders\Vertex</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

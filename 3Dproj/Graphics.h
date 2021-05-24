@@ -11,8 +11,10 @@
 #include "BillBoard.h"
 #include "rotation.h"
 #include "Keyboard.h"
+#include "imguiManager.h"
 
 //git
+class ShadowMap;
 struct Vcb {
 	struct {
 		DirectX::XMMATRIX element;
@@ -23,6 +25,14 @@ struct Vcb {
 	struct {
 		DirectX::XMMATRIX element;
 	}projection;
+	//for shadow
+	struct {
+		DirectX::XMMATRIX element;
+	}lightView;
+	struct {
+		DirectX::XMMATRIX element;
+	}lightProjection;
+
 };
 
 struct Pcb {
@@ -126,13 +136,12 @@ private:
 	//gonna clean up here later
 	ID3D11Texture2D* tex;
 	ID3D11SamplerState* sampler;
-	//not yet done
-	ID3D11Texture2D* diffuse;
-	ID3D11Texture2D* ambient;
 
 	//objects
-	PointLight light;
+	Light* light;
+	//ShadowMap* shadowMap;
 	object** objects;
+	ImguiManager *imguimanager;
 
 	//variables
 	float speed;
@@ -147,6 +156,7 @@ public:
 	//get things
 	Vcb *getVcb();
 	Pcb *getPcb();
+	ShadowMap* getShadowMap();
 	ID3D11Device* getDevice();
 	ID3D11DeviceContext*& get_IC();
 	ID3D11Texture2D*& getTexture();
@@ -156,16 +166,18 @@ public:
 	ID3D11InputLayout** getInputL();
 
 	vec2 getWH();
+	void takeLight(Light *light);
+	void takeIM(ImguiManager* manager);
+
 
 	//update
 	void Update(float dt);
-	void updateShaders(GameObject& obj);
 	void updateVertexShader(object& obj);
 	void updateGeometryShader(BillBoard& obj, Camera cam);
 	void updatePixelShader(object& obj);
 
+	//draw
 	void clearScreen();
-	void draw(GameObject& obj);
 	void present();
 private:
 	//Debug shit
@@ -173,4 +185,7 @@ private:
 	void keyboardDebug();
 	bool pressed = false;
 	bool normalMapping;
+public:
+	ID3D11ShaderResourceView* special();
+	
 };

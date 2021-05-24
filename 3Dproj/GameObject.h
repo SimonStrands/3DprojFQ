@@ -15,9 +15,9 @@ public:
 	virtual ~GameObject();
 
 	void draw(ID3D11DeviceContext*& immediateContext);
-
 private:
 	//object data
+	ID3D11ShaderResourceView* special;
 	Mesh *mesh;
 	ID3D11Buffer* vertexBuffer;
 };

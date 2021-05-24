@@ -1,8 +1,10 @@
 #pragma once
 #include <Windows.h>
-#include <d3d11.h>
+#include "DepthStencil.h"
 #include <iostream>
 //git
+static DepthStencil depth;
+
 bool SetupD3D11(UINT width,
 	UINT height,
 	HWND wnd,

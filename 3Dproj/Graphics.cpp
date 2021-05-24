@@ -2,6 +2,7 @@
 #include "imgui_impl_dx11.h"
 #include "imgui_impl_win32.h"
 #include "Camera.h"
+#include "ShadowMap.h"
 //debug nothing to look here at
 void Graphics::debugcd()
 {
@@ -24,50 +25,11 @@ void Graphics::keyboardDebug()
 	}
 }
 
-void Graphics::updateShaders(GameObject& obj)
+ID3D11ShaderResourceView* Graphics::special()
 {
-	DirectX::XMMATRIX rot(DirectX::XMMatrixRotationRollPitchYaw(obj.getRot().x, obj.getRot().y, obj.getRot().z));
-
-	DirectX::XMMATRIX scal(
-		obj.getScale().x, 0.0f, 0.0f, 0.0f,
-		0.0f, obj.getScale().y, 0.0f, 0.0f,
-		0.0f, 0.0f, obj.getScale().z, 0.0f,
-		0.0f, 0.0f, 0.0f, 1.0f
-	);
-	//transformPotion
-	DirectX::XMMATRIX trans(
-		1.0f, 0.0f, 0.0f, 0.0f,
-		0.0f, 1.0f, 0.0f, 0.0f,
-		0.0f, 0.0f, 1.0f, 0.0f,
-		obj.getPos().x, obj.getPos().y, obj.getPos().z, 1.0f
-	);
-	DirectX::XMMATRIX rts = ((rot * trans) * scal);
-
-	vcbd.transform.element = rts;
-
-	//changing vertex Shader cBuffer
-	D3D11_MAPPED_SUBRESOURCE resource;
-
-	immediateContext->Map(obj.getVertexConstBuffer(), 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
-	memcpy(resource.pData, &vcbd, sizeof(Vcb));
-	immediateContext->Unmap(obj.getVertexConstBuffer(), 0);
-	ZeroMemory(&resource, sizeof(D3D11_MAPPED_SUBRESOURCE));
-
-
-	//giving pixelshade lightPos
-	pcbd.lightPos.element[0] = light.getPos().x;
-	pcbd.lightPos.element[1] = light.getPos().y;
-	pcbd.lightPos.element[2] = light.getPos().z;
-	pcbd.lightPos.element[3] = 1;
-
-	//changing pixel shader cBuffer
-	std::cout << "stop" << std::endl;
-
-	immediateContext->Map(obj.getPixelConstBuffer(), 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
-	std::cout << "hello" << std::endl;
-	memcpy(resource.pData, &pcbd, sizeof(Pcb));
-	immediateContext->Unmap(obj.getPixelConstBuffer(), 0);
-	ZeroMemory(&resource, sizeof(D3D11_MAPPED_SUBRESOURCE));
+	//depth.CreateDepthStencil(device, WIDTH, HEIGHT, true);
+	//return depth.getDepthSRV();
+	return nullptr;
 }
 
 void Graphics::updateVertexShader(object& obj)
@@ -127,9 +89,9 @@ void Graphics::updateGeometryShader(BillBoard& obj, Camera cam)
 
 void Graphics::updatePixelShader(object& obj)
 {
-	pcbd.lightPos.element[0] = light.getPos().x;
-	pcbd.lightPos.element[1] = light.getPos().y;
-	pcbd.lightPos.element[2] = light.getPos().z;
+	pcbd.lightPos.element[0] = light->getPos().x;
+	pcbd.lightPos.element[1] = light->getPos().y;
+	pcbd.lightPos.element[2] = light->getPos().z;
 	pcbd.lightPos.element[3] = 1;
 
 	obj.getKdKa(pcbd.kd.element, pcbd.ka.element);
@@ -150,16 +112,16 @@ void Graphics::Projection()
 }
 
 Graphics::Graphics(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine, _In_ int nCmdShow) :
-	speed(1.5f),
-	light(vec3(0.f, 0.f, 40.f))
+	speed(1.5f)
 {
+	
 	fov = 45.f;
 	ratio = 16.f / 9.f;
 	farPlane = 200.f;
 	nearPlane = 0.1f;
 	nrOfObject = 0;
 	Pg_pConstantBuffer = NULL;
-	normalMapping = true;
+	normalMapping = true;//?
 	inputLayout = new ID3D11InputLayout * [2];
 	vShader = new ID3D11VertexShader * [2];
 	gShader = new ID3D11GeometryShader * [1];
@@ -180,6 +142,7 @@ Graphics::Graphics(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 		std::cerr << "cant set up" << std::endl;
 		delete this;
 	}
+
 	D3D11_BLEND_DESC bd = {};
 	bs = nullptr;
 	bd.RenderTarget[0].BlendEnable = TRUE;
@@ -280,6 +243,11 @@ Pcb *Graphics::getPcb()
 {
 	return &pcbd;
 }
+ShadowMap* Graphics::getShadowMap()
+{
+	//return this->shadowMap;
+	return nullptr;
+}
 ID3D11Device* Graphics::getDevice()
 {
 	return this->device;
@@ -313,38 +281,26 @@ vec2 Graphics::getWH()
 	return vec2((float)WIDTH, (float)HEIGHT);
 }
 
+void Graphics::takeLight(Light* light)
+{
+	this->light = light;
+	//shadowMap = new ShadowMap(light, this);
+}
+
+void Graphics::takeIM(ImguiManager* manager)
+{
+	this->imguimanager = manager;
+}
 
 void Graphics::clearScreen()
 {
 	float clearColor[4] = { 0.1f,0.1f,0.1f,0 };
 	immediateContext->ClearRenderTargetView(renderTarget, clearColor);
 	immediateContext->ClearDepthStencilView(dsView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1, 0);
-
-}
-
-void Graphics::draw(GameObject& obj)
-{
-	//immediateContext->PSSetShaderResources(0, 2, obj->texSRV);
-	//immediateContext->VSSetConstantBuffers(0, 1, &objects[i]->getVertexConstBuffer());
-	//immediateContext->PSSetConstantBuffers(0, 1, &objects[i]->getPixelConstBuffer());
-	//immediateContext->IASetVertexBuffers(0, 1, &objects[i]->getVertexBuffer(), &strid, &offset);
-	////this line right here
-	//immediateContext->Draw((int)objects[i]->getNrOfVertex(), 0);
 }
 
 void Graphics::present()
 {
-	//some other stuff
-	ImGui_ImplDX11_NewFrame();
-	ImGui_ImplWin32_NewFrame();
-	ImGui::NewFrame();
-	if (ImGui::Begin("Light")) {
-		ImGui::SliderFloat("Xpos", &light.getPos().x, 40.0f, -40.0f);
-		ImGui::SliderFloat("Zpos", &light.getPos().z, 40.0f, -40.0f);
-	}
-	ImGui::End();
-	ImGui::Render();
-	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
-
+	this->imguimanager->updateRender();
 	swapChain->Present(0, 0);
 }

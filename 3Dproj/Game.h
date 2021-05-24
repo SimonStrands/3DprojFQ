@@ -6,6 +6,7 @@
 #include "Camera.h"
 #include "imguiManager.h"
 #include "ResourceManager.h"
+#include "Light.h"
 
 #include "GameObject.h"
 #include "BillBoard.h"
@@ -30,6 +31,7 @@ private:
 
 	//game objects
 	Camera *camera;
+	Light *light;
 	GameObject** obj;
 	BillBoard *bill;
 	Mouse* mus;
