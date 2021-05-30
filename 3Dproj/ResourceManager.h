@@ -17,7 +17,7 @@ public:
 	Mesh *get_Ball();
 	Mesh *get_Stol();
 	Mesh *get_IDK();
-	Mesh* get_starwars();
+	//Mesh* get_starwars();
 #pragma endregion
 	
 private:
@@ -31,7 +31,7 @@ private:
 	Mesh *ball;
 	Mesh *stol;
 	Mesh *IDK;
-	Mesh* starwars;
+	//Mesh* starwars;
 #pragma endregion
 
 	void cantLoad(LPCWSTR theerror);

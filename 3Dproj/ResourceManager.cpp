@@ -37,7 +37,7 @@ void ResourceManager::loadThings(Graphics*& gfx)
 	ball = new Mesh(gfx, "obj/newsun.obj", def);
 	stol = new Mesh(gfx, "obj/stol.obj", def);
 	IDK = new Mesh(gfx, "obj/untitled.obj", def);
-	starwars = new Mesh(gfx, "obj/stormtrooper.obj", def);
+	//starwars = new Mesh(gfx, "obj/stormtrooper.obj", def);
 }
 
 Mesh *ResourceManager::get_Ball()
@@ -55,10 +55,10 @@ Mesh *ResourceManager::get_IDK()
 	return IDK;
 }
 
-Mesh* ResourceManager::get_starwars()
-{
-	return this->starwars;
-}
+//Mesh* ResourceManager::get_starwars()
+//{
+//	return this->starwars;
+//}
 
 ID3D11ShaderResourceView** ResourceManager::getDef()
 {

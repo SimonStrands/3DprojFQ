@@ -3,6 +3,8 @@
 #include "imgui_impl_win32.h"
 #include "Camera.h"
 #include "ShadowMap.h"
+#include "Game.h"
+
 //debug nothing to look here at
 void Graphics::debugcd()
 {
@@ -159,14 +161,9 @@ Graphics::Graphics(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	
 	//set settings up
 	immediateContext->PSSetSamplers(0, 1, &sampler);
-	immediateContext->VSSetShader(vShader[0], nullptr, 0);
-	immediateContext->GSSetShader(gShader[0], nullptr, 0);
-	immediateContext->PSSetShader(pShader[0], nullptr, 0);
 	immediateContext->RSSetViewports(1, &viewPort);
 	immediateContext->OMSetRenderTargets(1, &renderTarget, dsView);
 	immediateContext->RSSetState(pRS);
-	immediateContext->IASetInputLayout(inputLayout[0]);
-	immediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	ImGui_ImplDX11_Init(device, immediateContext);
 }
 
@@ -284,7 +281,6 @@ vec2 Graphics::getWH()
 void Graphics::takeLight(Light* light)
 {
 	this->light = light;
-	//shadowMap = new ShadowMap(light, this);
 }
 
 void Graphics::takeIM(ImguiManager* manager)
@@ -292,11 +288,28 @@ void Graphics::takeIM(ImguiManager* manager)
 	this->imguimanager = manager;
 }
 
+void Graphics::takeObj(object** obj)
+{
+	this->objects = obj;
+}
+
+void Graphics::setGame(Game* game)
+{
+	this->game = game;
+}
+
+
+
 void Graphics::clearScreen()
 {
 	float clearColor[4] = { 0.1f,0.1f,0.1f,0 };
 	immediateContext->ClearRenderTargetView(renderTarget, clearColor);
 	immediateContext->ClearDepthStencilView(dsView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1, 0);
+}
+
+void Graphics::drawToBuffer()
+{
+	this->game->DrawToBuffer(false);
 }
 
 void Graphics::present()

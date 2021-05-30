@@ -7,21 +7,43 @@ ShadowMap::ShadowMap(Light* light, Graphics* gfx)
 	this->light = light;
 	std::string bytecode;
 	loadVShader("VertexShadow.cso", gfx->getDevice(), vertexShadow, bytecode);
-	loadPShader("PixelShadow.cso", gfx->getDevice(), pixelShadow);
-	inputdesc(gfx, bytecode);
-	sampler(gfx);
-	//render target = null
-	//pixel shader = null
+	CreateDepthStencil(gfx->getDevice(), gfx->getWH().x, gfx->getWH().y);
 }
 
-bool ShadowMap::render(Graphics*& gfx, DirectX::XMMATRIX worldMatrix, DirectX::XMMATRIX viewMatrix, DirectX::XMMATRIX projectionMatrix, DirectX::XMMATRIX lightViewMatrix, DirectX::XMMATRIX lightProjectionMatrix, ID3D11ShaderResourceView* texture, ID3D11ShaderResourceView* depthMapTexture)
+bool ShadowMap::render(Graphics*& gfx)
 {
-	bool r = setShaderParameter(gfx, worldMatrix, viewMatrix, projectionMatrix, lightViewMatrix, lightProjectionMatrix, texture, depthMapTexture);
-	
+	//bool r = setShaderParameter(gfx, worldMatrix, viewMatrix, projectionMatrix, lightViewMatrix, lightProjectionMatrix, texture, depthMapTexture);
+	//gfx->get_IC()->OMSetRenderTargets(1, &renderTarget, dsView);
+	gfx->drawToBuffer();
 	return false;
 }
 
-bool ShadowMap::inputdesc(Graphics*& gfx, std::string& VbyteCode)
+bool ShadowMap::CreateDepthStencil(ID3D11Device* device, UINT width, UINT height)
+{
+	D3D11_TEXTURE2D_DESC textureDesc;
+	textureDesc.Width = width;
+	textureDesc.Height = height;
+	textureDesc.MipLevels = 1;
+	textureDesc.ArraySize = 1;
+	textureDesc.Format = DXGI_FORMAT_R32_TYPELESS;
+	textureDesc.SampleDesc.Count = 1;
+	textureDesc.SampleDesc.Quality = 0;
+	textureDesc.Usage = D3D11_USAGE_DEFAULT;
+	textureDesc.BindFlags = D3D10_BIND_DEPTH_STENCIL | D3D10_BIND_SHADER_RESOURCE;
+	textureDesc.CPUAccessFlags = 0;
+	textureDesc.MiscFlags = 0;
+
+	if (FAILED(device->CreateTexture2D(&textureDesc, nullptr, &dsTexture)))
+	{
+		printf("failed create 2d texture");
+		return false;
+	}
+
+	HRESULT hr = device->CreateDepthStencilView(dsTexture, nullptr, &dsview);
+	return !FAILED(hr);
+}
+
+/*bool ShadowMap::inputdesc(Graphics*& gfx, std::string& VbyteCode)
 {
 	D3D11_INPUT_ELEMENT_DESC inputDesc[3];
 	inputDesc[0].SemanticName = "POSITION";
@@ -57,8 +79,8 @@ bool ShadowMap::inputdesc(Graphics*& gfx, std::string& VbyteCode)
 	else {
 		return true;
 	}
-}
-bool ShadowMap::sampler(Graphics*& gfx)
+}*/
+/*bool ShadowMap::sampler(Graphics*& gfx)
 {
 	D3D11_SAMPLER_DESC samplerDesc;
 	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
@@ -91,8 +113,8 @@ bool ShadowMap::sampler(Graphics*& gfx)
 	else {
 		return true;
 	}
-}
-bool ShadowMap::buffers(Graphics*& gfx)
+}*/
+/*bool ShadowMap::buffers(Graphics*& gfx)
 {
 	D3D11_BUFFER_DESC mBufferDesc;
 	mBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
@@ -109,21 +131,18 @@ bool ShadowMap::buffers(Graphics*& gfx)
 	else {
 		return true;
 	}
-}
+}*/
 
-void ShadowMap::RenderShader(ID3D11DeviceContext* deviceContext, int indexCount)
+void ShadowMap::RenderShader(ID3D11DeviceContext* deviceContext)
 {
-	deviceContext->IASetInputLayout(layout);
 	deviceContext->VSSetShader(vertexShadow, NULL, 0);
-	deviceContext->PSSetShader(pixelShadow, NULL, 0);
-	deviceContext->PSSetSamplers(0, 1, &sampleStateClamp);
-	deviceContext->PSSetSamplers(1, 1, &sampleStateWrap);
+	deviceContext->PSSetShader(nullptr, nullptr, 0);
 
 	// Render the triangle.
-	deviceContext->DrawIndexed(indexCount, 0, 0);
+	deviceContext->DrawIndexed(1, 0, 0);
 }
 
-bool ShadowMap::setShaderParameter(Graphics*& gfx, DirectX::XMMATRIX worldMatrix, DirectX::XMMATRIX viewMatrix, DirectX::XMMATRIX projectionMatrix,
+/*bool ShadowMap::setShaderParameter(Graphics*& gfx, DirectX::XMMATRIX worldMatrix, DirectX::XMMATRIX viewMatrix, DirectX::XMMATRIX projectionMatrix,
 	DirectX::XMMATRIX lightViewMatrix, DirectX::XMMATRIX lightProjectionMatrix, ID3D11ShaderResourceView* texture, ID3D11ShaderResourceView* depthMapTexture)
 {
 	worldMatrix = DirectX::XMMatrixTranspose(worldMatrix);
@@ -133,7 +152,6 @@ bool ShadowMap::setShaderParameter(Graphics*& gfx, DirectX::XMMATRIX worldMatrix
 	lightProjectionMatrix = DirectX::XMMatrixTranspose(lightProjectionMatrix);
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 	Vcb VdataPtr;
-	SPCB PdataPtr;
 	HRESULT hr = gfx->get_IC()->Map(matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 	if (FAILED(hr)) {
 		return false;
@@ -156,4 +174,4 @@ bool ShadowMap::setShaderParameter(Graphics*& gfx, DirectX::XMMATRIX worldMatrix
 	}
 	return true;
 
-}
+}*/

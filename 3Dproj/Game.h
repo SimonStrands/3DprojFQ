@@ -17,13 +17,13 @@ public:
 	Game(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine, _In_ int nCmdShow);
 	virtual ~Game();
 	void run();
+	void DrawToBuffer(bool ps = true);
 private:
 	//width and height of window
 	MSG msg = {};
 	Graphics *gfx;
 	ResourceManager* rm;
 	void Update();
-	void Render();
 private:
 	//logic and others
 	DeltaTime dt;

@@ -66,6 +66,7 @@ struct Gcb {
 };
 
 class Camera;
+class Game;
 
 class Graphics {
 
@@ -153,7 +154,8 @@ private:
 	void Projection();
 
 public:
-	//get things
+	//get things 
+	//from gfx
 	Vcb *getVcb();
 	Pcb *getPcb();
 	ShadowMap* getShadowMap();
@@ -164,11 +166,13 @@ public:
 	ID3D11PixelShader** getPS();
 	ID3D11GeometryShader** getGS();
 	ID3D11InputLayout** getInputL();
-
 	vec2 getWH();
+	//to gfx
 	void takeLight(Light *light);
 	void takeIM(ImguiManager* manager);
-
+	void takeObj(object **obj);
+	void setGame(Game* game);
+	Game* game;
 
 	//update
 	void Update(float dt);
@@ -178,6 +182,7 @@ public:
 
 	//draw
 	void clearScreen();
+	void drawToBuffer();
 	void present();
 private:
 	//Debug shit

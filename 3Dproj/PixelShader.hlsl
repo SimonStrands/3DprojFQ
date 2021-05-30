@@ -23,16 +23,16 @@ Texture2D testTex : register(t1);
 Texture2D nMap : register(t2);
 SamplerState testSampler;
 
-float4 main(PixelShaderInput input) : SV_TARGET
-{
-	float x = input.fragpos.x - cameraPos.x;
-	float y = input.fragpos.y - cameraPos.y;
-	float z = input.fragpos.z - cameraPos.z;
-	float d = 1/(sqrt(x * x + y * y + z * z)/3);
-	return float4(d, d, d, 1);
-}
+//float4 main(PixelShaderInput input) : SV_TARGET
+//{
+//	float x = input.fragpos.x - cameraPos.x;
+//	float y = input.fragpos.y - cameraPos.y;
+//	float z = input.fragpos.z - cameraPos.z;
+//	float d = 1/(sqrt(x * x + y * y + z * z)/3);
+//	return float4(d, d, d, 1);
+//}
 
-/*float4 main(PixelShaderInput input) : SV_TARGET
+float4 main(PixelShaderInput input) : SV_TARGET
 {
 	//for culling none
 	float3 posToView = normalize(input.fragpos.xyz - cameraPos.xyz);
@@ -79,4 +79,4 @@ float4 main(PixelShaderInput input) : SV_TARGET
 	//float3 final = (testTex.Sample(testSampler, input.uv).xyz) * lightning;
 	return float4(final, dtex.a);
 
-}*/
+}
