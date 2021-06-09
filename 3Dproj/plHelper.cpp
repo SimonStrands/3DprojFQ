@@ -17,7 +17,7 @@ bool loadVShader(std::string name, ID3D11Device* device, ID3D11VertexShader*& vS
 	reader.open("../x64/Debug/" + name, std::ios::binary | std::ios::ate);
 	if (!reader.is_open())
 	{
-		std::cerr << "cannot open vertex file" << std::endl;
+		printf("cannot open vertex file\n");
 		return false;
 	}
 
@@ -26,8 +26,8 @@ bool loadVShader(std::string name, ID3D11Device* device, ID3D11VertexShader*& vS
 	reader.seekg(0, std::ios::beg);
 
 	shaderData.assign((std::istreambuf_iterator<char>(reader)), std::istreambuf_iterator<char>());
-
-	if (FAILED(device->CreateVertexShader(shaderData.c_str(), shaderData.length(), nullptr, &vShader)))
+	HRESULT hr = device->CreateVertexShader(shaderData.c_str(), shaderData.length(), nullptr, &vShader);
+	if (FAILED(hr))
 	{
 		std::cerr << "cannot create vertexShader" << std::endl;
 		return false;

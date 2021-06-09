@@ -12,7 +12,7 @@ Camera::Camera(Graphics *&gfx, Mouse* mus)
 	this->mouseSensitivity = 5.0f;
 	this->xCamPos = 0.f;
 	this->yCamPos = 0.0;
-	this->zCamPos = 0.0f;
+	this->zCamPos = 10.0f;
 	this->xCamRot = 0;
 	this->yCamRot = 0;
 }
@@ -23,7 +23,6 @@ Camera::~Camera()
 
 void Camera::updateCamera(float dt)
 {	
-	//printf("x :%f y :%f\n", xCamPos, yCamPos);
 	handleEvent(dt);
 	DirectX::XMMATRIX viewMatrix = DirectX::XMMATRIX(
 		1.0f,0.0f,0.0f,0.0f,

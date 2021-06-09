@@ -33,6 +33,8 @@ VertexShaderOutput main(VertexShaderInput input) {
 	output.bitangent = normalize((mul(input.bitangent, transform)).xyz);
 	output.tangent = normalize((mul(input.tangent, transform)).xyz);
 	output.normal = normalize((mul(input.normal, transform)).xyz);
-	
+
+	output.position.z = 0.1 * output.position.z;//does this work?
+
 	return output;
 }

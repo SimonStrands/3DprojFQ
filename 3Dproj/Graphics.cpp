@@ -2,8 +2,8 @@
 #include "imgui_impl_dx11.h"
 #include "imgui_impl_win32.h"
 #include "Camera.h"
-#include "ShadowMap.h"
 #include "Game.h"
+#include "ShadowMap.h"
 
 //debug nothing to look here at
 void Graphics::debugcd()
@@ -27,12 +27,6 @@ void Graphics::keyboardDebug()
 	}
 }
 
-ID3D11ShaderResourceView* Graphics::special()
-{
-	//depth.CreateDepthStencil(device, WIDTH, HEIGHT, true);
-	//return depth.getDepthSRV();
-	return nullptr;
-}
 
 void Graphics::updateVertexShader(object& obj)
 {
@@ -117,17 +111,18 @@ Graphics::Graphics(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	speed(1.5f)
 {
 	
-	fov = 45.f;
+	fov = 90.f;
 	ratio = 16.f / 9.f;
 	farPlane = 200.f;
 	nearPlane = 0.1f;
 	nrOfObject = 0;
 	Pg_pConstantBuffer = NULL;
 	normalMapping = true;//?
-	inputLayout = new ID3D11InputLayout * [2];
+	inputLayout = new ID3D11InputLayout * [3];
 	vShader = new ID3D11VertexShader * [2];
 	gShader = new ID3D11GeometryShader * [1];
 	pShader = new ID3D11PixelShader * [1];
+	
 	//setting matrixes
 	Projection();
 	//if delete this happens it will get an error and program will stop working(I want this to happen when I debug)
@@ -161,8 +156,11 @@ Graphics::Graphics(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	
 	//set settings up
 	immediateContext->PSSetSamplers(0, 1, &sampler);
+	immediateContext->PSSetShader(getPS()[0], nullptr, 0);
 	immediateContext->RSSetViewports(1, &viewPort);
 	immediateContext->OMSetRenderTargets(1, &renderTarget, dsView);
+	immediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	
 	immediateContext->RSSetState(pRS);
 	ImGui_ImplDX11_Init(device, immediateContext);
 }
@@ -240,10 +238,9 @@ Pcb *Graphics::getPcb()
 {
 	return &pcbd;
 }
-ShadowMap* Graphics::getShadowMap()
+ShadowMap*& Graphics::getShadowMap()
 {
-	//return this->shadowMap;
-	return nullptr;
+	return shadowMap;
 }
 ID3D11Device* Graphics::getDevice()
 {
@@ -273,6 +270,14 @@ ID3D11InputLayout** Graphics::getInputL()
 {
 	return this->inputLayout;
 }
+ID3D11RenderTargetView*& Graphics::getRenderTarget()
+{
+	return this->renderTarget;
+}
+ID3D11DepthStencilView* Graphics::getDepthStencil()
+{
+	return this->dsView;
+}
 vec2 Graphics::getWH()
 {
 	return vec2((float)WIDTH, (float)HEIGHT);
@@ -281,6 +286,7 @@ vec2 Graphics::getWH()
 void Graphics::takeLight(Light* light)
 {
 	this->light = light;
+	this->shadowMap = new ShadowMap(light, this);
 }
 
 void Graphics::takeIM(ImguiManager* manager)
@@ -309,7 +315,16 @@ void Graphics::clearScreen()
 
 void Graphics::drawToBuffer()
 {
-	this->game->DrawToBuffer(false);
+	immediateContext->OMSetRenderTargets(1, &renderTarget, dsView);
+	this->game->DrawToBuffer();
+}
+
+void Graphics::drawShadowBuffer()
+{
+	this->shadowMap->RenderShader();
+	ID3D11RenderTargetView* pNullRTV = NULL;
+	immediateContext->OMSetRenderTargets(0, &pNullRTV, shadowMap->Getdepthview());
+	this->game->DrawAllShadowObject();
 }
 
 void Graphics::present()

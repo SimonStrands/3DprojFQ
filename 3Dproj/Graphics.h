@@ -7,14 +7,16 @@
 #include <DirectXMath.h>
 #include "WindowHelper.h"
 #include "deltaTime.h"
-#include "GameObject.h"
-#include "BillBoard.h"
 #include "rotation.h"
 #include "Keyboard.h"
 #include "imguiManager.h"
 
+#include "GameObject.h"
+#include "BillBoard.h"
+
+#include "ShadowMap.h"
 //git
-class ShadowMap;
+
 struct Vcb {
 	struct {
 		DirectX::XMMATRIX element;
@@ -140,7 +142,7 @@ private:
 
 	//objects
 	Light* light;
-	//ShadowMap* shadowMap;
+	ShadowMap* shadowMap;
 	object** objects;
 	ImguiManager *imguimanager;
 
@@ -158,7 +160,7 @@ public:
 	//from gfx
 	Vcb *getVcb();
 	Pcb *getPcb();
-	ShadowMap* getShadowMap();
+	ShadowMap*& getShadowMap();
 	ID3D11Device* getDevice();
 	ID3D11DeviceContext*& get_IC();
 	ID3D11Texture2D*& getTexture();
@@ -166,6 +168,8 @@ public:
 	ID3D11PixelShader** getPS();
 	ID3D11GeometryShader** getGS();
 	ID3D11InputLayout** getInputL();
+	ID3D11RenderTargetView*& getRenderTarget();
+	ID3D11DepthStencilView* getDepthStencil();
 	vec2 getWH();
 	//to gfx
 	void takeLight(Light *light);
@@ -183,14 +187,14 @@ public:
 	//draw
 	void clearScreen();
 	void drawToBuffer();
+	void drawShadowBuffer();
 	void present();
+	
 private:
 	//Debug shit
 	void debugcd();
 	void keyboardDebug();
 	bool pressed = false;
 	bool normalMapping;
-public:
-	ID3D11ShaderResourceView* special();
 	
 };

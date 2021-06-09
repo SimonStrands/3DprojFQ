@@ -12,15 +12,13 @@ GameObject::GameObject(Mesh *file, Graphics*& gfx, vec3 pos, vec3 rot, vec3 scal
 	CreatePixelConstBuffer(gfx, this->getPixelConstBuffer());
 	file->getKdKa(this->kd, this->ka);
 	this->normalMap = 1.f;
-
-	this->special = gfx->special();
 }
 
 GameObject::~GameObject()
 {
 
 }
-
+static bool once = false;
 void GameObject::draw(ID3D11DeviceContext*& immediateContext)
 {
 	static UINT strid = sizeof(vertex);

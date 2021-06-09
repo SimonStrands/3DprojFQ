@@ -8,16 +8,14 @@
 #include "ResourceManager.h"
 #include "Light.h"
 
-#include "GameObject.h"
-#include "BillBoard.h"
-
 //git
 class Game {
 public:
 	Game(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine, _In_ int nCmdShow);
 	virtual ~Game();
 	void run();
-	void DrawToBuffer(bool ps = true);
+	void DrawToBuffer();
+	void DrawAllShadowObject();//without any otherShaders
 private:
 	//width and height of window
 	MSG msg = {};

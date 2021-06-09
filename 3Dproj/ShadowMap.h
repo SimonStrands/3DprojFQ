@@ -1,21 +1,33 @@
 #pragma once
-#include "Graphics.h"
 #include "plHelper.h"
+#include "Light.h"
+#include <d3d11.h>
+#include "plHelper.h"
+class Graphics;
 
 class ShadowMap {
 public:
 	ShadowMap(Light* light, Graphics* gfx);
-	void render(Graphics*& gfx);
+	ID3D11DepthStencilView* Getdepthview();
+	ID3D11ShaderResourceView* GetshadowResV();
+	void RenderShader();
+	ID3D11ShaderResourceView*& fromDepthToSRV();
+	
 private:
 
 	bool CreateDepthStencil(ID3D11Device* device, UINT width, UINT height);
 	//object
 	Light* light;
 	Graphics* gfx;
+	
 	ID3D11Texture2D* dsTexture;
-	ID3D11DepthStencilView* dsview;
+	ID3D11DepthStencilView* dsView;
 	ID3D11VertexShader* vertexShadow;
-	void RenderShader(ID3D11DeviceContext* deviceContext);
+	ID3D11PixelShader* pixelShadow;
+	ID3D11Resource* shadowRes;
+	ID3D11ShaderResourceView* shadowResV;
+
+	ID3D11RenderTargetView* shadowTarget;
 	/*set up
 bool inputdesc(Graphics*& gfx, std::string& VbyteCode);
 bool sampler(Graphics*& gfx);
@@ -30,14 +42,4 @@ bool setShaderParameter(Graphics*& gfx, DirectX::XMMATRIX worldMatrix,
 	ID3D11ShaderResourceView* texture,
 	ID3D11ShaderResourceView* depthMapTexture);
 	*/
-
-	//ID3D11PixelShader* pixelShadow;
-	//ID3D11InputLayout* layout;
-	//ID3D11SamplerState* sampleStateWrap;
-
-	//ID3D11SamplerState* sampleStateClamp;
-	//ID3D11Buffer* matrixBuffer;
-	//ID3D11Buffer* lightBuffer;
-	//ID3D11Buffer* lightBuffer2;
-	//ID3D11InputLayout* inputLayout;
 };

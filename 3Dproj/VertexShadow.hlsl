@@ -1,10 +1,9 @@
 struct VertexShaderInput {
-	float4 position : POSITION;
+	float3 position : POSITION;
 };
 
 struct VertexShaderOutput {
 	float4 position : SV_POSITION;
-	float4 fragpos: FRAG_POS;
 };
 
 cbuffer CBuf
@@ -14,10 +13,11 @@ cbuffer CBuf
 	row_major matrix projection;
 };
 
-float4 main( float4 pos : POSITION ) : SV_POSITION
+VertexShaderOutput main(VertexShaderInput input)
 {
+	VertexShaderOutput output;
 	float4x4 MVP = mul(mul(transform, view),projection);
-	output.fragpos = mul(float4(input.position,1.0f), transform);
 	output.position = mul((float4((input.position), 1.0f)), MVP);
+	output.position.z = 0.1 * output.position.z;//does this work?
 	return output;
 }

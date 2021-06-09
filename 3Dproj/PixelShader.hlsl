@@ -21,16 +21,17 @@ cbuffer CBuf
 Texture2D ambientTex : register(t0);
 Texture2D testTex : register(t1);
 Texture2D nMap : register(t2);
+Texture2D SM : register(t3);
 SamplerState testSampler;
 
-//float4 main(PixelShaderInput input) : SV_TARGET
-//{
-//	float x = input.fragpos.x - cameraPos.x;
-//	float y = input.fragpos.y - cameraPos.y;
-//	float z = input.fragpos.z - cameraPos.z;
-//	float d = 1/(sqrt(x * x + y * y + z * z)/3);
-//	return float4(d, d, d, 1);
-//}
+/*float4 main(PixelShaderInput input) : SV_TARGET
+{
+	float x = input.fragpos.x - cameraPos.x;
+	float y = input.fragpos.y - cameraPos.y;
+	float z = input.fragpos.z - cameraPos.z;
+	float d = 1/(sqrt(x * x + y * y + z * z)/3);
+	return float4(d, d, d, 1);
+}*/
 
 float4 main(PixelShaderInput input) : SV_TARGET
 {
@@ -71,10 +72,11 @@ float4 main(PixelShaderInput input) : SV_TARGET
 	
 
 	//get final lightning
-	float3 lightning = saturate(ambient_light + defuse_light);
-	//float3 lightning = (ambient_light + defuse_light) + specular;
+	//float3 lightning = saturate(ambient_light + defuse_light);
+	float3 lightning = float3(1,1,1);
 	//add the texture
-	float4 dtex = testTex.Sample(testSampler, input.uv);
+	//float4 dtex = testTex.Sample(testSampler, input.uv);
+	float4 dtex = SM.Sample(testSampler, input.uv);
 	float3 final = (dtex.xyz * lightning) + specular;
 	//float3 final = (testTex.Sample(testSampler, input.uv).xyz) * lightning;
 	return float4(final, dtex.a);

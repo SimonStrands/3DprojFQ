@@ -315,6 +315,12 @@
     <FxCompile Include="VertexShader.hlsl">
       <Filter>Resource Files\Shaders\Vertex</Filter>
     </FxCompile>
+    <FxCompile Include="VertexShadow.hlsl">
+      <Filter>Resource Files\Shaders\Vertex</Filter>
+    </FxCompile>
+    <FxCompile Include="PixelShadow.hlsl">
+      <Filter>Resource Files\Shaders\Pixel</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="Help.txt">

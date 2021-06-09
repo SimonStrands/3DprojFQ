@@ -36,7 +36,7 @@ void ResourceManager::loadThings(Graphics*& gfx)
 	//mesh
 	ball = new Mesh(gfx, "obj/newsun.obj", def);
 	stol = new Mesh(gfx, "obj/stol.obj", def);
-	IDK = new Mesh(gfx, "obj/untitled.obj", def);
+	IDK = new Mesh(gfx, "obj/quad.obj", def);
 	//starwars = new Mesh(gfx, "obj/stormtrooper.obj", def);
 }
 
