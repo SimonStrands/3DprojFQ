@@ -33,7 +33,7 @@ void ImguiManager::updateRender()
 		if (ImGui::Begin(name.c_str())) {
 			ImGui::SliderFloat("Xpos", &obj[i]->getxPos(), 40.0f, -40.0f);
 			ImGui::SliderFloat("Zpos", &obj[i]->getzPos(), 40.0f, -40.0f);
-			ImGui::SliderFloat("XRot", &obj[i]->getxRot(), 10.0f, -10.0f);
+			ImGui::SliderFloat("XRot", &obj[i]->getxRot(), 20.0f, -20.0f);
 		}
 		ImGui::End();
 	}

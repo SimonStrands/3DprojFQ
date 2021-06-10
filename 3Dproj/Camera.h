@@ -8,7 +8,7 @@
 
 class Camera {
 public:
-	Camera(Graphics *&gfx, Mouse *mus = nullptr);
+	Camera(Graphics *&gfx, Mouse *mus = nullptr, vec3 pos = vec3(0,0,10));
 	virtual ~Camera();
 	void updateCamera(float dt);
 	vec3 getPos();

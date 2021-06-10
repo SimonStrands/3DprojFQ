@@ -20,7 +20,6 @@ void Graphics::keyboardDebug()
 		else {
 			normalMapping = true;
 		}
-		//pcbd.nMapping.element = normalMapping;
 	}
 	else {
 		pressed = false;
@@ -283,7 +282,7 @@ vec2 Graphics::getWH()
 	return vec2((float)WIDTH, (float)HEIGHT);
 }
 
-void Graphics::takeLight(Light* light)
+void Graphics::takeLight(PointLight* light)
 {
 	this->light = light;
 	this->shadowMap = new ShadowMap(light, this);
@@ -324,7 +323,8 @@ void Graphics::drawShadowBuffer()
 	this->shadowMap->RenderShader();
 	ID3D11RenderTargetView* pNullRTV = NULL;
 	immediateContext->OMSetRenderTargets(0, &pNullRTV, shadowMap->Getdepthview());
-	this->game->DrawAllShadowObject();
+	this->vcbd.lightView.element = shadowMap->getLightView();
+	this->vcbd.view.element = shadowMap->getLightView();
 }
 
 void Graphics::present()

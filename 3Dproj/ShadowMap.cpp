@@ -1,8 +1,9 @@
 #include "ShadowMap.h"
 #include "Graphics.h"
+#include "rotation.h"
 
 
-ShadowMap::ShadowMap(Light* light, Graphics* gfx)
+ShadowMap::ShadowMap(PointLight* light, Graphics* gfx)
 {
 	this->gfx = gfx;
 	this->light = light;
@@ -30,6 +31,16 @@ void ShadowMap::RenderShader()
 	gfx->get_IC()->VSSetShader(vertexShadow, nullptr, 0);
 	gfx->get_IC()->PSSetShader( pixelShadow, nullptr, 0);
 
+	
+	DirectX::XMMATRIX temp(
+		1.0f, 0.0f, 0.0f, 0.0f,
+		0.0f, 1.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 1.0f, 0.0f,
+		light->getPos().x, light->getPos().y, light->getPos().z, 1.0f
+	);
+	XRotation(temp, light->getRotation().x);
+	YRotation(temp, light->getRotation().y);
+	lightView = temp;
 
 }
 
@@ -48,6 +59,11 @@ ID3D11ShaderResourceView*& ShadowMap::fromDepthToSRV()
 		printf("can create shadowResourceView");
 	}
 	return shadowResV;
+}
+
+DirectX::XMMATRIX ShadowMap::getLightView()
+{
+	return this->lightView;
 }
 
 bool ShadowMap::CreateDepthStencil(ID3D11Device* device, UINT width, UINT height)

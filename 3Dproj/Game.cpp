@@ -4,11 +4,12 @@ Game::Game(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWS
 {
 	gfx = new Graphics(hInstance, hPrevInstance, lpCmdLine, nCmdShow);
 	rm = new ResourceManager(gfx);
-	light = new PointLight(vec3(0,0,0));
+	light = new PointLight(vec3(15,0,20), vec3(0,0,-1));
 	gfx->takeIM(&this->UIManager);
 	gfx->setGame(this);
 	mus = new Mouse(gfx->getWH());
-	camera = new Camera(gfx, mus);
+	//camera = new Camera(gfx, mus, vec3(15,0,20));
+	camera = new Camera(gfx, mus, vec3(10,0,10));
 	nrOfObj = 3;
 	obj = new GameObject * [nrOfObj];
 	//int i = 0; 
@@ -19,17 +20,15 @@ Game::Game(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWS
 	//	}
 	//}
 	UIManager.takeLight(light);
-	obj[0] = new GameObject(rm->get_Stol(), gfx, vec3(0,0,-8.9), vec3(0,0,0), vec3(1,1,1));
-	obj[1] = new GameObject(rm->get_Stol(), gfx, vec3(0,0,-20), vec3(0,0,0), vec3(1,1,1));
-	//obj[2] = new GameObject(rm->get_Stol(), gfx, vec3(0, 0, 20), vec3(0, 0, 0), vec3(10, 10, 10));
-	obj[2] = new GameObject(rm->get_IDK(), gfx, vec3(0, 0, 20), vec3(-1.6, -1.6, 3.2), vec3(10, 10, 10));
+	obj[0] = new GameObject(rm->get_Stol(), gfx, vec3(-15,0,15), vec3(0, 1.56, 0), vec3(1,1,1));
+	//obj[1] = new GameObject(rm->get_Stol(), gfx, vec3(15,0,15), vec3(0,0,0), vec3(1,1,1));
+	obj[1] = new GameObject(rm->get_IDK(), gfx, vec3(0, 0, 20), vec3(0, 1.56,0), vec3(10, 10, 10));
+	obj[2] = new GameObject(rm->get_Ball(), gfx, vec3(10, 0, 10), vec3(-1.6, -1.6, 3.2), vec3(1, 1, 1));
 	UIManager.takeObject(obj[0]);
 	UIManager.takeObject(obj[1]);
-	UIManager.takeObject(obj[2]);
+	//UIManager.takeObject(obj[2]);
 	bill = new BillBoard(gfx, vec3(0.f, 1.2f, 5), rm->getFire(), rm->getDef()[1], 6);
 	gfx->takeLight(light); 
-
-
 
 }
 
@@ -59,18 +58,25 @@ void Game::run()
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		}
-		Update();
 		gfx->clearScreen();
-		for (int i = 0; i < nrOfObj; i++) {
-			gfx->updateVertexShader(*obj[i]);
-			gfx->updatePixelShader(*obj[i]);
-		}
+		
 		gfx->updateVertexShader(*bill);
 		gfx->updateGeometryShader(*bill, *camera);
 		gfx->updatePixelShader(*bill);
 
 		gfx->drawShadowBuffer();
+		for (int i = 0; i < nrOfObj; i++) {
+			gfx->updateVertexShader(*obj[i]);
+		}
+		DrawAllShadowObject();
+
 		
+		Update();
+		for (int i = 0; i < nrOfObj; i++) {
+			gfx->updateVertexShader(*obj[i]);
+			gfx->updatePixelShader(*obj[i]);
+		}
+
 		gfx->drawToBuffer();
 		gfx->present();
 	}
@@ -82,10 +88,10 @@ void Game::Update()
 	dt.restartClock();
 	//keyboard
 	//obj[0]->addRot(vec3(0, 1 * dt.dt(), 0));
-	//obj[1]->addRot(vec3(0, 1 * dt.dt(), 0));
-	bill->update((float)dt.dt());
-	//update
+	//obj[1]->addRot(vec3(0, 1.5 * dt.dt(), 0));
+	//obj[2]->addRot(vec3(0, 0.7 * dt.dt(), 0));
 	camera->updateCamera((float)dt.dt());
+	bill->update((float)dt.dt());
 	mus->UpdateMouse();
 
 	gfx->Update((float)dt.dt());
@@ -95,6 +101,7 @@ void Game::Update()
 void Game::DrawToBuffer()
 {
 	gfx->get_IC()->PSSetShaderResources(3, 1, &gfx->getShadowMap()->fromDepthToSRV());
+
 	gfx->get_IC()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	gfx->get_IC()->IASetInputLayout(gfx->getInputL()[0]);
 	gfx->get_IC()->PSSetShader(gfx->getPS()[0], nullptr, 0);
@@ -114,15 +121,6 @@ void Game::DrawToBuffer()
 
 void Game::DrawAllShadowObject()
 {
-	
-	//gfx->get_IC()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	//gfx->get_IC()->IASetInputLayout(gfx->getInputL()[0]);
-	//gfx->get_IC()->PSSetShader(gfx->getPS()[0], nullptr, 0);
-	//gfx->get_IC()->VSSetShader(gfx->getVS()[0], nullptr, 0);
-	//gfx->get_IC()->GSSetShader(nullptr, nullptr, 0);
-	//for (int i = 0; i < nrOfObj; i++) {
-	//	obj[i]->draw(gfx->get_IC());
-	//}
 	gfx->get_IC()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	gfx->get_IC()->IASetInputLayout(gfx->getInputL()[1]);
 	gfx->get_IC()->GSSetShader(nullptr, nullptr, 0);

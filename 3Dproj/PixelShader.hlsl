@@ -6,6 +6,7 @@ struct PixelShaderInput
 	float3 tangent : TANGENT;
 	float3 bitangent : BITANGENT;
 	float4 fragpos: FRAG_POS;
+	float4 shadowMapCoords : SM_COORDS;
 };
 
 cbuffer CBuf
@@ -24,14 +25,6 @@ Texture2D nMap : register(t2);
 Texture2D SM : register(t3);
 SamplerState testSampler;
 
-/*float4 main(PixelShaderInput input) : SV_TARGET
-{
-	float x = input.fragpos.x - cameraPos.x;
-	float y = input.fragpos.y - cameraPos.y;
-	float z = input.fragpos.z - cameraPos.z;
-	float d = 1/(sqrt(x * x + y * y + z * z)/3);
-	return float4(d, d, d, 1);
-}*/
 
 float4 main(PixelShaderInput input) : SV_TARGET
 {
@@ -54,29 +47,37 @@ float4 main(PixelShaderInput input) : SV_TARGET
 		input.normal = mul(nMapNormal, (float3x3)TBN);
 		
 	}
-	
+	return float4(input.normal, 1.0f);
 	//ambient
-	float3 ambient_light = ka.xyz * lightColor.xyz;
+	//float3 ambient_light = ka.xyz * lightColor.xyz;
+	float3 ambient_light = float3(0.01, 0.01, 0.01);
 
-	//defuse
-	float3 lightDir = normalize(input.fragpos.xyz - lightPos.xyz);
-	float ammount_diffuse = max(dot(-input.normal.xyz, lightDir), 0.0f);
-	float3 defuse_light = ammount_diffuse * kd.xyz * lightColor.xyz;
+	float3 specular;
+	float3 defuse_light;
+	input.shadowMapCoords.xyz = input.shadowMapCoords.xyz / input.shadowMapCoords.w;
+	//if (SM.Sample(testSampler, input.shadowMapCoords.xy).r > input.shadowMapCoords.z) {
 
-	//specular
-	float const_spec = 1.0f;
-	float3 reflection = normalize(reflect(-lightDir, normalize(input.normal.xyz)));
-	float spec = pow(max(0.f, dot(posToView, reflection)), 32);
-	float3 specular = ks.xyz * (lightColor.xyz * ammount_diffuse) * const_spec * ks.xyz * spec;
+		//defuse
+		float3 lightDir = normalize(input.fragpos.xyz - lightPos.xyz);
+		float ammount_diffuse = max(dot(-input.normal.xyz, lightDir), 0.0f);
+		defuse_light = ammount_diffuse * kd.xyz * lightColor.xyz;
 
+		//specular
+		float const_spec = 1.0f;
+		float3 reflection = normalize(reflect(-lightDir, normalize(input.normal.xyz)));
+		float spec = pow(max(0.f, dot(posToView, reflection)), 32);
+		specular = ks.xyz * (lightColor.xyz * ammount_diffuse) * const_spec * ks.xyz * spec;
+	//}
+	//else {
+	//	defuse_light = specular = float3(0.0f, 0.0f, 0.0f);
+	//}
 	
 
 	//get final lightning
-	//float3 lightning = saturate(ambient_light + defuse_light);
-	float3 lightning = float3(1,1,1);
+	float3 lightning = saturate(ambient_light + defuse_light);
 	//add the texture
-	//float4 dtex = testTex.Sample(testSampler, input.uv);
-	float4 dtex = SM.Sample(testSampler, input.uv);
+	float4 dtex = testTex.Sample(testSampler, input.uv);
+	//float4 dtex = SM.Sample(testSampler, input.uv);
 	float3 final = (dtex.xyz * lightning) + specular;
 	//float3 final = (testTex.Sample(testSampler, input.uv).xyz) * lightning;
 	return float4(final, dtex.a);

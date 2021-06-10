@@ -29,7 +29,7 @@ private:
 
 	//game objects
 	Camera *camera;
-	Light *light;
+	PointLight *light;
 	GameObject** obj;
 	BillBoard *bill;
 	Mouse* mus;

@@ -31,9 +31,6 @@ struct Vcb {
 	struct {
 		DirectX::XMMATRIX element;
 	}lightView;
-	struct {
-		DirectX::XMMATRIX element;
-	}lightProjection;
 
 };
 
@@ -106,6 +103,8 @@ private:
 		},
 		{//projection
 		},
+		{//lightView
+		},
 
 	};
 	//PixelConstantBuffer
@@ -172,7 +171,7 @@ public:
 	ID3D11DepthStencilView* getDepthStencil();
 	vec2 getWH();
 	//to gfx
-	void takeLight(Light *light);
+	void takeLight(PointLight *light);
 	void takeIM(ImguiManager* manager);
 	void takeObj(object **obj);
 	void setGame(Game* game);
