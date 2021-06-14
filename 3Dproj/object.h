@@ -27,7 +27,9 @@ public:
 
 	//debug
 	float& getxRot();
+
 	float& getxPos();
+	float& getyPos();
 	float& getzPos();
 protected:
 	float normalMap;

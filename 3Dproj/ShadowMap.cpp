@@ -36,7 +36,7 @@ void ShadowMap::RenderShader()
 		1.0f, 0.0f, 0.0f, 0.0f,
 		0.0f, 1.0f, 0.0f, 0.0f,
 		0.0f, 0.0f, 1.0f, 0.0f,
-		light->getPos().x, light->getPos().y, light->getPos().z, 1.0f
+		-light->getPos().x, -light->getPos().y, -light->getPos().z, 1.0f
 	);
 	XRotation(temp, light->getRotation().x);
 	YRotation(temp, light->getRotation().y);

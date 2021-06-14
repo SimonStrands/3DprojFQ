@@ -46,13 +46,13 @@ struct Pcb {
 	}lightColor;
 	struct {
 		float element[4];
-	}ka;
-	struct {
-		float element[4];
 	}kd;
 	struct {
 		float element[4];
 	}ks;
+	struct {
+		float element[4];
+	}ka;
 };
 
 struct Gcb {
@@ -119,13 +119,13 @@ private:
 			1,1,1,0
 		},
 		{//ka
-			0.5f,0.5f,0.5f,0
+			1,1,1,0,
 		},
 		{//kd
 			1.f,1.f,1.f,0
 		},
 		{//ks
-			1,1,1,0,
+			0.5f,0.5f,0.5f,1.f
 		},
 	};
 	//GeometryConstantBuffer

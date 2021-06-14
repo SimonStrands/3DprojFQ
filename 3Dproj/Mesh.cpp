@@ -11,7 +11,7 @@ Mesh::Mesh(Graphics*& gfx, std::string fileToLoad, ID3D11ShaderResourceView** de
 	for (int i = 0; i < nrOfTextures; i++) {
 		if (!CreateTexture(fileNames[i + 2], gfx->getDevice(), gfx->getTexture(), texSRV[i])) {
 			if (i == 2) {
-				texSRV[i] = def[1];
+				texSRV[i] = nullptr;
 			}
 			else {
 				texSRV[i] = def[0];

@@ -89,6 +89,17 @@ void Graphics::updatePixelShader(object& obj)
 	pcbd.lightPos.element[2] = light->getPos().z;
 	pcbd.lightPos.element[3] = 1;
 
+	pcbd.cameraPos.element[3] = obj.normalMapping();//using camerapos.w a normal map on and off
+	pcbd.lightPos.element[3] = 1;
+	if (getkey('N')) {
+		pcbd.cameraPos.element[3] = 1;
+		pcbd.lightPos.element[3] = 3;
+	}
+	if (getkey('M')) {
+		pcbd.cameraPos.element[3] = 0;
+		pcbd.lightPos.element[3] = 3;
+	}
+
 	obj.getKdKa(pcbd.kd.element, pcbd.ka.element);
 
 	//changing pixel shader cBuffer

@@ -11,7 +11,12 @@ GameObject::GameObject(Mesh *file, Graphics*& gfx, vec3 pos, vec3 rot, vec3 scal
 	CreateVertexConstBuffer(gfx, this->getVertexConstBuffer());
 	CreatePixelConstBuffer(gfx, this->getPixelConstBuffer());
 	file->getKdKa(this->kd, this->ka);
-	this->normalMap = 1.f;
+	if (mesh->getTextures()[2] == nullptr) {
+		this->normalMap = 0.f;
+	}
+	else {
+		this->normalMap = 1.f;
+	}
 }
 
 GameObject::~GameObject()
@@ -24,7 +29,12 @@ void GameObject::draw(ID3D11DeviceContext*& immediateContext)
 	static UINT strid = sizeof(vertex);
 	static UINT offset = 0;
 
-	immediateContext->PSSetShaderResources(0, mesh->getNrOfTextures(), mesh->getTextures());
+	if (normalMap < 0.5) {
+		immediateContext->PSSetShaderResources(0, mesh->getNrOfTextures() - 1, mesh->getTextures());
+	}
+	else {
+		immediateContext->PSSetShaderResources(0, mesh->getNrOfTextures(), mesh->getTextures());
+	}
 	immediateContext->VSSetConstantBuffers(0, 1, &this->getVertexConstBuffer());
 	immediateContext->PSSetConstantBuffers(0, 1, &this->getPixelConstBuffer());
 	immediateContext->IASetVertexBuffers(0, 1, &mesh->getVertexBuffer(), &strid, &offset);

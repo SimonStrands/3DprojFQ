@@ -22,28 +22,24 @@ cbuffer CBuf
 	row_major matrix transform;//model
 	row_major matrix view;
 	row_major matrix projection;
-	row_major matrix lightView;
+	row_major matrix lightView; 
 };
 
 VertexShaderOutput main(VertexShaderInput input) {
 	VertexShaderOutput output;
 
-	//input.position.z = 0.1 * input.position.z;//does this work?
-
-	float4x4 SHMVP = mul(mul(transform, lightView), projection);
-	float4 shadowCamera = mul(float4(input.position, 1.0f), transform);
-	float4 shadowHomo = mul(shadowCamera, SHMVP);
-	output.shadowMapCoords = shadowHomo * float4(0.5f, -0.5f, 1.0f, 1.0f) + float4(0.5f, 0.5f, 0.0f, 0.0f) * shadowHomo.w;
-
-	float4x4 MVP = mul(mul(transform, view),projection);
-	output.fragpos = mul(float4(input.position,1.0f), transform);
+	float4x4 MVP = mul(mul(transform, view), projection);
+	output.fragpos = mul(float4(input.position, 1.0f), transform);
 	output.position = mul((float4((input.position), 1.0f)), MVP);
 	output.uv = input.uv;
 	output.bitangent = normalize((mul(input.bitangent, transform)).xyz);
 	output.tangent = normalize((mul(input.tangent, transform)).xyz);
 	output.normal = normalize((mul(input.normal, transform)).xyz);
-	//output.position.z = 0.1 * output.position.z;//does this work?
-	
+
+
+	const float4 shadowCamera = mul(float4(input.position, 1.0f), transform);
+	const float4 shadowHomo = mul(shadowCamera, mul(lightView, projection));//should I have projection here to?
+	output.shadowMapCoords = shadowHomo * float4(0.5, -0.5, 1.0f, 1.0f) + (float4(0.5f, 0.5f, 0.0f, 0.0f) * shadowHomo.w);
 
 	return output;
 }

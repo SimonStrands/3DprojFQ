@@ -32,6 +32,7 @@ void ImguiManager::updateRender()
 		std::string name = "obj " + std::to_string(i);
 		if (ImGui::Begin(name.c_str())) {
 			ImGui::SliderFloat("Xpos", &obj[i]->getxPos(), 40.0f, -40.0f);
+			ImGui::SliderFloat("Ypos", &obj[i]->getyPos(), 40.0f, -40.0f);
 			ImGui::SliderFloat("Zpos", &obj[i]->getzPos(), 40.0f, -40.0f);
 			ImGui::SliderFloat("XRot", &obj[i]->getxRot(), 20.0f, -20.0f);
 		}

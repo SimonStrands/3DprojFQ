@@ -102,6 +102,10 @@ float& object::getxRot()
 float& object::getxPos() {
     return this->pos.x;
 }
+float& object::getyPos()
+{
+    return this->pos.y;
+}
 float& object::getzPos() {
     return this->pos.z;
 }
