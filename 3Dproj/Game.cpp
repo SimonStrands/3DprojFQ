@@ -93,6 +93,10 @@ void Game::Update()
 	mus->UpdateMouse();
 
 	gfx->Update((float)dt.dt());
+
+	if (getkey('C')) {
+		camera->setPosition(light->getPos());
+	}
 	
 }
 

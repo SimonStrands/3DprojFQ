@@ -12,6 +12,7 @@ public:
 	virtual ~Camera();
 	void updateCamera(float dt);
 	vec3 getPos();
+	void setPosition(vec3 newpos);
 private:
 	Mouse *mus;
 	Vcb *Vcbd;

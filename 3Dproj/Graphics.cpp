@@ -12,18 +12,7 @@ void Graphics::debugcd()
 //keyboard buttons + rotation
 void Graphics::keyboardDebug()
 {
-	if (getkey('N') && !pressed) {
-		pressed = true;
-		if (normalMapping == true) {
-			normalMapping = false;
-		}
-		else {
-			normalMapping = true;
-		}
-	}
-	else {
-		pressed = false;
-	}
+
 }
 
 

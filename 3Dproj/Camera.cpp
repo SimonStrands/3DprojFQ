@@ -44,6 +44,13 @@ vec3 Camera::getPos()
 	return vec3(xCamPos, yCamPos, zCamPos);
 }
 
+void Camera::setPosition(vec3 newpos)
+{
+	this->xCamPos = newpos.x;
+	this->yCamPos = newpos.y;
+	this->zCamPos = newpos.z;
+}
+
 void Camera::rotaiton(DirectX::XMMATRIX &matrix)
 {
 	XRotation(matrix, xCamRot);
