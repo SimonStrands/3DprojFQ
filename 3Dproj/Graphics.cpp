@@ -117,10 +117,10 @@ Graphics::Graphics(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	nrOfObject = 0;
 	Pg_pConstantBuffer = NULL;
 	normalMapping = true;//?
-	inputLayout = new ID3D11InputLayout * [3];
-	vShader = new ID3D11VertexShader * [2];
-	gShader = new ID3D11GeometryShader * [1];
-	pShader = new ID3D11PixelShader * [1];
+	inputLayout = new ID3D11InputLayout * [2]{nullptr, nullptr};
+	vShader = new ID3D11VertexShader * [2]{ nullptr, nullptr };
+	gShader = new ID3D11GeometryShader * [1]{ nullptr };
+	pShader = new ID3D11PixelShader * [2] { nullptr, nullptr };
 	
 	//setting matrixes
 	Projection();
@@ -138,7 +138,7 @@ Graphics::Graphics(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 		std::cerr << "cant set up" << std::endl;
 		delete this;
 	}
-
+	
 	D3D11_BLEND_DESC bd = {};
 	bs = nullptr;
 	bd.RenderTarget[0].BlendEnable = TRUE;
@@ -169,20 +169,31 @@ Graphics::~Graphics()
 	ImGui_ImplDX11_Shutdown();
 	shutDownWindow();
 	
-	if (pShader != nullptr) {
-		pShader[0]->Release();
-	}
-	if (gShader != nullptr) {
+	if (gShader[0] != nullptr) {
 		gShader[0]->Release();
 	}
 	for (int i = 0; i < 2; i++) {
 		if (vShader[i] != nullptr) {
 			vShader[i]->Release();
 		}
+		if (pShader[i] != nullptr) {
+			pShader[i]->Release();
+		}
 		if (inputLayout[i] != nullptr) {
 			inputLayout[i]->Release();
 		}
-		
+	}
+	if (pShader != nullptr) {
+		delete pShader;
+	}
+	if (gShader != nullptr) {
+		delete gShader;
+	}
+	if (vShader != nullptr) {
+		delete vShader;
+	}
+	if (inputLayout != nullptr) {
+		delete inputLayout;
 	}
 	if (dsView != nullptr) {
 		dsView->Release();
@@ -211,9 +222,11 @@ Graphics::~Graphics()
 	if (sampler != nullptr) {
 		sampler->Release();
 	}
-	delete[] objects;
 	if (bs != nullptr) {
 		bs->Release();
+	}
+	if (shadowMap != nullptr) {
+		delete shadowMap;
 	}
 }
 
@@ -293,11 +306,6 @@ void Graphics::takeIM(ImguiManager* manager)
 	this->imguimanager = manager;
 }
 
-void Graphics::takeObj(object** obj)
-{
-	this->objects = obj;
-}
-
 void Graphics::setGame(Game* game)
 {
 	this->game = game;
@@ -321,10 +329,13 @@ void Graphics::drawToBuffer()
 void Graphics::drawShadowBuffer()
 {
 	this->shadowMap->RenderShader();
+	ID3D11ShaderResourceView* const pSRV[1] = { NULL };
+	immediateContext->PSSetShaderResources(3, 1, pSRV);
 	ID3D11RenderTargetView* pNullRTV = NULL;
-	immediateContext->OMSetRenderTargets(0, &pNullRTV, shadowMap->Getdepthview());
+	immediateContext->OMSetRenderTargets(1, &pNullRTV, shadowMap->Getdepthview());
 	this->vcbd.lightView.element = shadowMap->getLightView();
 	this->vcbd.view.element = shadowMap->getLightView();
+	this->gcbd.lightView.element = shadowMap->getLightView();
 }
 
 void Graphics::present()

@@ -3,7 +3,22 @@
 
 DepthStencil::DepthStencil()
 {
-	
+    dsTexture = nullptr;
+    dShaderResourceView = nullptr;
+    dsview = nullptr;
+}
+
+DepthStencil::~DepthStencil()
+{
+    if (dsTexture != nullptr) {
+        dsTexture->Release();
+    }
+    if (dShaderResourceView != nullptr) {
+        dShaderResourceView->Release();
+    }
+    if (dsview != nullptr) {
+        dsview->Release();
+    }
 }
 
 bool DepthStencil::CreateDepthStencil(ID3D11Device* device, UINT width, UINT height, ID3D11Texture2D*& dsTexture, ID3D11DepthStencilView*& dsview)

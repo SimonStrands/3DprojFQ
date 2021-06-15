@@ -38,7 +38,7 @@ VertexShaderOutput main(VertexShaderInput input) {
 
 
 	const float4 shadowCamera = mul(float4(input.position, 1.0f), transform);
-	const float4 shadowHomo = mul(shadowCamera, mul(lightView, projection));//should I have projection here to?
+	const float4 shadowHomo = mul(shadowCamera, mul(lightView, projection));
 	output.shadowMapCoords = shadowHomo * float4(0.5, -0.5, 1.0f, 1.0f) + (float4(0.5f, 0.5f, 0.0f, 0.0f) * shadowHomo.w);
 
 	return output;

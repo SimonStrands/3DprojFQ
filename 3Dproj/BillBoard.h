@@ -11,6 +11,7 @@ class BillBoard : public object {
 public:
 	
 	BillBoard(Graphics *&gfx, vec3 pos, ID3D11ShaderResourceView* texSRV, ID3D11ShaderResourceView* NDef, int nrOfCol = 1, int nrOfRow = 1);
+	virtual ~BillBoard();
 	void update(float dt);
 	void draw(ID3D11DeviceContext*& immediateContext);
 

@@ -25,16 +25,6 @@ Texture2D nMap : register(t2);
 Texture2D SM : register(t3);
 SamplerState testSampler;
 
-bool CalcShadowMapAmt(Texture2D ShadowMap, float4 initShadowMapCoords) 
-{
-	float3 nSMCoords = (initShadowMapCoords.xyz / initShadowMapCoords.w) * 0.5 + 0.5;
-	float SR = (SM.Sample(testSampler, nSMCoords.xy)).r;
-	if (SR + 0.001 > nSMCoords.z) {
-		return true;
-	}
-	return false;
-}
-
 float4 main(PixelShaderInput input) : SV_TARGET
 {
 	//for culling none
@@ -62,11 +52,10 @@ float4 main(PixelShaderInput input) : SV_TARGET
 	
 	//ambient
 	//float3 ambient_light = ka.xyz * lightColor.xyz;
-	float3 ambient_light = float3(0.1, 0.1, 0.1);
+	float3 ambient_light = float3(0.1,0.1,0.1);
 
 	float3 specular;
 	float3 defuse_light;
-	//if (CalcShadowMapAmt(SM, input.shadowMapCoords)) {
 	input.shadowMapCoords.xyz = input.shadowMapCoords.xyz / input.shadowMapCoords.w;
 	if (SM.Sample(testSampler, input.shadowMapCoords.xy).r > input.shadowMapCoords.z - 0.00001){
 	
@@ -93,9 +82,6 @@ float4 main(PixelShaderInput input) : SV_TARGET
 	float4 dtex = testTex.Sample(testSampler, input.uv);
 	float3 final = (testTex.Sample(testSampler, input.uv).xyz) * lightning;
 
-	//float3 lightning = float3(1, 1, 1);
-	//float4 dtex = SM.Sample(testSampler, input.uv);
-	//float3 final = (dtex.xyz * lightning);
 	return float4(final, dtex.a);
 
 }

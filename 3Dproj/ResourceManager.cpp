@@ -12,6 +12,9 @@ ResourceManager::~ResourceManager()
 			def[i]->Release();
 		}
 	}
+	if (def != nullptr) {
+		delete def;
+	}
 	if (Fire != nullptr) {
 		Fire->Release();
 	}

@@ -15,6 +15,25 @@ ShadowMap::ShadowMap(PointLight* light, Graphics* gfx)
 	fromDepthToSRV();
 }
 
+ShadowMap::~ShadowMap()
+{
+	if (dsTexture != nullptr) {
+		dsTexture->Release();
+	}
+	if (dsView != nullptr) {
+		dsView->Release();
+	}
+	if (vertexShadow != nullptr) {
+		vertexShadow->Release();
+	}
+	if (pixelShadow != nullptr) {
+		pixelShadow->Release();
+	}
+	if (shadowResV != nullptr) {
+		shadowResV->Release();
+	}
+}
+
 ID3D11DepthStencilView* ShadowMap::Getdepthview()
 {
 	return this->dsView;
@@ -58,6 +77,7 @@ ID3D11ShaderResourceView*& ShadowMap::fromDepthToSRV()
 	if (hr != S_OK) {
 		printf("can create shadowResourceView");
 	}
+	shadowRes->Release();
 	return shadowResV;
 }
 

@@ -62,6 +62,9 @@ struct Gcb {
 	struct {
 		float element[4];
 	}uvCords;
+	struct {
+		DirectX::XMMATRIX element;
+	}lightView;
 };
 
 class Camera;
@@ -134,7 +137,6 @@ private:
 		{0,0,0,0},
 	};
 
-	//textures
 	//gonna clean up here later
 	ID3D11Texture2D* tex;
 	ID3D11SamplerState* sampler;
@@ -142,7 +144,6 @@ private:
 	//objects
 	Light* light;
 	ShadowMap* shadowMap;
-	object** objects;
 	ImguiManager *imguimanager;
 
 	//variables
@@ -173,7 +174,6 @@ public:
 	//to gfx
 	void takeLight(PointLight *light);
 	void takeIM(ImguiManager* manager);
-	void takeObj(object **obj);
 	void setGame(Game* game);
 	Game* game;
 

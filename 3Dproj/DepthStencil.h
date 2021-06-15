@@ -4,6 +4,7 @@
 class DepthStencil {
 public:
 	DepthStencil();
+    virtual ~DepthStencil();
     bool CreateDepthStencil(ID3D11Device* device, 
         UINT width, UINT height, 
         ID3D11Texture2D*& dsTexture, 

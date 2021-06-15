@@ -196,7 +196,8 @@ bool SetupPipeline(ID3D11Device* device, ID3D11VertexShader**& vShader,
 	if (loadVShader("VertexShader.cso", device, vShader[0], vShaderByteCode[0]) &&
 		loadVShader("VertexBillBoard.cso", device, vShader[1], vShaderByteCode[1]) &&
 		loadGShader("GeometryShader.cso", device, gShader[0]) &&
-		loadPShader("PixelShader.cso", device, pShader[0]))
+		loadPShader("PixelShader.cso", device, pShader[0]) && 
+		loadPShader("PixelBillShader.cso", device, pShader[1]))
 	{
 		//continoue
 	}

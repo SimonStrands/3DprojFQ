@@ -21,7 +21,10 @@ GameObject::GameObject(Mesh *file, Graphics*& gfx, vec3 pos, vec3 rot, vec3 scal
 
 GameObject::~GameObject()
 {
-
+	if (vertexBuffer != nullptr) {
+		vertexBuffer->Release();
+	}
+	
 }
 static bool once = false;
 void GameObject::draw(ID3D11DeviceContext*& immediateContext)

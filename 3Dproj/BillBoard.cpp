@@ -37,6 +37,16 @@ BillBoard::BillBoard(Graphics*& gfx, vec3 pos, ID3D11ShaderResourceView* texSRV,
 	this->normalMap = 0.f;
 }
 
+BillBoard::~BillBoard()
+{
+	if (pointBuffer != nullptr) {
+		pointBuffer->Release();
+	}
+	if (Gg_pConstantBuffer != nullptr) {
+		Gg_pConstantBuffer->Release();
+	}
+}
+
 void BillBoard::update(float dt)
 {
 	anim.update(dt);
