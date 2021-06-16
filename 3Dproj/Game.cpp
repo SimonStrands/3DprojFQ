@@ -14,13 +14,14 @@ Game::Game(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWS
 
 	//OBJECTS
 	obj[0] = new GameObject(rm->get_Ball(), gfx, light->getPos(), vec3(0, 0 ,0), vec3(0.1, 0.1, 0.1));//light
-	obj[1] = new GameObject(rm->get_IDK(), gfx, vec3(0, 0, 20), vec3(-1.56, 1.56,0), vec3(10, 10, 10));
+	obj[1] = new GameObject(rm->get_IDK(), gfx, vec3(0, 0, 20), vec3(-1.56, 1.56,0), vec3(20, 20, 20));
 	obj[2] = new GameObject(rm->get_Ball(), gfx, vec3(3, 0, 10), vec3(-1.6, -1.6, 3.2), vec3(1, 1, 1));
 	obj[3] = new GameObject(rm->get_Stol(), gfx, vec3(-15, 0, 15), vec3(0, 1.56, 0), vec3(1, 1, 1));
 	bill = new BillBoard(gfx, vec3(0.f, 1.2f, 5), rm->getFire(), rm->getDef()[1], 6);
 	
 	//UI
 	UIManager.takeLight(light);
+	UIManager.takeObject(obj[0]);
 	UIManager.takeObject(obj[1]);
 	UIManager.takeObject(obj[2]);
 	UIManager.takeObject(obj[3]);
@@ -77,7 +78,6 @@ void Game::run()
 		gfx->drawToBuffer();
 		gfx->present();
 	}
-	
 }
 
 void Game::Update()
@@ -102,7 +102,7 @@ void Game::Update()
 
 void Game::DrawToBuffer()
 {
-	gfx->get_IC()->PSSetShaderResources(3, 1, &gfx->getShadowMap()->fromDepthToSRV());
+	gfx->get_IC()->PSSetShaderResources(3, 1, &gfx->getShadowMap()->GetshadowResV());
 	
 	gfx->get_IC()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	gfx->get_IC()->IASetInputLayout(gfx->getInputL()[0]);

@@ -4,6 +4,9 @@
 
 bool CreateVertexBuffer(Graphics*& gfx, Mesh& mesh, std::string fileName) {
 	std::vector<std::vector<vertex>> vertices;
+	if (fileName.substr(fileName.size() - 3) == "fbx") {
+		std::cout << "fbx file" << std::endl;
+	}
 	if (!readObjFile(vertices, fileName, mesh.getNrOfVertex())) {
 		return false;
 	}

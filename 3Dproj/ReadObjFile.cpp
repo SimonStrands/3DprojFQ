@@ -187,13 +187,13 @@ bool readObjFile(std::vector<std::vector<vertex>>& objP, std::string fileName, i
 					delete[] sTemp;
 				}
 				nrOfVertexes += 3;
-				sTemp = getDest(sTemp2[3]);
+				sTemp = getDest(sTemp2[0]);
 				objP[objIndex].push_back(vertex(vPos[std::stoi(sTemp[0]) - 1], vUv[std::stoi(sTemp[1]) - 1], vNorm[std::stoi(sTemp[2]) - 1]));
 				delete[] sTemp;
 				sTemp = getDest(sTemp2[2]);
 				objP[objIndex].push_back(vertex(vPos[std::stoi(sTemp[0]) - 1], vUv[std::stoi(sTemp[1]) - 1], vNorm[std::stoi(sTemp[2]) - 1]));
 				delete[] sTemp;
-				sTemp = getDest(sTemp2[0]);
+				sTemp = getDest(sTemp2[3]);
 				objP[objIndex].push_back(vertex(vPos[std::stoi(sTemp[0]) - 1], vUv[std::stoi(sTemp[1]) - 1], vNorm[std::stoi(sTemp[2]) - 1]));
 				delete[] sTemp;
 			}

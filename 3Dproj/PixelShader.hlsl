@@ -57,7 +57,9 @@ float4 main(PixelShaderInput input) : SV_TARGET
 	float3 specular;
 	float3 defuse_light;
 	input.shadowMapCoords.xyz = input.shadowMapCoords.xyz / input.shadowMapCoords.w;
-	if (SM.Sample(testSampler, input.shadowMapCoords.xy).r > input.shadowMapCoords.z - 0.00001){
+	if (SM.Sample(testSampler, input.shadowMapCoords.xy).r > input.shadowMapCoords.z - 0.00001 && 
+		input.shadowMapCoords.x < 1 && input.shadowMapCoords.x > 0 &&
+		input.shadowMapCoords.y < 1 && input.shadowMapCoords.y > 0){
 	
 		//defuse
 		float3 lightDir = normalize(input.fragpos.xyz - lightPos.xyz);

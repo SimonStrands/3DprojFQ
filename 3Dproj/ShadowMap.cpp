@@ -39,7 +39,7 @@ ID3D11DepthStencilView* ShadowMap::Getdepthview()
 	return this->dsView;
 }
 
-ID3D11ShaderResourceView* ShadowMap::GetshadowResV()
+ID3D11ShaderResourceView*& ShadowMap::GetshadowResV()
 {
 	return this->shadowResV;
 }

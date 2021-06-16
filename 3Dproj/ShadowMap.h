@@ -13,7 +13,7 @@ public:
 	ShadowMap(PointLight* light, Graphics* gfx);
 	virtual ~ShadowMap();
 	ID3D11DepthStencilView* Getdepthview();
-	ID3D11ShaderResourceView* GetshadowResV();
+	ID3D11ShaderResourceView*& GetshadowResV();
 	ID3D11ShaderResourceView*& fromDepthToSRV();
 	DirectX::XMMATRIX getLightView();
 	void RenderShader();
