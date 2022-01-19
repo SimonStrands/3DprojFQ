@@ -79,8 +79,8 @@ bool CreateRasterizerState(ID3D11Device* device , ID3D11RasterizerState*& pRS) {
     D3D11_RASTERIZER_DESC rasterState;
     rasterState.FillMode = D3D11_FILL_SOLID;
     //rasterState.FillMode = D3D11_FILL_WIREFRAME;
-    //rasterState.CullMode = D3D11_CULL_NONE;
-    rasterState.CullMode = D3D11_CULL_BACK;
+    rasterState.CullMode = D3D11_CULL_NONE;
+    //rasterState.CullMode = D3D11_CULL_BACK;
     rasterState.FrontCounterClockwise = false;
     rasterState.DepthBias = 0;
     rasterState.SlopeScaledDepthBias = 0;
@@ -89,6 +89,7 @@ bool CreateRasterizerState(ID3D11Device* device , ID3D11RasterizerState*& pRS) {
     rasterState.ScissorEnable = false;
     rasterState.MultisampleEnable = false;
     rasterState.AntialiasedLineEnable = false;
+    //rasterState.AntialiasedLineEnable = true;
 
    HRESULT hr = device->CreateRasterizerState(&rasterState, &pRS);
    if (FAILED(hr)) {

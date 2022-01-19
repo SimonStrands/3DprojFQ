@@ -14,9 +14,9 @@ public:
 #pragma endregion
 
 #pragma region Meshes
-	Mesh *get_Ball();
-	Mesh *get_Stol();
-	Mesh *get_IDK();
+	MeshObj *get_Ball();
+	MeshObj *get_Stol();
+	MeshObj *get_IDK();
 	//Mesh* get_starwars();
 #pragma endregion
 	
@@ -28,9 +28,9 @@ private:
 
 #pragma region Meshes
 	//meshes
-	Mesh *ball;
-	Mesh *stol;
-	Mesh *IDK;
+	MeshObj *ball;
+	MeshObj *stol;
+	MeshObj *IDK;
 	//Mesh* starwars;
 #pragma endregion
 

@@ -37,7 +37,9 @@ struct vec3 {
 
 	void Normalize();
 	vec3 X(const vec3& other);
-	float operator*(vec3& other);
+	float operator*(vec3& other);//dot
+	vec3 operator*(float& other);
+	vec3 mul(float other);
 	vec3 operator+(vec3& other);
 	vec3 operator-(vec3& other);
 	bool operator==(vec3& other);
@@ -50,6 +52,9 @@ struct vec3 {
 	float z;
 };
 struct vec4 {
+	vec4() {
+
+	};
 	vec4(float a, float b, float c, float d) {
 		xyz.x = a;
 		xyz.y = b;

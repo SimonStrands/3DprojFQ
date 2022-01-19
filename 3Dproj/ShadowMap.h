@@ -6,8 +6,6 @@
 #include <DirectXMath.h>
 #include "CreateBuffer.h"
 
-class Graphics;
-
 class ShadowMap {
 public:
 	ShadowMap(PointLight* light, Graphics* gfx);
@@ -17,6 +15,7 @@ public:
 	ID3D11ShaderResourceView*& fromDepthToSRV();
 	DirectX::XMMATRIX getLightView();
 	void RenderShader();
+	void DrawShadowBuffer(Graphics*& gfx);
 private:
 
 	bool CreateDepthStencil(ID3D11Device* device, UINT width, UINT height);

@@ -112,6 +112,17 @@ bool CreateInputLayout(ID3D11Device* device, ID3D11InputLayout*& inputLayout, st
 	return !FAILED(hr);
 } 
 
+bool CreateInputLayoutOwn(ID3D11Device* device, ID3D11InputLayout*& inputLayout, std::string& VbyteCode, D3D11_INPUT_ELEMENT_DESC inputDesc[], int nrOfElements)
+{
+	HRESULT hr = device->CreateInputLayout(inputDesc, nrOfElements, VbyteCode.c_str(), VbyteCode.length(), &inputLayout);
+	if (FAILED(hr) || hr != S_OK) {
+		printf("input layout 2");
+		return false;
+	}
+
+	return !FAILED(hr);
+}
+
 bool CreateInputLayoutBill(ID3D11Device* device, ID3D11InputLayout*& inputLayout, std::string& VbyteCode) {
 	const int nrOfEl = 1;
 	D3D11_INPUT_ELEMENT_DESC inputDesc[nrOfEl] =
@@ -191,11 +202,13 @@ bool SetupPipeline(ID3D11Device* device, ID3D11VertexShader**& vShader,
 	ID3D11InputLayout**& inputLayout,
 	ID3D11Texture2D*& tex, ID3D11SamplerState*& sampler)
 {
-	std::string vShaderByteCode[2];
+	std::string vShaderByteCode[3];
 #pragma region shaderloading
 	if (loadVShader("VertexShader.cso", device, vShader[0], vShaderByteCode[0]) &&
 		loadVShader("VertexBillBoard.cso", device, vShader[1], vShaderByteCode[1]) &&
+		loadVShader("SkeletonAnimationVS.cso", device, vShader[2], vShaderByteCode[2]) &&
 		loadGShader("GeometryShader.cso", device, gShader[0]) &&
+		loadGShader("Debugging_test.cso", device, gShader[1]) &&
 		loadPShader("PixelShader.cso", device, pShader[0]) && 
 		loadPShader("PixelBillShader.cso", device, pShader[1]))
 	{
@@ -206,7 +219,18 @@ bool SetupPipeline(ID3D11Device* device, ID3D11VertexShader**& vShader,
 		return false;
 	}
 #pragma endregion
-	
+	//hereChange
+	D3D11_INPUT_ELEMENT_DESC inputDesc[7] =
+	{
+		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"UV", 0, DXGI_FORMAT_R32G32_FLOAT, 0,D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"TANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"BITANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"BONEID", 0, DXGI_FORMAT_R32G32B32A32_UINT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"WEIGHTS", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+
+	};
 	if (!CreateInputLayout(device, inputLayout[0], vShaderByteCode[0]))
 	{
 		std::cerr << "cant load inputlayout" << std::endl;
@@ -215,6 +239,11 @@ bool SetupPipeline(ID3D11Device* device, ID3D11VertexShader**& vShader,
 	if (!CreateInputLayoutBill(device, inputLayout[1], vShaderByteCode[1]))
 	{
 		std::cerr << "cant load inputlayout2" << std::endl;
+		return false;
+	}
+	//hereChange
+	if (!CreateInputLayoutOwn(device, inputLayout[2], vShaderByteCode[2], inputDesc, 7)) {
+		std::cerr << "cant load inputlayout 3" << std::endl;
 		return false;
 	}
 	if (!CreateSamplerState(device, sampler))

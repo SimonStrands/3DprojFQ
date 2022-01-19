@@ -10,7 +10,7 @@ ShadowMap::ShadowMap(PointLight* light, Graphics* gfx)
 	std::string a;
 	loadVShader("VertexShadow.cso", gfx->getDevice(), vertexShadow, a);
 	loadPShader("PixelShadow.cso", gfx->getDevice(), pixelShadow);
-	CreateDepthStencil(gfx->getDevice(), gfx->getWH().x, gfx->getWH().y);
+	CreateDepthStencil(gfx->getDevice(), (UINT)gfx->getWH().x, (UINT)gfx->getWH().y);
 
 	fromDepthToSRV();
 }
@@ -60,7 +60,19 @@ void ShadowMap::RenderShader()
 	XRotation(temp, light->getRotation().x);
 	YRotation(temp, light->getRotation().y);
 	lightView = temp;
+}
 
+void ShadowMap::DrawShadowBuffer(Graphics*& gfx)
+{
+	this->RenderShader();
+	ID3D11ShaderResourceView* const pSRV[1] = { NULL };
+	gfx->get_IC()->PSSetShaderResources(3, 1, pSRV);
+	ID3D11RenderTargetView* pNullRTV = NULL;
+	gfx->get_IC()->OMSetRenderTargets(1, &pNullRTV, this->Getdepthview());
+	
+	gfx->getVcb()->lightView.element = this->getLightView();
+	gfx->getVcb()->view.element = this->getLightView();
+	gfx->getGcb()->lightView.element = this->getLightView();
 }
 
 ID3D11ShaderResourceView*& ShadowMap::fromDepthToSRV()

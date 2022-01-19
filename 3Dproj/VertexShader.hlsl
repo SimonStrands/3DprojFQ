@@ -32,9 +32,9 @@ VertexShaderOutput main(VertexShaderInput input) {
 	output.fragpos = mul(float4(input.position, 1.0f), transform);
 	output.position = mul((float4((input.position), 1.0f)), MVP);
 	output.uv = input.uv;
-	output.bitangent = normalize((mul(input.bitangent, transform)).xyz);
-	output.tangent = normalize((mul(input.tangent, transform)).xyz);
-	output.normal = normalize((mul(input.normal, transform)).xyz);
+	output.bitangent = normalize((mul(float4(input.bitangent,0.0f), transform)).xyz);
+	output.tangent = normalize((mul(float4(input.tangent,0.f), transform)).xyz);
+	output.normal = normalize((mul(float4(input.normal,0.f), transform)).xyz);
 
 
 	const float4 shadowCamera = mul(float4(input.position, 1.0f), transform);

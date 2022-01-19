@@ -1,8 +1,6 @@
 #include "GameObject.h"
 
-
-
-GameObject::GameObject(Mesh *file, Graphics*& gfx, vec3 pos, vec3 rot, vec3 scale, std::string otherTex)
+GameObject::GameObject(MeshObj*file, Graphics*& gfx, vec3 pos, vec3 rot, vec3 scale, std::string otherTex)
 {
 	this->changePos(pos);
 	this->changeScale(scale);
@@ -42,4 +40,14 @@ void GameObject::draw(ID3D11DeviceContext*& immediateContext)
 	immediateContext->PSSetConstantBuffers(0, 1, &this->getPixelConstBuffer());
 	immediateContext->IASetVertexBuffers(0, 1, &mesh->getVertexBuffer(), &strid, &offset);
 	immediateContext->Draw(mesh->getNrOfVertex(), 0);
+}
+
+void GameObject::Updateshaders(Graphics*& gfx, bool vertex, bool pixel)
+{
+	if (vertex) {
+		this->updateVertexShader(gfx);
+	}
+	if (pixel) {
+		this->updatePixelShader(gfx);
+	}
 }

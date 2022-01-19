@@ -1,6 +1,7 @@
 #pragma once
 #include <d3d11.h>
 #include "Vec.h"
+#include "Graphics.h"
 
 class object {
 public:
@@ -12,10 +13,13 @@ public:
 	vec3 getPos();
 	const vec3 getRot();
 	const vec3 getScale();
+	const vec3 getPoint();
 
 	void changePos(vec3 pos);
 	void changeRot(vec3 pos);
 	void changeScale(vec3 pos);
+	void changePoint(vec3 point);
+	void addPoint(vec3 point);
 	void addPos(vec3 pos);
 	void addRot(vec3 rot);
 	void addScale(vec3 scale);
@@ -31,6 +35,9 @@ public:
 	float& getxPos();
 	float& getyPos();
 	float& getzPos();
+
+	void updateVertexShader(Graphics*& gfx);
+	void updatePixelShader(Graphics*& gfx);
 protected:
 	float normalMap;
 	float kd[4];
@@ -39,6 +46,8 @@ private:
 	vec3 pos;
 	vec3 rot;
 	vec3 scale;
+	vec3 rPoint;
 	ID3D11Buffer* Vg_pConstantBuffer;
 	ID3D11Buffer* Pg_pConstantBuffer;
 };
+

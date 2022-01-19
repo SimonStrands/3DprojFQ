@@ -52,16 +52,16 @@ void main(
 	element.uv = float2((uv.x / uv.y), 0);
 	output.Append(element);
 
+	v = input[0].position + float4(side + up, 0.f) * size;
+	element.position = mul(v, MVP);
+	element.fragpos = mul(v, input[0].model);
+	element.uv = float2(((uv.x + 1) / uv.y), 0);
+	output.Append(element);
+
 	v = input[0].position - float4(side + up, 0.f) * size;
 	element.position = mul(v, MVP);
 	element.fragpos = mul(v, input[0].model);
 	element.uv = float2((uv.x / uv.y), 1);
-	output.Append(element);
-
-	v = input[0].position + float4(side + up, 0.f) * size;
-	element.position = mul(v, MVP);
-	element.fragpos = mul(v, input[0].model);
-	element.uv = float2(((uv.x + 1)/ uv.y), 0);
 	output.Append(element);
 
 	v = input[0].position + float4(side - up, 0.f) * size;

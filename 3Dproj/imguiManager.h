@@ -2,9 +2,10 @@
 #include "imgui.h"
 #include "imgui_impl_dx11.h"
 #include "imgui_impl_win32.h"
-#include "object.h"
 #include <vector>
+#include "object.h"
 #include "Light.h"
+#include <string>
 
 class ImguiManager {
 public:

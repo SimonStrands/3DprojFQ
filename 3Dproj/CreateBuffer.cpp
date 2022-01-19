@@ -2,14 +2,18 @@
 #include "GameObject.h"
 #include "Graphics.h"
 
-bool CreateVertexBuffer(Graphics*& gfx, Mesh& mesh, std::string fileName) {
+bool CreateVertexBuffer(Graphics*& gfx, MeshObj& mesh, std::string fileName) {
 	std::vector<std::vector<vertex>> vertices;
 	if (fileName.substr(fileName.size() - 3) == "fbx") {
-		std::cout << "fbx file" << std::endl;
+		//readFBXFile(vertices, fileName, mesh.getNrOfVertex());
 	}
-	if (!readObjFile(vertices, fileName, mesh.getNrOfVertex())) {
-		return false;
+	else
+	{
+		if (!readObjFile(vertices, fileName, mesh.getNrOfVertex())) {
+			return false;
+		}
 	}
+	
 
 	D3D11_BUFFER_DESC bDesc = {};
 	bDesc.ByteWidth = sizeof(vertex) * (UINT)mesh.getNrOfVertex();
@@ -62,7 +66,31 @@ bool CreateVertexConstBuffer(Graphics*& gfx, ID3D11Buffer*& buff)
 	return !FAILED(hr);
 }
 
+bool CreateConstBuffer(Graphics*& gfx, ID3D11Buffer*& buff, UINT size, CB &initdata) {
+	D3D11_BUFFER_DESC CbDesc;
 
+	CbDesc.Usage = D3D11_USAGE_DYNAMIC;
+	CbDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	CbDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	CbDesc.MiscFlags = 0;
+	CbDesc.StructureByteStride = 0;
+
+	D3D11_SUBRESOURCE_DATA InitData;
+
+	InitData.SysMemPitch = 0;
+	InitData.SysMemSlicePitch = 0;
+
+	CbDesc.ByteWidth = size;
+	InitData.pSysMem = &initdata;
+
+	HRESULT hr = gfx->getDevice()->CreateBuffer(&CbDesc, &InitData, &buff);
+	if (FAILED(hr)) {
+		printf("failed");
+		return false;
+	}
+
+	return !FAILED(hr);
+}
 
 bool CreatePixelConstBuffer(Graphics*& gfx, ID3D11Buffer*& buff)
 {

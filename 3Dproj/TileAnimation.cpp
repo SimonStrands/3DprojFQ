@@ -25,5 +25,5 @@ void TileAnimation::update(float dt)
 
 vec4 TileAnimation::uv()
 {
-	return vec4(cpx, noaw, cpy, noah);
+	return vec4((float)cpx, (float)noaw, (float)cpy, (float)noah);
 }

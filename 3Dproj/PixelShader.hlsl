@@ -27,7 +27,6 @@ SamplerState testSampler;
 
 float4 main(PixelShaderInput input) : SV_TARGET
 {
-	//for culling none
 	float3 posToView = normalize(input.fragpos.xyz - cameraPos.xyz);
 	if (dot(posToView, input.normal) > 0) {
 		input.normal = -input.normal;

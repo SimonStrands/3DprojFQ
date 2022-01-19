@@ -1,6 +1,7 @@
 #pragma once
 #include <array>
 #include "Vec.h"
+
 //git
 struct vertex {
 	float pos[3];
@@ -8,6 +9,9 @@ struct vertex {
 	float norm[3];
 	float tang[3];
 	float bitang[3];
+	vertex() {
+		//yes should be like this
+	}
 	vertex(const std::array<float, 3>& position, const std::array<float, 2>& uvC, const std::array<float, 4>& normal) {
 		for (int i = 0; i < 3; i++) {
 			this->pos[i] = position[i];
@@ -27,3 +31,4 @@ struct vertex {
 		this->bitang[2] = bitang.z;
 	}
 };
+

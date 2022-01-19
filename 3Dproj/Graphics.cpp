@@ -1,9 +1,7 @@
 ﻿#include "Graphics.h"
+#include "imguiManager.h"
 #include "imgui_impl_dx11.h"
 #include "imgui_impl_win32.h"
-#include "Camera.h"
-#include "Game.h"
-#include "ShadowMap.h"
 
 //debug nothing to look here at
 void Graphics::debugcd()
@@ -16,90 +14,6 @@ void Graphics::keyboardDebug()
 }
 
 
-void Graphics::updateVertexShader(object& obj)
-{
-	DirectX::XMMATRIX rot(DirectX::XMMatrixRotationRollPitchYaw(obj.getRot().x, obj.getRot().y, obj.getRot().z));
-
-	DirectX::XMMATRIX scal(
-		obj.getScale().x, 0.0f, 0.0f, 0.0f,
-		0.0f, obj.getScale().y, 0.0f, 0.0f,
-		0.0f, 0.0f, obj.getScale().z, 0.0f,
-		0.0f, 0.0f, 0.0f, 1.0f
-	);
-	//transformPotion
-	DirectX::XMMATRIX trans(
-		1.0f, 0.0f, 0.0f, 0.0f,
-		0.0f, 1.0f, 0.0f, 0.0f,
-		0.0f, 0.0f, 1.0f, 0.0f,
-		obj.getPos().x, obj.getPos().y, obj.getPos().z, 1.0f
-	);
-	DirectX::XMMATRIX point(
-		1.0f, 0.0f, 0.0f, 0.0f,
-		0.0f, 1.0f, 0.0f, 0.0f,
-		0.0f, 0.0f, 1.0f, 0.0f,
-		0.0f, 0.0f, 0.0f, 1.0f
-	);
-	DirectX::XMMATRIX rts = point * (scal*(rot * trans));
-
-	vcbd.transform.element = rts;
-
-	//changing vertex Shader cBuffer
-	D3D11_MAPPED_SUBRESOURCE resource;
-
-	immediateContext->Map(obj.getVertexConstBuffer(), 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
-	memcpy(resource.pData, &vcbd, sizeof(Vcb));
-	immediateContext->Unmap(obj.getVertexConstBuffer(), 0);
-	ZeroMemory(&resource, sizeof(D3D11_MAPPED_SUBRESOURCE));
-}
-
-void Graphics::updateGeometryShader(BillBoard& obj, Camera cam)
-{
-	gcbd.cameraPos.element[0] = -cam.getPos().x;
-	gcbd.cameraPos.element[1] = -cam.getPos().y;
-	gcbd.cameraPos.element[2] = -cam.getPos().z;
-
-	//uv
-	gcbd.uvCords.element[0] = obj.getTAnim().uv().xyz.x;
-	gcbd.uvCords.element[1] = obj.getTAnim().uv().xyz.y;
-	gcbd.uvCords.element[2] = obj.getTAnim().uv().xyz.z;
-	gcbd.uvCords.element[3] = obj.getTAnim().uv().w;
-
-	D3D11_MAPPED_SUBRESOURCE resource;
-	immediateContext->Map(obj.getGCB(), 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
-	memcpy(resource.pData, &gcbd, sizeof(Gcb));
-	immediateContext->Unmap(obj.getGCB(), 0);
-	ZeroMemory(&resource, sizeof(D3D11_MAPPED_SUBRESOURCE));
-}
-
-void Graphics::updatePixelShader(object& obj)
-{
-	pcbd.lightPos.element[0] = light->getPos().x;
-	pcbd.lightPos.element[1] = light->getPos().y;
-	pcbd.lightPos.element[2] = light->getPos().z;
-	pcbd.lightPos.element[3] = 1;
-
-	pcbd.cameraPos.element[3] = obj.normalMapping();//using camerapos.w a normal map on and off
-	pcbd.lightPos.element[3] = 1;
-	if (getkey('N')) {
-		pcbd.cameraPos.element[3] = 1;
-		pcbd.lightPos.element[3] = 3;
-	}
-	if (getkey('M')) {
-		pcbd.cameraPos.element[3] = 0;
-		pcbd.lightPos.element[3] = 3;
-	}
-
-	obj.getKdKa(pcbd.kd.element, pcbd.ka.element);
-
-	//changing pixel shader cBuffer
-	D3D11_MAPPED_SUBRESOURCE resource;
-	immediateContext->Map(obj.getPixelConstBuffer(), 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
-	memcpy(resource.pData, &pcbd, sizeof(Pcb));
-	immediateContext->Unmap(obj.getPixelConstBuffer(), 0);
-	ZeroMemory(&resource, sizeof(D3D11_MAPPED_SUBRESOURCE));
-
-}
-
 void Graphics::Projection()
 {
 	//setting projection matrix
@@ -109,7 +23,6 @@ void Graphics::Projection()
 Graphics::Graphics(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine, _In_ int nCmdShow) :
 	speed(1.5f)
 {
-	
 	fov = 90.f;
 	ratio = 16.f / 9.f;
 	farPlane = 200.f;
@@ -117,11 +30,18 @@ Graphics::Graphics(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	nrOfObject = 0;
 	Pg_pConstantBuffer = NULL;
 	normalMapping = true;//?
-	inputLayout = new ID3D11InputLayout * [2]{nullptr, nullptr};
-	vShader = new ID3D11VertexShader * [2]{ nullptr, nullptr };
-	gShader = new ID3D11GeometryShader * [1]{ nullptr };
+	inputLayout = new ID3D11InputLayout * [3]{nullptr, nullptr, nullptr};
+	vShader = new ID3D11VertexShader * [3]{ nullptr, nullptr, nullptr };
+	gShader = new ID3D11GeometryShader * [2]{ nullptr, nullptr };
 	pShader = new ID3D11PixelShader * [2] { nullptr, nullptr };
-	
+	//setting normal value for pcbd
+	this->pcbd.lightPos = { 1,1,1,1 };
+	this->pcbd.lightColor = { 1,1,1,0 };
+	this->pcbd.cameraPos = { 0,0,1,1 };
+	this->pcbd.ka = { 0.5f,0.5f,0.5f,1 };
+	this->pcbd.kd = { 1.f,1.f,1.f,0 };
+	this->pcbd.ks = {1.f,1.f,1.f,0};
+	//
 	//setting matrixes
 	Projection();
 	//if delete this happens it will get an error and program will stop working(I want this to happen when I debug)
@@ -225,9 +145,6 @@ Graphics::~Graphics()
 	if (bs != nullptr) {
 		bs->Release();
 	}
-	if (shadowMap != nullptr) {
-		delete shadowMap;
-	}
 }
 
 float nextFpsUpdate = 0;
@@ -250,9 +167,17 @@ Pcb *Graphics::getPcb()
 {
 	return &pcbd;
 }
-ShadowMap*& Graphics::getShadowMap()
+Gcb* Graphics::getGcb()
 {
-	return shadowMap;
+	return &gcbd;
+}
+void Graphics::setVView(DirectX::XMMATRIX &mat)
+{
+	mat = this->vcbd.view.element;
+}
+void Graphics::setVProj(DirectX::XMMATRIX& mat)
+{
+	mat = DirectX::XMMatrixPerspectiveFovLH(DirectX::XMConvertToRadians(fov), ratio, nearPlane, farPlane);
 }
 ID3D11Device* Graphics::getDevice()
 {
@@ -290,6 +215,10 @@ ID3D11DepthStencilView* Graphics::getDepthStencil()
 {
 	return this->dsView;
 }
+Light *Graphics::getLight()
+{
+	return this->light;
+}
 vec2 Graphics::getWH()
 {
 	return vec2((float)WIDTH, (float)HEIGHT);
@@ -298,20 +227,12 @@ vec2 Graphics::getWH()
 void Graphics::takeLight(PointLight* light)
 {
 	this->light = light;
-	this->shadowMap = new ShadowMap(light, this);
 }
 
 void Graphics::takeIM(ImguiManager* manager)
 {
 	this->imguimanager = manager;
 }
-
-void Graphics::setGame(Game* game)
-{
-	this->game = game;
-}
-
-
 
 void Graphics::clearScreen()
 {
@@ -320,22 +241,9 @@ void Graphics::clearScreen()
 	immediateContext->ClearDepthStencilView(dsView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1, 0);
 }
 
-void Graphics::drawToBuffer()
+void Graphics::setRenderTarget()
 {
 	immediateContext->OMSetRenderTargets(1, &renderTarget, dsView);
-	this->game->DrawToBuffer();
-}
-
-void Graphics::drawShadowBuffer()
-{
-	this->shadowMap->RenderShader();
-	ID3D11ShaderResourceView* const pSRV[1] = { NULL };
-	immediateContext->PSSetShaderResources(3, 1, pSRV);
-	ID3D11RenderTargetView* pNullRTV = NULL;
-	immediateContext->OMSetRenderTargets(1, &pNullRTV, shadowMap->Getdepthview());
-	this->vcbd.lightView.element = shadowMap->getLightView();
-	this->vcbd.view.element = shadowMap->getLightView();
-	this->gcbd.lightView.element = shadowMap->getLightView();
 }
 
 void Graphics::present()

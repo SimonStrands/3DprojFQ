@@ -212,7 +212,6 @@ bool readObjFile(std::vector<std::vector<vertex>>& objP, std::string fileName, i
 			a.str(readWord);
 			std::string mtlname;
 			a >> trash >> mtlname;
-			//mtl.push_back(mtlname);
 		}
 		else if (readWord.substr(0, 2) == "o ") {
 			objIndex++;
@@ -223,7 +222,3 @@ bool readObjFile(std::vector<std::vector<vertex>>& objP, std::string fileName, i
 	return true;
 }
 
-//bool readObjFile(std::vector<std::vector<vertex>>& objP, std::string fileName, int& nrOfVertexes)
-//{
-//	return false;
-//}

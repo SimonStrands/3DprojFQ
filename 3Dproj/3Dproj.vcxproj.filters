@@ -43,12 +43,6 @@
     <Filter Include="Header Files\Graphic\Animation">
       <UniqueIdentifier>{5ca20437-c167-4b8d-9fc1-4590dc42298a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Graphic\Particle">
-      <UniqueIdentifier>{eca78a50-2288-49b2-a3c8-216a00da14de}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Graphic\Paricle">
-      <UniqueIdentifier>{76b250a2-9755-4e96-951d-af0fb06089f7}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Graphic\mesh loading">
       <UniqueIdentifier>{7221fbe7-5b3b-4ff5-a258-45365d4ffd64}</UniqueIdentifier>
     </Filter>
@@ -66,6 +60,15 @@
     </Filter>
     <Filter Include="Resource Files\Shaders\Geometry">
       <UniqueIdentifier>{a1a8980e-9083-4eac-a9f6-595f0de008d2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Graphic\Animation &amp; other">
+      <UniqueIdentifier>{b8d70232-b13e-4fcb-a2c2-74dbee6f173a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Graphic\Animation &amp; other\Paricle">
+      <UniqueIdentifier>{76b250a2-9755-4e96-951d-af0fb06089f7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Graphic\Animation\Particle">
+      <UniqueIdentifier>{eca78a50-2288-49b2-a3c8-216a00da14de}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -145,7 +148,7 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="BillBoard.cpp">
-      <Filter>Source Files\Graphic\Paricle</Filter>
+      <Filter>Source Files\Graphic\Animation &amp; other\Paricle</Filter>
     </ClCompile>
     <ClCompile Include="Textures.cpp">
       <Filter>Source Files</Filter>
@@ -172,6 +175,18 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="DepthStencil.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Model.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Convertions.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimationModel.cpp">
+      <Filter>Source Files\Graphic\Animation &amp; other</Filter>
+    </ClCompile>
+    <ClCompile Include="DynamicConstBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -261,7 +276,7 @@
       <Filter>Header Files\Graphic\Animation</Filter>
     </ClInclude>
     <ClInclude Include="BillBoard.h">
-      <Filter>Header Files\Graphic\Particle</Filter>
+      <Filter>Header Files\Graphic\Animation\Particle</Filter>
     </ClInclude>
     <ClInclude Include="Mesh.h">
       <Filter>Header Files\Game</Filter>
@@ -293,6 +308,21 @@
     <ClInclude Include="DepthStencil.h">
       <Filter>Header Files\Graphic\Shadow</Filter>
     </ClInclude>
+    <ClInclude Include="Model.h">
+      <Filter>Header Files\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimationModel.h">
+      <Filter>Header Files\Graphic\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Convertions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Quaternion.h">
+      <Filter>Header Files\Other</Filter>
+    </ClInclude>
+    <ClInclude Include="DynamicConstBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md">
@@ -301,9 +331,6 @@
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="GeometryShader.hlsl">
-      <Filter>Resource Files\Shaders\Geometry</Filter>
-    </FxCompile>
-    <FxCompile Include="GeometryShader1.hlsl">
       <Filter>Resource Files\Shaders\Geometry</Filter>
     </FxCompile>
     <FxCompile Include="PixelShader.hlsl">
@@ -323,6 +350,12 @@
     </FxCompile>
     <FxCompile Include="PixelBillShader.hlsl">
       <Filter>Resource Files\Shaders\Pixel</Filter>
+    </FxCompile>
+    <FxCompile Include="SkeletonAnimationVS.hlsl">
+      <Filter>Resource Files\Shaders\Vertex</Filter>
+    </FxCompile>
+    <FxCompile Include="Debugging_test.hlsl">
+      <Filter>Resource Files\Shaders\Geometry</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

@@ -1,5 +1,4 @@
 #include "imguiManager.h"
-#include <string>
 
 ImguiManager::ImguiManager()
 {

@@ -18,11 +18,11 @@ public:
 	ID3D11Buffer* getGCB();
 	point points;
 	TileAnimation &getTAnim();
+	void UpdateShader(Graphics*& gfx, vec3 cameraPos ,bool v = true, bool p = true, bool g = true);
 private:
 	TileAnimation anim;
 	ID3D11Buffer* pointBuffer;
 	ID3D11ShaderResourceView* texSRV;
 	ID3D11ShaderResourceView* NDef;
 	ID3D11Buffer* Gg_pConstantBuffer;
-	
 };

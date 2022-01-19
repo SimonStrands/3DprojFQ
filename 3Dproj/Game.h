@@ -6,7 +6,14 @@
 #include "Camera.h"
 #include "imguiManager.h"
 #include "ResourceManager.h"
+
+#include "AnimationModel.h"
+#include "GameObject.h"
+#include "BillBoard.h"
 #include "Light.h"
+
+#include "ShadowMap.h"
+#include "Graphics.h"
 
 //git
 class Game {
@@ -26,14 +33,17 @@ private:
 	//logic and others
 	DeltaTime dt;
 	ImguiManager UIManager;
+	Mouse* mus;
+	Camera* camera;
+	ShadowMap* shadowMap;
 
 	//game objects
-	Camera *camera;
 	PointLight *light;
 	GameObject** obj;
 	BillBoard *bill;
-	Mouse* mus;
+	AnimationModel* snake;
 
 	//var
 	int nrOfObj;
+	float currentTime;
 };

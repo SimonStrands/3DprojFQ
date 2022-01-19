@@ -1,23 +1,22 @@
 #pragma once
 #include <vector>
 #include <d3d11.h>
+#include <DirectXMath.h>
 #include "plHelper.h"
 #include "D311Helper.h"
-#include "Light.h"
-#include <DirectXMath.h>
 #include "WindowHelper.h"
+#include "Light.h"
 #include "deltaTime.h"
 #include "rotation.h"
 #include "Keyboard.h"
-#include "imguiManager.h"
 
-#include "GameObject.h"
-#include "BillBoard.h"
+class ImguiManager;
 
-#include "ShadowMap.h"
-//git
+struct CB {
 
-struct Vcb {
+};
+
+struct Vcb : public CB{
 	struct {
 		DirectX::XMMATRIX element;
 	}transform;
@@ -34,7 +33,7 @@ struct Vcb {
 
 };
 
-struct Pcb {
+struct Pcb: CB {
 	struct {
 		float element[4];
 	}lightPos;
@@ -67,8 +66,7 @@ struct Gcb {
 	}lightView;
 };
 
-class Camera;
-class Game;
+
 
 class Graphics {
 
@@ -100,36 +98,13 @@ private:
 
 	//VertexConstantBuffer
 	Vcb vcbd = {
-		{//transform
-		},
-		{//view
-		},
-		{//projection
-		},
-		{//lightView
-		},
-
+		//transform
+		//view
+		//projection
+		//lightView
 	};
 	//PixelConstantBuffer
 	Pcb pcbd = {
-		{//lightPos
-			1,1,1,1,
-		},
-		{//camPos
-			0,0,1,1,
-		},
-		{//lightColor
-			1,1,1,0
-		},
-		{//ka
-			1,1,1,0,
-		},
-		{//kd
-			1.f,1.f,1.f,0
-		},
-		{//ks
-			0.5f,0.5f,0.5f,1.f
-		},
 	};
 	//GeometryConstantBuffer
 	Gcb gcbd = {
@@ -143,7 +118,6 @@ private:
 
 	//objects
 	Light* light;
-	ShadowMap* shadowMap;
 	ImguiManager *imguimanager;
 
 	//variables
@@ -160,7 +134,10 @@ public:
 	//from gfx
 	Vcb *getVcb();
 	Pcb *getPcb();
-	ShadowMap*& getShadowMap();
+	Gcb* getGcb();
+	void setVView(DirectX::XMMATRIX &mat);
+	void setVProj(DirectX::XMMATRIX &mat);
+
 	ID3D11Device* getDevice();
 	ID3D11DeviceContext*& get_IC();
 	ID3D11Texture2D*& getTexture();
@@ -170,23 +147,18 @@ public:
 	ID3D11InputLayout** getInputL();
 	ID3D11RenderTargetView*& getRenderTarget();
 	ID3D11DepthStencilView* getDepthStencil();
+	Light *getLight();
 	vec2 getWH();
 	//to gfx
 	void takeLight(PointLight *light);
 	void takeIM(ImguiManager* manager);
-	void setGame(Game* game);
-	Game* game;
 
 	//update
 	void Update(float dt);
-	void updateVertexShader(object& obj);
-	void updateGeometryShader(BillBoard& obj, Camera cam);
-	void updatePixelShader(object& obj);
 
 	//draw
 	void clearScreen();
-	void drawToBuffer();
-	void drawShadowBuffer();
+	void setRenderTarget();
 	void present();
 	
 private:

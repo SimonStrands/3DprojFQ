@@ -1,6 +1,6 @@
 #include "Mesh.h"
 
-Mesh::Mesh(Graphics*& gfx, std::string fileToLoad, ID3D11ShaderResourceView** def)
+MeshObj::MeshObj(Graphics*& gfx, std::string fileToLoad, ID3D11ShaderResourceView** def)
 {
 	nrOfVertexes = 0;
 	CreateVertexBuffer(gfx, *this, fileToLoad);
@@ -28,7 +28,7 @@ Mesh::Mesh(Graphics*& gfx, std::string fileToLoad, ID3D11ShaderResourceView** de
 	a >> kd[0] >> kd[1] >> kd[2];
 }
 
-Mesh::~Mesh()
+MeshObj::~MeshObj()
 {
 	if (vertexBuffer != nullptr) {
 		vertexBuffer->Release();
@@ -42,27 +42,27 @@ Mesh::~Mesh()
 	delete[] texSRV;
 }
 
-ID3D11Buffer*& Mesh::getVertexBuffer()
+ID3D11Buffer*& MeshObj::getVertexBuffer()
 {
 	return this->vertexBuffer;
 }
 
-ID3D11ShaderResourceView** Mesh::getTextures()
+ID3D11ShaderResourceView** MeshObj::getTextures()
 {
 	return this->texSRV;
 }
 
-int& Mesh::getNrOfVertex()
+int& MeshObj::getNrOfVertex()
 {
 	return nrOfVertexes;
 }
 
-int& Mesh::getNrOfTextures()
+int& MeshObj::getNrOfTextures()
 {
 	return nrOfTextures;
 }
 
-void Mesh::getKdKa(float (&kd)[4], float (&ka)[4])
+void MeshObj::getKdKa(float (&kd)[4], float (&ka)[4])
 {
 	for (int i = 0; i < 3; i++) {
 		kd[i] = this->kd[i];
@@ -70,4 +70,55 @@ void Mesh::getKdKa(float (&kd)[4], float (&ka)[4])
 	}
 	kd[3] = 1.f;
 	ka[3] = 1.f;
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////////
+
+
+Mesh::Mesh(Graphics*& gfx, std::vector<vertex> vertecies, std::vector<DWORD>& indices)
+{
+	//this->nrOfVertexes = (int)vertecies.size();
+	//this->nrOfIndecies = (int)indices.size();
+	//CreateVertexBuffer(gfx->getDevice(), vertecies, this->vertexBuffer);
+	//CreateVertexBuffer(gfx->getDevice(), indices, this->indicesBuffer, true);
+}
+Mesh::Mesh(Graphics*& gfx, std::vector<BoneVertex> vertecies, std::vector<DWORD>& indices) 
+{
+	this->nrOfVertexes = (int)vertecies.size();
+	this->nrOfIndecies = (int)indices.size();
+	CreateVertexBuffer(gfx->getDevice(), vertecies, this->vertexBuffer);
+	printf("mybuffer at when made %p\n", vertexBuffer);
+	CreateVertexBuffer(gfx->getDevice(), indices, this->indicesBuffer, true);
+	vertecies;
+}
+
+Mesh::Mesh(const Mesh& mesh)
+{
+	this->nrOfTextures = mesh.nrOfTextures;
+	this->nrOfVertexes = mesh.nrOfVertexes;
+	this->nrOfIndecies = mesh.nrOfIndecies;
+	this->vertexBuffer = mesh.vertexBuffer;
+	this->indicesBuffer = mesh.indicesBuffer;
+}
+
+Mesh::~Mesh()
+{
+}
+
+void Mesh::Draw(ID3D11DeviceContext*& immediateContext)
+{
+	if (nrOfIndecies < 0) {
+		return;
+	}
+	UINT offset = 0;
+	static UINT strid = sizeof(BoneVertex);
+	immediateContext->IASetIndexBuffer(this->indicesBuffer, DXGI_FORMAT::DXGI_FORMAT_R32_UINT, 0);
+	immediateContext->IASetVertexBuffers(0, 1, &this->vertexBuffer, &strid, &offset);
+	immediateContext->DrawIndexed(this->nrOfIndecies, 0, 0);
+}
+
+const int Mesh::getNrOfVertexes()
+{
+	return this->nrOfVertexes;
 }

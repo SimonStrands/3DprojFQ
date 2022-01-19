@@ -51,6 +51,16 @@ float vec3::operator*(vec3& other)
 	return(this->x * other.x + this->y * other.y + this->z * other.z);
 }
 
+vec3 vec3::operator*(float& other)
+{
+	return vec3(other * this->x, other * this->y, other* this->z);
+}
+
+vec3 vec3::mul(float other)
+{
+	return vec3(other * this->x, other * this->y, other * this->z);
+}
+
 vec3 vec3::operator+(vec3& other)
 {
 	return vec3(this->x + other.x, this->y + other.y, this->z + other.z);

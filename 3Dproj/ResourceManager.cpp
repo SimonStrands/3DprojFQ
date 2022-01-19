@@ -38,23 +38,24 @@ void ResourceManager::loadThings(Graphics*& gfx)
 	}
 	//mesh
 	//ball = new Mesh(gfx, "obj/newsun.obj", def);
-	ball = new Mesh(gfx, "obj/roundsol.obj", def);
-	stol = new Mesh(gfx, "obj/stol.obj", def);
-	IDK = new Mesh(gfx, "obj/quad2.obj", def);
+	ball = new MeshObj(gfx, "obj/roundsol.obj", def);
+	//stol = new MeshObj(gfx, "obj/stol.obj", def);
+	stol = new MeshObj(gfx, "obj/SnakeTest.obj", def);
+	IDK = new  MeshObj(gfx, "obj/quad2.obj", def);
 	//starwars = new Mesh(gfx, "obj/stormtrooper.obj", def);
 }
 
-Mesh *ResourceManager::get_Ball()
+MeshObj*ResourceManager::get_Ball()
 {
 	return ball;
 }
 
-Mesh *ResourceManager::get_Stol()
+MeshObj*ResourceManager::get_Stol()
 {
 	return stol;
 }
 
-Mesh *ResourceManager::get_IDK()
+MeshObj*ResourceManager::get_IDK()
 {
 	return IDK;
 }
