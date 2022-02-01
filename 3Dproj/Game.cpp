@@ -11,9 +11,9 @@ Game::Game(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWS
 	//we need mor light
 	nrOfLight = 3;
 	light = new Light * [nrOfLight];
-	light[0] = new SpotLight(vec3(-10,0,0), vec3(0,0,-1));
+	light[0] = new SpotLight(vec3(0,0,0), vec3(0,0,-1));
 	light[1] = new SpotLight(vec3(0,0,0), vec3(0,0,-1));
-	light[2] = new SpotLight(vec3(10,0,0), vec3(0,0,-1));
+	light[2] = new SpotLight(vec3(0,0,0), vec3(0,0,-1));
 	//shadow map needs to take more lights
 	this->shadowMap = new ShadowMap((SpotLight**)light, nrOfLight, gfx);
 
@@ -45,7 +45,7 @@ Game::Game(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWS
 	UIManager.takeObject(obj[2]);
 	//UIManager.takeObject(obj[3]);
 	
-	gfx->takeLight((SpotLight*)light[0]);
+	gfx->takeLight((SpotLight**)light, nrOfLight);
 
 	currentTime = 0;
 }

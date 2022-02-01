@@ -35,7 +35,7 @@ Graphics::Graphics(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	gShader = new ID3D11GeometryShader * [2]{ nullptr, nullptr };
 	pShader = new ID3D11PixelShader * [3] { nullptr, nullptr,nullptr };
 	//setting normal value for pcbd
-	this->LCBG.lightPos = { 1,1,1,1 };
+	//this->LCBG.lightPos = { 1,1,1,1 };
 	this->LCBG.lightColor = { 1,1,1,0 };
 	this->LCBG.cameraPos = { 0,0,1,1 };
 	this->pcbd.ka = { 0.5f,0.5f,0.5f,1 };
@@ -150,27 +150,23 @@ Graphics::~Graphics()
 float nextFpsUpdate = 0;
 void Graphics::Update(float dt)
 {
-	//update a global transform (camera and light pos) to shaders
-	LCBG.lightPos.element[0] = this->getLight()->getPos().x;
-	LCBG.lightPos.element[1] = this->getLight()->getPos().y;
-	LCBG.lightPos.element[2] = this->getLight()->getPos().z;
-	LCBG.lightPos.element[3] = 1;
+	//don't have light pos but light view
+	//LCBG.lightPos.element[0] = this->getLight()->getPos().x;
+	//LCBG.lightPos.element[1] = this->getLight()->getPos().y;
+	//LCBG.lightPos.element[2] = this->getLight()->getPos().z;
+	//LCBG.lightPos.element[3] = 1;
 
 	if (getkey('N')) {
 		LCBG.cameraPos.element[3] = 1;
-		LCBG.lightPos.element[3] = 3;
+		//LCBG.lightPos.element[3] = 3;
 	}
 	if (getkey('M')) {
 		LCBG.cameraPos.element[3] = 0;
-		LCBG.lightPos.element[3] = 3;
+		//LCBG.lightPos.element[3] = 3;
 	}
 	LCBG.projection.element = vcbd.projection.element;
-	for (int i = 0; i < 1; i++) {
-		//change later to this->light[i]
-		SpotLight* pl = dynamic_cast<SpotLight*>(this->light);
-		if (pl != nullptr) {
-			LCBG.lightView.element[i] = pl->getLightView();
-		}
+	for (int i = 0; i < nrOfLights; i++) {
+		LCBG.lightView.element[i] = this->light[i]->getLightView();
 	}
 	D3D11_MAPPED_SUBRESOURCE resource;
 	immediateContext->Map(this->Pg_pConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
@@ -178,7 +174,7 @@ void Graphics::Update(float dt)
 	immediateContext->Unmap(this->Pg_pConstantBuffer, 0);
 	ZeroMemory(&resource, sizeof(D3D11_MAPPED_SUBRESOURCE));
 	this->immediateContext->PSSetConstantBuffers(3, 1, &this->Pg_pConstantBuffer);
-	this->immediateContext->CSSetConstantBuffers(3, 1, &this->Pg_pConstantBuffer);
+	this->immediateContext->CSSetConstantBuffers(6, 1, &this->Pg_pConstantBuffer);
 	//fps
 	nextFpsUpdate += (float)dt;
 	if (nextFpsUpdate >= 0.5f) {
@@ -257,7 +253,7 @@ ID3D11Buffer*& Graphics::getTransGCB()
 {
 	return this->Pg_pConstantBuffer;
 }
-Light *Graphics::getLight()
+SpotLight **Graphics::getLight()
 {
 	return this->light;
 }
@@ -266,8 +262,9 @@ vec2 Graphics::getWH()
 	return vec2((float)WIDTH, (float)HEIGHT);
 }
 
-void Graphics::takeLight(SpotLight* light)
+void Graphics::takeLight(SpotLight** light, int nrOfLights)
 {
+	this->nrOfLights = nrOfLights;
 	this->light = light;
 }
 

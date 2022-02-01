@@ -23,9 +23,6 @@ struct DeafulatThings {
 struct LCBGS : public CB {
 	struct {
 		float element[4];
-	}lightPos;
-	struct {
-		float element[4];
 	}cameraPos;
 	struct {
 		float element[4];
@@ -34,7 +31,7 @@ struct LCBGS : public CB {
 		DirectX::XMMATRIX element;
 	}projection;
 	struct {
-		DirectX::XMMATRIX element[1];
+		DirectX::XMMATRIX element[6];
 	}lightView;
 	
 };
@@ -132,7 +129,8 @@ private:
 	ID3D11SamplerState* sampler;
 
 	//objects
-	Light* light;
+	SpotLight** light;
+	int nrOfLights;
 	ImguiManager *imguimanager;
 
 	//variables
@@ -165,10 +163,10 @@ public:
 	ID3D11DepthStencilView* getDepthStencil();
 	ID3D11Buffer*& getTransGCB();
 	IDXGISwapChain*& getSwapChain();
-	Light *getLight();
+	SpotLight**getLight();
 	vec2 getWH();
 	//to gfx
-	void takeLight(SpotLight *light);
+	void takeLight(SpotLight **light, int nrOfLights);
 	void takeIM(ImguiManager* manager);
 
 	//update

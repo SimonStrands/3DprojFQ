@@ -43,7 +43,7 @@ PixelShaderOutput main(PixelShaderInput input)
 	////else here calc normalMapping
 
 	output.Normal = float4(input.normal.xyz, 1);
-	output.Position = float4(input.fragpos.xyz, 1);
+	output.Position = float4(input.fragpos);
 	output.Color = diffuseTex.Sample(testSampler, input.uv);
 	//TEST
 	//output.Position = float4(1, 0, 0, 1);

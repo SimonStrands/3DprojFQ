@@ -26,6 +26,8 @@ SamplerState testSampler;
 
 float4 main(PixelShaderInput input) : SV_TARGET
 {
+    float4x4 LVT = lightView[0];
+    float4 lightPos = float4(LVT[3][0], LVT[3][1], LVT[3][2], LVT[3][3]);
 	float3 posToView = normalize(input.fragpos.xyz - cameraPos.xyz);
 	if (dot(posToView, input.normal) > 0) {
 		input.normal = -input.normal;
