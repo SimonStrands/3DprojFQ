@@ -16,7 +16,7 @@ public:
 private:
 	Mouse *mus;
 	Vcb *Vcbd;
-	Pcb *Pcbd;
+	LCBGS* Lcbd;
 	void rotaiton(DirectX::XMMATRIX &matrix);
 	void movement();
 	void handleEvent(float dt);
@@ -28,6 +28,6 @@ private:
 	float xCamRot;
 	float yCamRot;
 	DirectX::XMFLOAT3 translation;
-	float movementspeed = 10;
+	float movementspeed = 20;
 	void Translate(float dt);
 };

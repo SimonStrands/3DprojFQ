@@ -37,7 +37,6 @@ void RedirectIOToConsole()
     freopen_s(&fp, "CONOUT$", "w", stdout);
 
     printf("Hello console on\n");
-    std::cout << "Windows 10" << std::endl;
 }
 #endif
 

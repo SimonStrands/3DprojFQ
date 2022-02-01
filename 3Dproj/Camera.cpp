@@ -4,11 +4,9 @@
 
 Camera::Camera(Graphics *&gfx, Mouse* mus, vec3 pos)
 {
-	this->Pcbd = gfx->getPcb();
+	this->Lcbd = gfx->getLCB();
 	this->Vcbd = gfx->getVcb();
 	this->mus = mus;
-
-	this->speed = 10.0f;
 	this->mouseSensitivity = 5.0f;
 	this->xCamPos = pos.x;
 	this->yCamPos = pos.y;
@@ -59,9 +57,9 @@ void Camera::rotaiton(DirectX::XMMATRIX &matrix)
 
 void Camera::movement()
 {
-	Pcbd->cameraPos.element[0] = xCamPos;
-	Pcbd->cameraPos.element[1] = yCamPos;
-	Pcbd->cameraPos.element[2] = zCamPos;
+	Lcbd->cameraPos.element[0] = xCamPos;
+	Lcbd->cameraPos.element[1] = yCamPos;
+	Lcbd->cameraPos.element[2] = zCamPos;
 }
 bool once = false;
 void Camera::handleEvent(float dt)

@@ -4,7 +4,7 @@ struct VertexShaderInput {
 	float2 uv : UV;
 	float3 normal : NORMAL;
 	float3 tangent : TANGENT;
-	float3 bitangent : BITANGENT;
+	float3 bitangent : BITANGENT;//calc this in shader
 };
 
 struct VertexShaderOutput {
@@ -22,7 +22,7 @@ cbuffer CBuf
 	row_major matrix transform;//model
 	row_major matrix view;
 	row_major matrix projection;
-	row_major matrix lightView; 
+	row_major matrix lightView;
 };
 
 VertexShaderOutput main(VertexShaderInput input) {

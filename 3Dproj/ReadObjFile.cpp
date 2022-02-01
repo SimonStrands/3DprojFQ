@@ -2,7 +2,7 @@
 #include <DirectXMath.h>
 
 
-std::vector<vec3> calcTangent(vertex *vex1, vertex *vex2, vertex *vex3)
+std::vector<vec3> calcTangent(vertex* vex1, vertex* vex2, vertex* vex3)
 {
 	vertex vex[3]{ *vex1, *vex2, *vex3 };
 	//get all vars we need
@@ -52,30 +52,31 @@ std::vector<vec3> calcTangent(vertex *vex1, vertex *vex2, vertex *vex3)
 	return theReturn;
 }
 
-void fixtangent(std::vector<std::vector<vertex>>& objP)
+
+void fixtangent(std::vector<vertex> &vertecies)
 {
-	for (int objI = 0; objI < objP.size(); objI++) {
-		for (int i = 0; i < objP[objI].size();) {
-			std::vector<vec3> tanbi = calcTangent(&objP[objI][i], &objP[objI][i + 1], &objP[objI][i + 2]);
-			for (int p = 0; p < 3; p++) {
-				objP[objI][i + p].fixtang(tanbi[0], tanbi[1]);
-			}
-			i += 3;
+	for (int i = 0; i < vertecies.size();) {
+		std::vector<vec3> tanbi = calcTangent(&vertecies[i], &vertecies[i+1], &vertecies[i+2]);
+		tanbi[0].Normalize(); tanbi[1].Normalize();
+		for (int p = 0; p < 3; p++) {
+			vertecies[i + p].fixtang(tanbi[0], tanbi[1]);
 		}
+		i += 3;
 	}
 }
 
-std::vector<std::string> getTextureNames(std::string fileName)
+std::vector<FileTextureData> getTextureNames(std::string fileName)
 {
 	std::ifstream infile(fileName);
 	std::string readWord;
 	std::string trash;
 	std::string mtlname;
 	std::string TextureName;
-	std::vector<std::string> theReturn;
-	theReturn.resize(5);
+	int CTR = -1;
+	std::vector<FileTextureData> theReturn;
 	if (!infile.is_open()) {
-		return std::vector<std::string>();
+		printf("cannot open textures");
+		return std::vector<FileTextureData>();
 	}
 	bool done = false;
 	while (std::getline(infile, readWord) && !done) {
@@ -90,63 +91,93 @@ std::vector<std::string> getTextureNames(std::string fileName)
 	infile.open("obj/" + mtlname);
 	if (done && infile.is_open()) {
 		while (std::getline(infile, readWord)) {
+			if (readWord.substr(0, 6) == "newmtl") {
+				CTR++;
+				theReturn.resize(CTR + 1);
+				std::istringstream a;
+				std::string b;
+				a.str(readWord);
+				a >> trash >> theReturn[CTR].name;
+			}
+			if (readWord.substr(0, 2) == "Ns") {
+				//do something
+				std::istringstream a;
+				std::string b;
+				a.str(readWord);
+				a >> trash >> theReturn[CTR].Ns;
+			}
 			if (readWord.substr(0, 2) == "Ka") {
 				//ambient
 				std::istringstream a;
-				std::string b[3];
 				a.str(readWord);
-				a >> trash >> b[0] >> b[1] >> b[2];
-				theReturn[0] = b[0] + " " + b[1] + " " + b[2];
+				a >> trash >> theReturn[CTR].Ka[0] >> theReturn[CTR].Ka[1] >> theReturn[CTR].Ka[2];
 			}
 			if (readWord.substr(0, 2) == "Kd") {
 				//deffuse
 				std::istringstream a;
-				std::string b[3];
 				a.str(readWord);
-				a >> trash >> b[0] >> b[1] >> b[2];
-				theReturn[1] = b[0] + " " + b[1] + " " + b[2];
+				a >> trash >> theReturn[CTR].Kd[0] >> theReturn[CTR].Kd[1] >> theReturn[CTR].Kd[2];
 			}
 			if (readWord.substr(0, 6) == "map_Ka") {
 				//map_ambient
 				std::istringstream a;
 				a.str(readWord);
-				a >> trash >> theReturn[2];
+				a >> trash >> theReturn[CTR].Map_Ka;
+				theReturn[CTR].nrOfTextures++;
 			}
 			if (readWord.substr(0, 6) == "map_Kd") {
-				//map_deffuse
+				//map_diffuse
 				std::istringstream a;
 				a.str(readWord);
-				a >> trash >> theReturn[3];
+				a >> trash >> theReturn[CTR].Map_Kd;
+				theReturn[CTR].nrOfTextures++;
+			}
+			if (readWord.substr(0, 6) == "map_Ks") {
+				//map_Specular
+				std::istringstream a;
+				a.str(readWord);
+				a >> trash >> theReturn[CTR].Map_Ks;
+				theReturn[CTR].nrOfTextures++;
 			}
 			if (readWord.substr(0, 8) == "map_Bump") {
 				//map_normal
 				std::istringstream a;
 				a.str(readWord);
-				a >> trash >> theReturn[4];
+				std::string b;
+				bool done = false;
+				while (a >> b && !done) {
+					if (!(b.substr(0, 2) == "-bm" || b.substr(0, 8) == "map_Bump" || int(b[0]) < 58)) {
+						done = true;
+						theReturn[CTR].Map_Bump = b;
+						theReturn[CTR].nrOfTextures++;
+					}
+				}
 			}
 		}
 	}
 	else {
 		//we didnt get what we wanted
-		return std::vector<std::string>();
+		return std::vector<FileTextureData>();
 	}
 
 	return theReturn;
 }
 
-bool readObjFile(std::vector<std::vector<vertex>>& objP, std::string fileName, int& nrOfVertexes)
+bool readObjFile(std::vector<MeshObj>& Meshes, std::string fileName, std::vector<Material> matrial, Graphics *& gfx)
 {
 	std::string* sTemp;
 	std::string sTemp2[4];
 
+	std::vector<vertex> vertecies;
 	std::vector<std::array<float, 3>>vPos;
 	std::vector<std::array<float, 2>>vUv;
 	std::vector<std::array<float, 4>>vNorm;
+	int currentMatrial = -1;
 
 	std::ifstream infile(fileName);
 	std::string readWord;
 	std::string trash;
-	int objIndex = -1;
+	bool first = true;
 	if (!infile.is_open()) {
 		return false;
 	}
@@ -180,28 +211,28 @@ bool readObjFile(std::vector<std::vector<vertex>>& objP, std::string fileName, i
 			a >> trash >> sTemp2[0] >> sTemp2[1] >> sTemp2[2] >> sTemp2[3];
 			if (sTemp2[3] != "") {
 				for (int i = 0; i < 3; i++) {
-					nrOfVertexes++;
+					//nrOfVertexes++;
 					sTemp = getDest(sTemp2[i]);
 					//när jag läser in faces så får dem första sex alltid samma p.g.a det är så dem har skrivit det på obj filen
-					objP[objIndex].push_back(vertex(vPos[std::stoi(sTemp[0]) - 1], vUv[std::stoi(sTemp[1]) - 1], vNorm[std::stoi(sTemp[2]) - 1]));
+					vertecies.push_back(vertex(vPos[std::stoi(sTemp[0]) - 1], vUv[std::stoi(sTemp[1]) - 1], vNorm[std::stoi(sTemp[2]) - 1]));
 					delete[] sTemp;
 				}
-				nrOfVertexes += 3;
+				//nrOfVertexes += 3;
 				sTemp = getDest(sTemp2[0]);
-				objP[objIndex].push_back(vertex(vPos[std::stoi(sTemp[0]) - 1], vUv[std::stoi(sTemp[1]) - 1], vNorm[std::stoi(sTemp[2]) - 1]));
+				vertecies.push_back(vertex(vPos[std::stoi(sTemp[0]) - 1], vUv[std::stoi(sTemp[1]) - 1], vNorm[std::stoi(sTemp[2]) - 1]));
 				delete[] sTemp;
 				sTemp = getDest(sTemp2[2]);
-				objP[objIndex].push_back(vertex(vPos[std::stoi(sTemp[0]) - 1], vUv[std::stoi(sTemp[1]) - 1], vNorm[std::stoi(sTemp[2]) - 1]));
+				vertecies.push_back(vertex(vPos[std::stoi(sTemp[0]) - 1], vUv[std::stoi(sTemp[1]) - 1], vNorm[std::stoi(sTemp[2]) - 1]));
 				delete[] sTemp;
 				sTemp = getDest(sTemp2[3]);
-				objP[objIndex].push_back(vertex(vPos[std::stoi(sTemp[0]) - 1], vUv[std::stoi(sTemp[1]) - 1], vNorm[std::stoi(sTemp[2]) - 1]));
+				vertecies.push_back(vertex(vPos[std::stoi(sTemp[0]) - 1], vUv[std::stoi(sTemp[1]) - 1], vNorm[std::stoi(sTemp[2]) - 1]));
 				delete[] sTemp;
 			}
 			else {
 				for (int i = 0; i < 3; i++) {
-					nrOfVertexes++;
+					//nrOfVertexes++;
 					sTemp = getDest(sTemp2[i]);
-					objP[objIndex].push_back(vertex(vPos[std::stoi(sTemp[0]) - 1], vUv[std::stoi(sTemp[1]) - 1], vNorm[std::stoi(sTemp[2]) - 1]));
+					vertecies.push_back(vertex(vPos[std::stoi(sTemp[0]) - 1], vUv[std::stoi(sTemp[1]) - 1], vNorm[std::stoi(sTemp[2]) - 1]));
 					delete[] sTemp;
 				}
 			}
@@ -214,11 +245,40 @@ bool readObjFile(std::vector<std::vector<vertex>>& objP, std::string fileName, i
 			a >> trash >> mtlname;
 		}
 		else if (readWord.substr(0, 2) == "o ") {
-			objIndex++;
-			objP.resize(objP.size() + 1);
+			if (!first) {
+				fixtangent(vertecies);
+				Meshes.push_back(MeshObj(gfx, vertecies, matrial[currentMatrial]));
+				if (matrial[currentMatrial].flags & TexFlags::Map_Bump) {
+					Meshes[Meshes.size() - 1].SetShaders(gfx->getVS()[0], gfx->getPS()[0]);
+				}
+				else {
+					Meshes[Meshes.size() - 1].SetShaders(gfx->getVS()[0], gfx->getPS()[2]);
+				}
+				vertecies.clear();
+			}
+			first = false;
+		}
+		else if (readWord.substr(0, 6) == "usemtl") {
+			std::istringstream a;
+			a.str(readWord);
+			std::string mName;
+			a >> trash >> mName;
+			for (int i = 0; i < matrial.size(); i++) {
+				if (matrial[i].name == mName) {
+					currentMatrial = i;
+				}
+			}
 		}
 	}
-	fixtangent(objP);
+	fixtangent(vertecies);
+	Meshes.push_back(MeshObj(gfx, vertecies, matrial[currentMatrial]));
+	if (matrial[currentMatrial].flags & TexFlags::Map_Bump) {
+		Meshes[Meshes.size() - 1].SetShaders(gfx->getVS()[0], gfx->getPS()[0]);
+	}
+	else {
+		Meshes[Meshes.size() - 1].SetShaders(gfx->getVS()[0], gfx->getPS()[2]);
+	}
+	
 	return true;
 }
 

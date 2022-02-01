@@ -26,36 +26,45 @@ ResourceManager::~ResourceManager()
 void ResourceManager::loadThings(Graphics*& gfx)
 {
 	//default tex
-	def = new ID3D11ShaderResourceView * [2];
+	def = new ID3D11ShaderResourceView * [4];
+	//diffuse
 	if (!CreateTexture("Textures/Default/KdDef.png", gfx->getDevice(), gfx->getTexture(), def[0])) {
 		cantLoad(L"kddef cant load");
 	}
-	if (!CreateTexture("Textures/Default/normalDef.jpg", gfx->getDevice(), gfx->getTexture(), def[1])) {
+	//normal
+	if (!CreateTexture("Textures/Default/NormalDef2.png", gfx->getDevice(), gfx->getTexture(), def[1])) {
 		cantLoad(L"NDef cant load");
 	}
+	//ambient
+	if (!CreateTexture("Textures/Default/KaDef2.png", gfx->getDevice(), gfx->getTexture(), def[2])) {
+		cantLoad(L"AmientDef cant load");
+	}
+	//specular//orkar inte
+	def[3] = def[2];
+
 	if (!CreateTexture("Textures/Fire.png", gfx->getDevice(), gfx->getTexture(), Fire)) {
 		cantLoad(L"Fire cant load");
 	}
 	//mesh
-	//ball = new Mesh(gfx, "obj/newsun.obj", def);
-	ball = new MeshObj(gfx, "obj/roundsol.obj", def);
-	//stol = new MeshObj(gfx, "obj/stol.obj", def);
-	stol = new MeshObj(gfx, "obj/SnakeTest.obj", def);
-	IDK = new  MeshObj(gfx, "obj/quad2.obj", def);
-	//starwars = new Mesh(gfx, "obj/stormtrooper.obj", def);
+
+	ball = new ModelObj("obj/roundsol.obj", gfx, def);
+	//ball = new ModelObj("", gfx);
+	stol = new ModelObj("obj/DoubleMesh.obj" , gfx, def);
+	//IDK = new  ModelObj("obj/stormtrooper.obj"     , gfx, def);
+	IDK = new  ModelObj("obj/quad2.obj"     , gfx, def);
 }
 
-MeshObj*ResourceManager::get_Ball()
+ModelObj*ResourceManager::get_Ball()
 {
 	return ball;
 }
 
-MeshObj*ResourceManager::get_Stol()
+ModelObj*ResourceManager::get_Stol()
 {
 	return stol;
 }
 
-MeshObj*ResourceManager::get_IDK()
+ModelObj*ResourceManager::get_IDK()
 {
 	return IDK;
 }

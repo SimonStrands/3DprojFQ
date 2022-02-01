@@ -99,22 +99,26 @@ ID3D11Buffer*& object::getPixelConstBuffer()
     return this->Pg_pConstantBuffer;
 }
 
-float& object::normalMapping()
+float object::normalMapping()
 {
-    return this->normalMap;
+    //return this->normalMap;
+    return false;
 }
 
 void object::getKdKa(float kd[4], float ka[4])
 {
     for (int i = 0; i < 4; i++) {
-        kd[i] = this->kd[i];
-        ka[i] = this->ka[i];
     }
 }
 
 float& object::getxRot()
 {
     return this->rot.y;
+}
+
+void object::setModel(ModelObj* m)
+{
+    this->model = m;
 }
 
 float& object::getxPos() {
@@ -153,7 +157,6 @@ void object::updateVertexShader(Graphics*& gfx)
     );
     DirectX::XMMATRIX rts = point * (scal * (rot * trans));
 
-    //vcbd.transform.element = rts;
     gfx->getVcb()->transform.element = rts;
 
     //changing vertex Shader cBuffer
@@ -167,22 +170,7 @@ void object::updateVertexShader(Graphics*& gfx)
 
 void object::updatePixelShader(Graphics*& gfx)
 {
-    gfx->getPcb()->lightPos.element[0] = gfx->getLight()->getPos().x;
-    gfx->getPcb()->lightPos.element[1] = gfx->getLight()->getPos().y;
-    gfx->getPcb()->lightPos.element[2] = gfx->getLight()->getPos().z;
-    gfx->getPcb()->lightPos.element[3] = 1;
-
-    gfx->getPcb()->cameraPos.element[3] = this->normalMapping();//using camerapos.w a normal map on and off
-    if (getkey('N')) {
-        gfx->getPcb()->cameraPos.element[3] = 1;
-        gfx->getPcb()->lightPos.element[3] = 3;
-    }
-    if (getkey('M')) {
-        gfx->getPcb()->cameraPos.element[3] = 0;
-        gfx->getPcb()->lightPos.element[3] = 3;
-    }
-
-    this->getKdKa(gfx->getPcb()->kd.element, gfx->getPcb()->ka.element);
+    //mMesh->getKdKa(gfx->getPcb()->kd.element, gfx->getPcb()->ka.element);
 
     //changing pixel shader cBuffer
     D3D11_MAPPED_SUBRESOURCE resource;

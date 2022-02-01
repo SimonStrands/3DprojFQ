@@ -70,6 +70,12 @@
     <Filter Include="Header Files\Graphic\Animation\Particle">
       <UniqueIdentifier>{eca78a50-2288-49b2-a3c8-216a00da14de}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\Shaders\Buffers">
+      <UniqueIdentifier>{66e45ce6-50f5-41a1-8417-a61a2b91662f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Shaders\DeferedRendering">
+      <UniqueIdentifier>{312e419a-fa88-469d-b44c-dc63cfcca7a9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -186,7 +192,7 @@
     <ClCompile Include="AnimationModel.cpp">
       <Filter>Source Files\Graphic\Animation &amp; other</Filter>
     </ClCompile>
-    <ClCompile Include="DynamicConstBuffer.cpp">
+    <ClCompile Include="DeferredRendering.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -320,7 +326,10 @@
     <ClInclude Include="Quaternion.h">
       <Filter>Header Files\Other</Filter>
     </ClInclude>
-    <ClInclude Include="DynamicConstBuffer.h">
+    <ClInclude Include="Material.h">
+      <Filter>Header Files\Graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="DeferredRendering.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -328,13 +337,13 @@
     <None Include="README.md">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="Transforms.hlsli">
+      <Filter>Resource Files\Shaders\Buffers</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="GeometryShader.hlsl">
       <Filter>Resource Files\Shaders\Geometry</Filter>
-    </FxCompile>
-    <FxCompile Include="PixelShader.hlsl">
-      <Filter>Resource Files\Shaders\Pixel</Filter>
     </FxCompile>
     <FxCompile Include="VertexBillBoard.hlsl">
       <Filter>Resource Files\Shaders\Vertex</Filter>
@@ -356,6 +365,18 @@
     </FxCompile>
     <FxCompile Include="Debugging_test.hlsl">
       <Filter>Resource Files\Shaders\Geometry</Filter>
+    </FxCompile>
+    <FxCompile Include="PSSH.hlsl">
+      <Filter>Resource Files\Shaders\Pixel</Filter>
+    </FxCompile>
+    <FxCompile Include="PSSHNormal.hlsl">
+      <Filter>Resource Files\Shaders\Pixel</Filter>
+    </FxCompile>
+    <FxCompile Include="DeferredLightningCS.hlsl">
+      <Filter>Resource Files\Shaders\DeferedRendering</Filter>
+    </FxCompile>
+    <FxCompile Include="TestFragmentshader.hlsl">
+      <Filter>Resource Files\Shaders\DeferedRendering</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

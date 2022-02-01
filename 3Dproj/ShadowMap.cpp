@@ -1,18 +1,20 @@
 #include "ShadowMap.h"
-#include "Graphics.h"
 #include "rotation.h"
 
 
-ShadowMap::ShadowMap(PointLight* light, Graphics* gfx)
+ShadowMap::ShadowMap(SpotLight** light, int nrOfLights, Graphics* gfx)
 {
 	this->gfx = gfx;
 	this->light = light;
+	this->nrOfLights = nrOfLights;
 	std::string a;
 	loadVShader("VertexShadow.cso", gfx->getDevice(), vertexShadow, a);
 	loadPShader("PixelShadow.cso", gfx->getDevice(), pixelShadow);
-	CreateDepthStencil(gfx->getDevice(), (UINT)gfx->getWH().x, (UINT)gfx->getWH().y);
+	if (!CreateDepthStencil(gfx->getDevice(), (UINT)gfx->getWH().x, (UINT)gfx->getWH().y)) {
+		printf("something didnt go right");
+	}
 
-	fromDepthToSRV();
+	//fromDepthToSRV();
 }
 
 ShadowMap::~ShadowMap()
@@ -20,12 +22,14 @@ ShadowMap::~ShadowMap()
 	if (dsTexture != nullptr) {
 		dsTexture->Release();
 	}
-	if (dsView != nullptr) {
-		dsView->Release();
-	}
-	if (vertexShadow != nullptr) {
-		vertexShadow->Release();
-	}
+	//for (int i = 0; i < nrOfLights; i++) {
+	//	if (dsViews[i] != nullptr) {
+	//		dsViews[i]->Release();
+	//	}
+	//}
+	//if (vertexShadow != nullptr) {
+	//	vertexShadow->Release();
+	//}
 	if (pixelShadow != nullptr) {
 		pixelShadow->Release();
 	}
@@ -34,9 +38,9 @@ ShadowMap::~ShadowMap()
 	}
 }
 
-ID3D11DepthStencilView* ShadowMap::Getdepthview()
+ID3D11DepthStencilView* ShadowMap::Getdepthview(int i)
 {
-	return this->dsView;
+	return dsViews[i];
 }
 
 ID3D11ShaderResourceView*& ShadowMap::GetshadowResV()
@@ -44,50 +48,25 @@ ID3D11ShaderResourceView*& ShadowMap::GetshadowResV()
 	return this->shadowResV;
 }
 
-void ShadowMap::RenderShader()
-{
-	gfx->get_IC()->ClearDepthStencilView(dsView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1, 0);
-	gfx->get_IC()->VSSetShader(vertexShadow, nullptr, 0);
-	gfx->get_IC()->PSSetShader( pixelShadow, nullptr, 0);
-
-	
-	DirectX::XMMATRIX temp(
-		1.0f, 0.0f, 0.0f, 0.0f,
-		0.0f, 1.0f, 0.0f, 0.0f,
-		0.0f, 0.0f, 1.0f, 0.0f,
-		-light->getPos().x, -light->getPos().y, -light->getPos().z, 1.0f
-	);
-	XRotation(temp, light->getRotation().x);
-	YRotation(temp, light->getRotation().y);
-	lightView = temp;
-}
-
-void ShadowMap::DrawShadowBuffer(Graphics*& gfx)
-{
-	this->RenderShader();
-	ID3D11ShaderResourceView* const pSRV[1] = { NULL };
-	gfx->get_IC()->PSSetShaderResources(3, 1, pSRV);
-	ID3D11RenderTargetView* pNullRTV = NULL;
-	gfx->get_IC()->OMSetRenderTargets(1, &pNullRTV, this->Getdepthview());
-	
-	gfx->getVcb()->lightView.element = this->getLightView();
-	gfx->getVcb()->view.element = this->getLightView();
-	gfx->getGcb()->lightView.element = this->getLightView();
-}
 
 ID3D11ShaderResourceView*& ShadowMap::fromDepthToSRV()
-{
-	dsView->GetResource(&shadowRes);
+{	
 	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
 	srvDesc.Format = DXGI_FORMAT::DXGI_FORMAT_R32_FLOAT;
 	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-	srvDesc.Texture2D.MostDetailedMip = 0;
-	srvDesc.Texture2D.MipLevels = 1;
-	HRESULT hr = gfx->getDevice()->CreateShaderResourceView(
-		shadowRes, &srvDesc, &shadowResV
-	);
-	if (hr != S_OK) {
-		printf("can create shadowResourceView");
+	srvDesc.Texture2DArray.ArraySize = nrOfLights;
+	srvDesc.Texture2DArray.MostDetailedMip = 0;
+	srvDesc.Texture2DArray.MipLevels = 1;
+	
+	for (int i = 0; i < nrOfLights; i++) {
+		dsViews[i]->GetResource(&shadowRes);
+		HRESULT hr = gfx->getDevice()->CreateShaderResourceView(
+			shadowRes, &srvDesc, &shadowResV
+		);
+		if (hr != S_OK) {
+			printf("can create shadowResourceView");
+		}
+		
 	}
 	shadowRes->Release();
 	return shadowResV;
@@ -98,13 +77,36 @@ DirectX::XMMATRIX ShadowMap::getLightView()
 	return this->lightView;
 }
 
+void ShadowMap::setUpdateShadow()
+{
+	for (int i = 0; i < nrOfLights; i++) {
+		gfx->get_IC()->ClearDepthStencilView(dsViews[i], D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1, 0);
+	}
+	gfx->get_IC()->VSSetShader(vertexShadow, nullptr, 0);
+	gfx->get_IC()->PSSetShader(nullptr, nullptr, 0);
+	ID3D11ShaderResourceView* const pSRV[1] = { NULL };
+	gfx->get_IC()->PSSetShaderResources(4, 1, pSRV);
+}
+
+void ShadowMap::inUpdateShadow(int i)
+{
+	ID3D11RenderTargetView* pNullRTV = NULL;
+	gfx->get_IC()->OMSetRenderTargets(1, &pNullRTV, this->Getdepthview(i));
+
+	//don't think about this now
+	gfx->getVcb()->lightView.element = this->light[i]->getLightView();
+	gfx->getVcb()->view.element = this->light[i]->getLightView();
+	gfx->getGcb()->lightView.element = this->light[i]->getLightView();
+}
+
 bool ShadowMap::CreateDepthStencil(ID3D11Device* device, UINT width, UINT height)
 {
+	//CREATE TEXTURE 2D ARRAY
 	D3D11_TEXTURE2D_DESC textureDesc;
 	textureDesc.Width = width;
 	textureDesc.Height = height;
 	textureDesc.MipLevels = 1;
-	textureDesc.ArraySize = 1;
+	textureDesc.ArraySize = nrOfLights;
 	textureDesc.Format = DXGI_FORMAT_R32_TYPELESS;
 	textureDesc.SampleDesc.Count = 1;
 	textureDesc.SampleDesc.Quality = 0;
@@ -112,21 +114,54 @@ bool ShadowMap::CreateDepthStencil(ID3D11Device* device, UINT width, UINT height
 	textureDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
 	textureDesc.CPUAccessFlags = 0;
 	textureDesc.MiscFlags = 0;
-
-	D3D11_DEPTH_STENCIL_VIEW_DESC descView = {};
-	descView.Format = DXGI_FORMAT_D32_FLOAT;
-	descView.Flags = 0;
-	descView.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
-	descView.Texture2DArray.MipSlice = 0;
-	descView.Texture2DArray.ArraySize = 1;
-	descView.Texture2DArray.FirstArraySlice = (UINT)0;
+	
+	//D3D11_SUBRESOURCE_DATA* sSubData = new D3D11_SUBRESOURCE_DATA[nrOfLights];
+	//for (int i = 0; i < nrOfLights; i++) {
+	//	sSubData[i].pSysMem = shadowRes;
+	//	sSubData[i].SysMemPitch = (UINT)(width * 1);
+	//	sSubData[i].SysMemSlicePitch = (UINT)(width * height * 1);
+	//}
 
 	if (FAILED(device->CreateTexture2D(&textureDesc, nullptr, &dsTexture)))
 	{
 		printf("failed create 2d texture");
 		return false;
 	}
-	HRESULT hr = device->CreateDepthStencilView(dsTexture, &descView, &dsView);
-	return !FAILED(hr);
+
+	//DEPTH STENCIL ARRAY
+	D3D11_DEPTH_STENCIL_VIEW_DESC descView = {};
+	descView.Format = DXGI_FORMAT_D32_FLOAT;
+	descView.Flags = 0;
+	descView.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2DARRAY;
+	descView.Texture2DArray.ArraySize = 1;
+	descView.Texture2DArray.MipSlice = 0;
+
+	for (int i = 0; i < nrOfLights; i++) {
+		descView.Texture2DArray.FirstArraySlice = D3D11CalcSubresource(0, i, 1);
+		ID3D11DepthStencilView* dsView;
+		if (FAILED(device->CreateDepthStencilView(dsTexture, &descView, &dsView))) {
+			printf("failed to create dSV");
+			return false;
+		}
+		dsViews.push_back(dsView);
+	}
+
+	//DEPTH STENCIL TO SRV
+	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+	srvDesc.Format = DXGI_FORMAT::DXGI_FORMAT_R32_FLOAT;
+	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2DARRAY;
+	srvDesc.Texture2DArray.ArraySize = nrOfLights;
+	srvDesc.Texture2DArray.MostDetailedMip = 0;
+	srvDesc.Texture2DArray.MipLevels = 1;
+
+	HRESULT hr = gfx->getDevice()->CreateShaderResourceView(
+		dsTexture, &srvDesc, &shadowResV
+	);
+	if (hr != S_OK) {
+		printf("can create shadowResourceView");
+	}
+
+	
+	return true;
 }
 

@@ -4,6 +4,7 @@
 #include <map>
 #include "Convertions.h"
 
+/*
 struct AnimVCB : CB {
 	struct {
 		DirectX::XMMATRIX element;
@@ -45,3 +46,4 @@ private:
 	void loadAnimation(const aiScene* scene);
 	std::pair<UINT, float> getTimeFraction(std::vector<float>& keyframesTime, float& elapsedTime);
 };
+*/

@@ -1,45 +1,22 @@
 #include "Mesh.h"
 
-MeshObj::MeshObj(Graphics*& gfx, std::string fileToLoad, ID3D11ShaderResourceView** def)
+MeshObj::MeshObj(Graphics*& gfx, std::vector<vertex> vertecies, Material &material)
 {
-	nrOfVertexes = 0;
-	CreateVertexBuffer(gfx, *this, fileToLoad);
-	std::vector<std::string> fileNames;
-	fileNames = getTextureNames(fileToLoad);
-	nrOfTextures = (int)fileNames.size() - 2;
-	texSRV = new ID3D11ShaderResourceView * [nrOfTextures];
-	for (int i = 0; i < nrOfTextures; i++) {
-		if (!CreateTexture(fileNames[i + 2], gfx->getDevice(), gfx->getTexture(), texSRV[i])) {
-			if (i == 2) {
-				texSRV[i] = nullptr;
-			}
-			else {
-				texSRV[i] = def[0];
-			}
-			
-			defTexture[i] = true;
-		}
+	this->nrOfVertexes = (int)vertecies.size();
+	CreateVertexBuffer(gfx->getDevice(), vertecies, this->vertexBuffer);
+	this->matrial = material;
+}
+
+void MeshObj::begone()
+{
+	if (this->vertexBuffer != nullptr) {
+		this->vertexBuffer->Release();
 	}
-	std::istringstream a;
-	a.str(fileNames[0]);
-	a >> ka[0] >> ka[1] >> ka[2];
-	a.clear();
-	a.str(fileNames[1]);
-	a >> kd[0] >> kd[1] >> kd[2];
+	matrial.begone();
 }
 
 MeshObj::~MeshObj()
 {
-	if (vertexBuffer != nullptr) {
-		vertexBuffer->Release();
-	}
-	// why wont this delete
-	for (int i = 0; i < nrOfTextures; i++) {
-		if (texSRV[i] != nullptr && !defTexture[i]) {
-			texSRV[i]->Release();
-		}
-	}
-	delete[] texSRV;
 }
 
 ID3D11Buffer*& MeshObj::getVertexBuffer()
@@ -49,7 +26,7 @@ ID3D11Buffer*& MeshObj::getVertexBuffer()
 
 ID3D11ShaderResourceView** MeshObj::getTextures()
 {
-	return this->texSRV;
+	return this->matrial.texSRV;
 }
 
 int& MeshObj::getNrOfVertex()
@@ -59,23 +36,44 @@ int& MeshObj::getNrOfVertex()
 
 int& MeshObj::getNrOfTextures()
 {
-	return nrOfTextures;
+	return this->matrial.nrOfTextures;
 }
 
 void MeshObj::getKdKa(float (&kd)[4], float (&ka)[4])
 {
 	for (int i = 0; i < 3; i++) {
-		kd[i] = this->kd[i];
-		ka[i] = this->ka[i];
+		kd[i] = this->matrial.Kd[i];
+		ka[i] = this->matrial.Ka[i];
 	}
 	kd[3] = 1.f;
 	ka[3] = 1.f;
 }
 
+void MeshObj::draw(ID3D11DeviceContext*& immediateContext)
+{
+	UINT offset = 0;
+	static UINT strid = sizeof(vertex);
+	immediateContext->PSSetShaderResources(0, 4, this->matrial.texSRV);
+	immediateContext->IASetVertexBuffers(0, 1, &this->vertexBuffer, &strid, &offset);
+	immediateContext->Draw(this->nrOfVertexes, 0);
+}
+
+void MeshObj::SetShaders(ID3D11VertexShader* VS, ID3D11PixelShader* PS)
+{
+	this->VS = VS;
+	this->PS = PS;
+}
+
+void MeshObj::SetShader(ID3D11DeviceContext*& immediateContext)
+{
+	immediateContext->VSSetShader(this->VS, nullptr, 0);
+	immediateContext->PSSetShader(this->PS, nullptr, 0);
+}
+
 
 //////////////////////////////////////////////////////////////////////////////////////////
 
-
+/*
 Mesh::Mesh(Graphics*& gfx, std::vector<vertex> vertecies, std::vector<DWORD>& indices)
 {
 	//this->nrOfVertexes = (int)vertecies.size();
@@ -90,7 +88,6 @@ Mesh::Mesh(Graphics*& gfx, std::vector<BoneVertex> vertecies, std::vector<DWORD>
 	CreateVertexBuffer(gfx->getDevice(), vertecies, this->vertexBuffer);
 	printf("mybuffer at when made %p\n", vertexBuffer);
 	CreateVertexBuffer(gfx->getDevice(), indices, this->indicesBuffer, true);
-	vertecies;
 }
 
 Mesh::Mesh(const Mesh& mesh)
@@ -122,3 +119,4 @@ const int Mesh::getNrOfVertexes()
 {
 	return this->nrOfVertexes;
 }
+*/

@@ -1,5 +1,5 @@
 #pragma once
-#include "Mesh.h"
+#include "Model.h"
 #include "plHelper.h"
 
 class ResourceManager {
@@ -14,9 +14,9 @@ public:
 #pragma endregion
 
 #pragma region Meshes
-	MeshObj *get_Ball();
-	MeshObj *get_Stol();
-	MeshObj *get_IDK();
+	ModelObj* get_Ball();
+	ModelObj* get_Stol();
+	ModelObj*get_IDK();
 	//Mesh* get_starwars();
 #pragma endregion
 	
@@ -28,9 +28,9 @@ private:
 
 #pragma region Meshes
 	//meshes
-	MeshObj *ball;
-	MeshObj *stol;
-	MeshObj *IDK;
+	ModelObj *ball;
+	ModelObj *stol;
+	ModelObj *IDK;
 	//Mesh* starwars;
 #pragma endregion
 

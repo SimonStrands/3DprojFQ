@@ -1,6 +1,6 @@
 #include "Model.h"
-
-
+#include "ReadObjFile.h"
+/*
 Model::Model(const std::string filePath, Graphics*& gfx, vec3 pos, vec3 rot, vec3 scale)
 {
 	this->changePos(pos);
@@ -93,5 +93,46 @@ bool Model::LoadModel(const std::string& modelfile)
 		return false;
 	}
 	this->ProcessNode(pScene->mRootNode, pScene);
+	return false;
+}
+
+*/
+
+ModelObj::ModelObj(const std::string& ModelFile, Graphics*& gfx, ID3D11ShaderResourceView** def)
+{
+	std::vector<FileTextureData> textures;
+	std::vector<Material> matrial;
+	textures = getTextureNames(ModelFile);
+	matrial.resize(textures.size());
+	for (int i = 0; i < textures.size(); i++) {
+		textures[i].fromFTDToMaterial(matrial[i], gfx, def);
+	}
+	readObjFile(mMeshes, ModelFile, matrial, gfx);
+}
+
+void ModelObj::draw(ID3D11DeviceContext*& immediateContext, bool sm)
+{
+	for (int i = 0; i < mMeshes.size(); i++) {
+		if (!sm) {
+			this->mMeshes[i].SetShader(immediateContext);
+		}
+		mMeshes[i].draw(immediateContext);
+	}
+}
+
+void ModelObj::drawDefTest(ID3D11DeviceContext*& immediateContext)
+{
+	for (int i = 0; i < mMeshes.size(); i++) {
+		mMeshes[i].draw(immediateContext);
+	}
+}
+
+std::vector<MeshObj> ModelObj::getMehses()
+{
+	return this->mMeshes;
+}
+
+bool ModelObj::loadModel(const std::string& ModelFile)
+{
 	return false;
 }

@@ -1,5 +1,5 @@
 #include "AnimationModel.h"
-
+/*
 AnimationModel::AnimationModel(const std::string filePath, Graphics*& gfx, vec3 pos, vec3 rot, vec3 scale) :
 	Model(gfx)
 {
@@ -271,3 +271,4 @@ std::pair<UINT, float> AnimationModel::getTimeFraction(std::vector<float>& keyfr
 	float frac = (elapsedTime - start) / (end - start);
 	return {segment, frac};
 }
+*/

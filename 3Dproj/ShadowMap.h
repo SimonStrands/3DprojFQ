@@ -5,27 +5,30 @@
 #include "plHelper.h"
 #include <DirectXMath.h>
 #include "CreateBuffer.h"
+#include "Graphics.h"
 
 class ShadowMap {
 public:
-	ShadowMap(PointLight* light, Graphics* gfx);
+	ShadowMap(SpotLight** light, int nrOfLights, Graphics* gfx);
 	virtual ~ShadowMap();
-	ID3D11DepthStencilView* Getdepthview();
+	ID3D11DepthStencilView* Getdepthview(int i);
 	ID3D11ShaderResourceView*& GetshadowResV();
 	ID3D11ShaderResourceView*& fromDepthToSRV();
 	DirectX::XMMATRIX getLightView();
-	void RenderShader();
-	void DrawShadowBuffer(Graphics*& gfx);
+	void setUpdateShadow();
+	void inUpdateShadow(int i);
 private:
 
 	bool CreateDepthStencil(ID3D11Device* device, UINT width, UINT height);
 	//object
-	PointLight* light;
+	int nrOfLights;
+	SpotLight** light;
 	Graphics* gfx;
 
 	DirectX::XMMATRIX lightView;
 	ID3D11Texture2D* dsTexture;
-	ID3D11DepthStencilView* dsView;
+	//ID3D11DepthStencilView* dsViews;
+	std::vector<ID3D11DepthStencilView*> dsViews;
 	ID3D11VertexShader* vertexShadow;
 	ID3D11PixelShader* pixelShadow;
 	ID3D11Resource* shadowRes;

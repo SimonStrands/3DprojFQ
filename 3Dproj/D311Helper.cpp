@@ -18,7 +18,7 @@ bool CreateInsterface(UINT width, UINT height, HWND wnd, ID3D11Device*& device, 
     swapChainDesc.SampleDesc.Count = 1;
     swapChainDesc.SampleDesc.Quality = 0;
 
-    swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+    swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT | DXGI_USAGE_UNORDERED_ACCESS;
     swapChainDesc.BufferCount = 1;
     swapChainDesc.OutputWindow = wnd;
     swapChainDesc.Windowed = true;

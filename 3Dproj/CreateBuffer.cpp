@@ -1,7 +1,7 @@
 #include "CreateBuffer.h"
 #include "GameObject.h"
 #include "Graphics.h"
-
+/*
 bool CreateVertexBuffer(Graphics*& gfx, MeshObj& mesh, std::string fileName) {
 	std::vector<std::vector<vertex>> vertices;
 	if (fileName.substr(fileName.size() - 3) == "fbx") {
@@ -38,11 +38,11 @@ bool CreateVertexBuffer(Graphics*& gfx, MeshObj& mesh, std::string fileName) {
 	return !FAILED(hr);
 
 }
-
+*/
 bool CreateVertexConstBuffer(Graphics*& gfx, ID3D11Buffer*& buff)
 {
 	D3D11_BUFFER_DESC CbDesc;
-	
+	CbDesc.ByteWidth = sizeof(Vcb);
 	CbDesc.Usage = D3D11_USAGE_DYNAMIC;
 	CbDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 	CbDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
@@ -53,8 +53,6 @@ bool CreateVertexConstBuffer(Graphics*& gfx, ID3D11Buffer*& buff)
 	
 	InitData.SysMemPitch = 0;
 	InitData.SysMemSlicePitch = 0;
-
-	CbDesc.ByteWidth = sizeof(Vcb);
 	InitData.pSysMem = gfx->getVcb();
 
 	HRESULT hr = gfx->getDevice()->CreateBuffer(&CbDesc, &InitData, &buff);
@@ -66,9 +64,9 @@ bool CreateVertexConstBuffer(Graphics*& gfx, ID3D11Buffer*& buff)
 	return !FAILED(hr);
 }
 
-bool CreateConstBuffer(Graphics*& gfx, ID3D11Buffer*& buff, UINT size, CB &initdata) {
+bool CreateConstBuffer(Graphics*& gfx, ID3D11Buffer*& buff, UINT size, CB *initdata) {
 	D3D11_BUFFER_DESC CbDesc;
-
+	CbDesc.ByteWidth = size;
 	CbDesc.Usage = D3D11_USAGE_DYNAMIC;
 	CbDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 	CbDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
@@ -79,8 +77,6 @@ bool CreateConstBuffer(Graphics*& gfx, ID3D11Buffer*& buff, UINT size, CB &initd
 
 	InitData.SysMemPitch = 0;
 	InitData.SysMemSlicePitch = 0;
-
-	CbDesc.ByteWidth = size;
 	InitData.pSysMem = &initdata;
 
 	HRESULT hr = gfx->getDevice()->CreateBuffer(&CbDesc, &InitData, &buff);

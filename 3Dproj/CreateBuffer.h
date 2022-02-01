@@ -12,18 +12,15 @@ class MeshObj;
 //class Graphics;
 class GameObject;
 
-bool CreateVertexBuffer(Graphics*& gfx, MeshObj& obj, std::string fileName);
+//bool CreateVertexBuffer(Graphics*& gfx, MeshObj& obj, std::string fileName);
 bool CreateVertexConstBuffer(Graphics *&gfx, ID3D11Buffer*& buff);
 bool CreatePixelConstBuffer(Graphics *&gfx, ID3D11Buffer*& buff);
 bool CreateGeometryConstBuffer(Graphics *&gfx, ID3D11Buffer*& buff);
-bool CreateConstBuffer(Graphics *&gfx, ID3D11Buffer*& buff, UINT size, CB &initdata);
+bool CreateConstBuffer(Graphics *&gfx, ID3D11Buffer*& buff, UINT size, CB *initdata);
 template<class T>
 bool CreateVertexBuffer(ID3D11Device* device, std::vector<T> vertecies, ID3D11Buffer*& vertexBuffer, bool ind = false) {
 	D3D11_BUFFER_DESC bDesc = {};
 	bDesc.ByteWidth = sizeof(T) * (UINT)vertecies.size();
-	printf(std::to_string((int)bDesc.ByteWidth).c_str());
-	vertecies;
-	printf("\n");
 	bDesc.Usage = D3D11_USAGE_DYNAMIC;
 	bDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	if (ind) {

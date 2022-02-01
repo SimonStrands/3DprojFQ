@@ -16,6 +16,29 @@ struct CB {
 
 };
 
+struct DeafulatThings {
+
+};
+
+struct LCBGS : public CB {
+	struct {
+		float element[4];
+	}lightPos;
+	struct {
+		float element[4];
+	}cameraPos;
+	struct {
+		float element[4];
+	}lightColor;
+	struct {
+		DirectX::XMMATRIX element;
+	}projection;
+	struct {
+		DirectX::XMMATRIX element[1];
+	}lightView;
+	
+};
+
 struct Vcb : public CB{
 	struct {
 		DirectX::XMMATRIX element;
@@ -34,15 +57,6 @@ struct Vcb : public CB{
 };
 
 struct Pcb: CB {
-	struct {
-		float element[4];
-	}lightPos;
-	struct {
-		float element[4];
-	}cameraPos;
-	struct {
-		float element[4];
-	}lightColor;
 	struct {
 		float element[4];
 	}kd;
@@ -103,6 +117,7 @@ private:
 		//projection
 		//lightView
 	};
+	LCBGS LCBG = {};
 	//PixelConstantBuffer
 	Pcb pcbd = {
 	};
@@ -135,6 +150,7 @@ public:
 	Vcb *getVcb();
 	Pcb *getPcb();
 	Gcb* getGcb();
+	LCBGS* getLCB();
 	void setVView(DirectX::XMMATRIX &mat);
 	void setVProj(DirectX::XMMATRIX &mat);
 
@@ -147,10 +163,12 @@ public:
 	ID3D11InputLayout** getInputL();
 	ID3D11RenderTargetView*& getRenderTarget();
 	ID3D11DepthStencilView* getDepthStencil();
+	ID3D11Buffer*& getTransGCB();
+	IDXGISwapChain*& getSwapChain();
 	Light *getLight();
 	vec2 getWH();
 	//to gfx
-	void takeLight(PointLight *light);
+	void takeLight(SpotLight *light);
 	void takeIM(ImguiManager* manager);
 
 	//update

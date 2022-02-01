@@ -3,7 +3,7 @@ struct PixelShaderInput
    float4 position : SV_POSITION;
 };
 
-Texture2D SM : register(t3);
+Texture2D SM : register(t4);
 
 float4 main(PixelShaderInput input) : SV_TARGET
 {

@@ -1,3 +1,5 @@
+#include "Transforms.hlsli"
+
 struct PixelShaderInput
 {
 	float4 position : SV_POSITION;
@@ -10,9 +12,6 @@ struct PixelShaderInput
 
 cbuffer CBuf
 {
-	float4 lightPos;
-	float4 cameraPos;
-	float4 lightColor;
 	float4 kd;
 	float4 ks;
 	float4 ka;

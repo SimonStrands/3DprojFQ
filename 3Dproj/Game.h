@@ -7,11 +7,11 @@
 #include "imguiManager.h"
 #include "ResourceManager.h"
 
-#include "AnimationModel.h"
 #include "GameObject.h"
 #include "BillBoard.h"
 #include "Light.h"
 
+#include "DeferredRendering.h"
 #include "ShadowMap.h"
 #include "Graphics.h"
 
@@ -22,6 +22,7 @@ public:
 	virtual ~Game();
 	void run();
 	void DrawToBuffer();
+	void ForwardDraw();
 	void DrawAllShadowObject();//without any otherShaders
 private:
 	//width and height of window
@@ -31,6 +32,7 @@ private:
 	void Update();
 private:
 	//logic and others
+	DeferredRendering *defRend;
 	DeltaTime dt;
 	ImguiManager UIManager;
 	Mouse* mus;
@@ -38,12 +40,14 @@ private:
 	ShadowMap* shadowMap;
 
 	//game objects
-	PointLight *light;
+	Light **light;
+	GameObject** LightVisualizers;
+
 	GameObject** obj;
 	BillBoard *bill;
-	AnimationModel* snake;
 
 	//var
+	int nrOfLight;
 	int nrOfObj;
 	float currentTime;
 };

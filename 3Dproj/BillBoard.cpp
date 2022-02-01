@@ -9,8 +9,8 @@ BillBoard::BillBoard(Graphics*& gfx, vec3 pos, ID3D11ShaderResourceView* texSRV,
 	this->texSRV = texSRV;
 	this->NDef = NDef;
 	for (int i = 0; i < 4; i++) {
-		ka[i] = 0.11f;
-		kd[i] = 0.0f;
+		
+		
 	}
 	CreateVertexConstBuffer(gfx, this->getVertexConstBuffer());
 	CreateGeometryConstBuffer(gfx, Gg_pConstantBuffer);
@@ -33,7 +33,6 @@ BillBoard::BillBoard(Graphics*& gfx, vec3 pos, ID3D11ShaderResourceView* texSRV,
 	if (FAILED(hr)) {
 		printf("failed");
 	}
-	this->normalMap = 0.f;
 }
 
 BillBoard::~BillBoard()
@@ -51,7 +50,7 @@ void BillBoard::update(float dt)
 	anim.update(dt);
 }
 
-void BillBoard::draw(ID3D11DeviceContext*& immediateContext)
+void BillBoard::draw(ID3D11DeviceContext*& immediateContext, bool sm)
 {
 	immediateContext->PSSetShaderResources(0, 1, &texSRV);
 	immediateContext->PSSetShaderResources(1, 1, &texSRV);
@@ -63,6 +62,16 @@ void BillBoard::draw(ID3D11DeviceContext*& immediateContext)
 	immediateContext->PSSetConstantBuffers(0, 1, &this->getPixelConstBuffer());
 	immediateContext->IASetVertexBuffers(0, 1, &pointBuffer, &strid, &offset);
 	immediateContext->Draw(1, 0);
+}
+
+void BillBoard::getKdKa(float(&kd)[4], float(&ka)[4])
+{
+	for (int i = 0; i < 3; i++) {
+		kd[i] = 0.5;
+		ka[i] = 0.5;
+	}
+	kd[3] = 1.f;
+	ka[3] = 1.f;
 }
 
 ID3D11Buffer* BillBoard::getGCB()
@@ -78,7 +87,18 @@ TileAnimation& BillBoard::getTAnim()
 void BillBoard::UpdateShader(Graphics*& gfx, vec3 cameraPos, bool v, bool p, bool g)
 {
 	this->updateVertexShader(gfx);
-	this->updatePixelShader(gfx);
+
+	this->getKdKa(gfx->getPcb()->kd.element, gfx->getPcb()->ka.element);
+
+
+	//changing pixel shader cBuffer
+	D3D11_MAPPED_SUBRESOURCE resource;
+	gfx->get_IC()->Map(this->getPixelConstBuffer(), 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
+	memcpy(resource.pData, gfx->getPcb(), sizeof(Pcb));
+	gfx->get_IC()->Unmap(this->getPixelConstBuffer(), 0);
+	ZeroMemory(&resource, sizeof(D3D11_MAPPED_SUBRESOURCE));
+
+	//GCB
 	gfx->getGcb()->cameraPos.element[0] = -cameraPos.x;
 	gfx->getGcb()->cameraPos.element[1] = -cameraPos.y;
 	gfx->getGcb()->cameraPos.element[2] = -cameraPos.z;
@@ -89,7 +109,6 @@ void BillBoard::UpdateShader(Graphics*& gfx, vec3 cameraPos, bool v, bool p, boo
 	gfx->getGcb()->uvCords.element[2] = this->getTAnim().uv().xyz.z;
 	gfx->getGcb()->uvCords.element[3] = this->getTAnim().uv().w;
 
-	D3D11_MAPPED_SUBRESOURCE resource;
 	gfx->get_IC()->Map(this->getGCB(), 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
 	memcpy(resource.pData, gfx->getGcb(), sizeof(Gcb));
 	gfx->get_IC()->Unmap(this->getGCB(), 0);
