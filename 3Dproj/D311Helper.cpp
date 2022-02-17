@@ -79,8 +79,8 @@ bool CreateRasterizerState(ID3D11Device* device , ID3D11RasterizerState*& pRS) {
     D3D11_RASTERIZER_DESC rasterState;
     rasterState.FillMode = D3D11_FILL_SOLID;
     //rasterState.FillMode = D3D11_FILL_WIREFRAME;
-    rasterState.CullMode = D3D11_CULL_NONE;
-    //rasterState.CullMode = D3D11_CULL_BACK;
+    //rasterState.CullMode = D3D11_CULL_NONE;
+    rasterState.CullMode = D3D11_CULL_BACK;
     rasterState.FrontCounterClockwise = false;
     rasterState.DepthBias = 0;
     rasterState.SlopeScaledDepthBias = 0;
@@ -129,7 +129,7 @@ bool SetupD3D11(UINT width, UINT height,
         return false;
     }
 
-    if (!depth.CreateDepthStencil(device, width, height, dsTexture, dsView))
+    if (!CreateDepthStencil(device, width, height, dsTexture, dsView))
     {
         std::cerr << "create depth" << std::endl;
         return false;

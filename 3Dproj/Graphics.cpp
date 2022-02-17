@@ -19,23 +19,43 @@ void Graphics::Projection()
 	//setting projection matrix
 	vcbd.projection.element = DirectX::XMMatrixPerspectiveFovLH(DirectX::XMConvertToRadians(fov), ratio, nearPlane, farPlane);
 }
+void Graphics::CreateBlendState(int wBlend, bool transparance) {
+	D3D11_BLEND_DESC bd = {};
+	if (transparance) {
+		bd.RenderTarget[0].BlendEnable = TRUE;
+		bd.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+		bd.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+		bd.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+		bd.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ZERO;
+		bd.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+		bd.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+		bd.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+	}
+	else {
+		bd.RenderTarget[0].BlendEnable = FALSE;
+		bd.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+	}
+	device->CreateBlendState(&bd, &bs[wBlend]);
+}
 
 Graphics::Graphics(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine, _In_ int nCmdShow) :
 	speed(1.5f)
 {
 	fov = 90.f;
 	ratio = 16.f / 9.f;
-	farPlane = 200.f;
+	farPlane = 2000.f;
 	nearPlane = 0.1f;
 	nrOfObject = 0;
 	Pg_pConstantBuffer = nullptr;
 	normalMapping = true;//?
-	inputLayout = new ID3D11InputLayout * [3]{nullptr, nullptr, nullptr};
+	inputLayout = new ID3D11InputLayout * [2]{nullptr, nullptr};
 	vShader = new ID3D11VertexShader * [3]{ nullptr, nullptr, nullptr };
 	gShader = new ID3D11GeometryShader * [2]{ nullptr, nullptr };
 	pShader = new ID3D11PixelShader * [3] { nullptr, nullptr,nullptr };
+	hShader = new ID3D11HullShader * [2] { nullptr,nullptr };
+	dShader = new ID3D11DomainShader * [2] { nullptr,nullptr };
+
 	//setting normal value for pcbd
-	//this->LCBG.lightPos = { 1,1,1,1 };
 	this->LCBG.lightColor = { 1,1,1,0 };
 	this->LCBG.cameraPos = { 0,0,1,1 };
 	this->pcbd.ka = { 0.5f,0.5f,0.5f,1 };
@@ -53,28 +73,21 @@ Graphics::Graphics(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 		std::cerr << "cant set up" << std::endl;
 		delete this;
 	}
-	if (!SetupPipeline(device, vShader, pShader, gShader, inputLayout, tex, sampler))
+	if (!SetupPipeline(device, vShader, pShader, gShader, hShader, dShader, inputLayout, tex, sampler))
 	{
 		std::cerr << "cant set up" << std::endl;
 		delete this;
 	}
-	
-	D3D11_BLEND_DESC bd = {};
-	bs = nullptr;
-	bd.RenderTarget[0].BlendEnable = TRUE;
-	bd.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
-	bd.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
-	bd.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
-	bd.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ZERO;
-	bd.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
-	bd.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
-	bd.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
-	device->CreateBlendState(&bd, &bs);
+	bs = new ID3D11BlendState * [2];
+	this->CreateBlendState(0, false);
+	this->CreateBlendState(1, true);
 	UINT a = 0xFFFFFFFFu;
-	immediateContext->OMSetBlendState(bs, nullptr, 0xFFFFFFFFu);
+	immediateContext->OMSetBlendState(bs[0], nullptr, 0xFFFFFFFFu);
 	
 	//set settings up
 	immediateContext->PSSetSamplers(0, 1, &sampler);
+	immediateContext->DSSetSamplers(0, 1, &sampler);
+
 	immediateContext->PSSetShader(getPS()[0], nullptr, 0);
 	immediateContext->RSSetViewports(1, &viewPort);
 	immediateContext->OMSetRenderTargets(1, &renderTarget, dsView);
@@ -142,19 +155,13 @@ Graphics::~Graphics()
 	if (sampler != nullptr) {
 		sampler->Release();
 	}
-	if (bs != nullptr) {
-		bs->Release();
-	}
+	bs[0]->Release();
+	bs[1]->Release();
 }
 
 float nextFpsUpdate = 0;
 void Graphics::Update(float dt)
 {
-	//don't have light pos but light view
-	//LCBG.lightPos.element[0] = this->getLight()->getPos().x;
-	//LCBG.lightPos.element[1] = this->getLight()->getPos().y;
-	//LCBG.lightPos.element[2] = this->getLight()->getPos().z;
-	//LCBG.lightPos.element[3] = 1;
 
 	if (getkey('N')) {
 		LCBG.cameraPos.element[3] = 1;
@@ -175,6 +182,7 @@ void Graphics::Update(float dt)
 	ZeroMemory(&resource, sizeof(D3D11_MAPPED_SUBRESOURCE));
 	this->immediateContext->PSSetConstantBuffers(3, 1, &this->Pg_pConstantBuffer);
 	this->immediateContext->CSSetConstantBuffers(6, 1, &this->Pg_pConstantBuffer);
+
 	//fps
 	nextFpsUpdate += (float)dt;
 	if (nextFpsUpdate >= 0.5f) {
@@ -233,6 +241,14 @@ ID3D11GeometryShader** Graphics::getGS()
 {
 	return this->gShader;
 }
+ID3D11HullShader** Graphics::getHS()
+{
+	return this->hShader;
+}
+ID3D11DomainShader** Graphics::getDS()
+{
+	return this->dShader;
+}
 IDXGISwapChain*& Graphics::getSwapChain()
 {
 	return this->swapChain;
@@ -257,9 +273,21 @@ SpotLight **Graphics::getLight()
 {
 	return this->light;
 }
+
 vec2 Graphics::getWH()
 {
 	return vec2((float)WIDTH, (float)HEIGHT);
+}
+
+
+void Graphics::setTransparant(bool transparance)
+{
+	if (transparance) {
+		immediateContext->OMSetBlendState(bs[1], nullptr, 0xFFFFFFFFu);
+	}
+	else {
+		immediateContext->OMSetBlendState(bs[0], nullptr, 0xFFFFFFFFu);
+	}
 }
 
 void Graphics::takeLight(SpotLight** light, int nrOfLights)

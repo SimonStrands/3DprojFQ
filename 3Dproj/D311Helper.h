@@ -3,7 +3,7 @@
 #include "DepthStencil.h"
 #include <iostream>
 //git
-static DepthStencil depth;
+//static DepthStencil depth;
 
 bool SetupD3D11(UINT width,
 	UINT height,

@@ -34,6 +34,8 @@ void ImguiManager::updateRender()
 			ImGui::SliderFloat("Ypos", &obj[i]->getyPos(), 40.0f, -40.0f);
 			ImGui::SliderFloat("Zpos", &obj[i]->getzPos(), 40.0f, -40.0f);
 			ImGui::SliderFloat("XRot", &obj[i]->getxRot(), 20.0f, -20.0f);
+			ImGui::SliderFloat("YRot", &obj[i]->getyRot(), 20.0f, -20.0f);
+			ImGui::SliderFloat("ZRot", &obj[i]->getzRot(), 20.0f, -20.0f);
 		}
 		ImGui::End();
 	}
@@ -43,6 +45,9 @@ void ImguiManager::updateRender()
 			ImGui::SliderFloat("Xpos", &light[i]->getPos().x, 40.0f, -40.0f);
 			ImGui::SliderFloat("Ypos", &light[i]->getPos().y, 40.0f, -40.0f);
 			ImGui::SliderFloat("Zpos", &light[i]->getPos().z, 40.0f, -40.0f);
+			ImGui::SliderFloat("XRot", &light[i]->getRotation().x, 6.3f, -6.3f);
+			ImGui::SliderFloat("YRot", &light[i]->getRotation().y, 6.3f, -6.3f);
+			ImGui::SliderFloat("ZRot", &light[i]->getRotation().z, 6.3f, -6.3f);
 		}
 		ImGui::End();
 	}

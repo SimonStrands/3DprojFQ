@@ -2,9 +2,12 @@
 
 MeshObj::MeshObj(Graphics*& gfx, std::vector<vertex> vertecies, Material &material)
 {
+	this->HS = nullptr;
+	this->DS = nullptr;
 	this->nrOfVertexes = (int)vertecies.size();
 	CreateVertexBuffer(gfx->getDevice(), vertecies, this->vertexBuffer);
 	this->matrial = material;
+	CreateVertexConstBuffer(gfx, this->Pg_pConstantBuffer);
 }
 
 void MeshObj::begone()
@@ -26,7 +29,7 @@ ID3D11Buffer*& MeshObj::getVertexBuffer()
 
 ID3D11ShaderResourceView** MeshObj::getTextures()
 {
-	return this->matrial.texSRV;
+	return this->matrial.texSRVPS;
 }
 
 int& MeshObj::getNrOfVertex()
@@ -34,28 +37,35 @@ int& MeshObj::getNrOfVertex()
 	return nrOfVertexes;
 }
 
-int& MeshObj::getNrOfTextures()
-{
-	return this->matrial.nrOfTextures;
-}
 
-void MeshObj::getKdKa(float (&kd)[4], float (&ka)[4])
+//ns is in the 4:th element of ks
+void MeshObj::getKdKaKsNs(float(&kd)[4], float(&ka)[4], float(&ks)[4])
 {
 	for (int i = 0; i < 3; i++) {
 		kd[i] = this->matrial.Kd[i];
 		ka[i] = this->matrial.Ka[i];
+		ks[i] = this->matrial.Ks[i];
 	}
+	ks[3] = matrial.Ns;
 	kd[3] = 1.f;
 	ka[3] = 1.f;
 }
 
-void MeshObj::draw(ID3D11DeviceContext*& immediateContext)
+void MeshObj::draw(ID3D11DeviceContext*& immediateContext, bool sm)
 {
 	UINT offset = 0;
 	static UINT strid = sizeof(vertex);
-	immediateContext->PSSetShaderResources(0, 4, this->matrial.texSRV);
+
+	immediateContext->DSSetShaderResources(0, 1, this->matrial.texSRVDS);
+	immediateContext->PSSetShaderResources(0, 4, this->matrial.texSRVPS);//denna är fel på något sätt
+	immediateContext->PSSetConstantBuffers(0, 1, &this->Pg_pConstantBuffer);
 	immediateContext->IASetVertexBuffers(0, 1, &this->vertexBuffer, &strid, &offset);
 	immediateContext->Draw(this->nrOfVertexes, 0);
+}
+
+void MeshObj::SetShaders(ID3D11VertexShader* VS)
+{
+	this->VS = VS;
 }
 
 void MeshObj::SetShaders(ID3D11VertexShader* VS, ID3D11PixelShader* PS)
@@ -64,10 +74,42 @@ void MeshObj::SetShaders(ID3D11VertexShader* VS, ID3D11PixelShader* PS)
 	this->PS = PS;
 }
 
-void MeshObj::SetShader(ID3D11DeviceContext*& immediateContext)
+void MeshObj::SetShaders(ID3D11HullShader* HS, ID3D11DomainShader* DS)
 {
-	immediateContext->VSSetShader(this->VS, nullptr, 0);
-	immediateContext->PSSetShader(this->PS, nullptr, 0);
+	this->HS = HS;
+	this->DS = DS;
+}
+
+void MeshObj::SetShader(ID3D11DeviceContext*& immediateContext, int flag)
+{
+	if (flag == 0) {
+		immediateContext->VSSetShader(this->VS, nullptr, 0);
+		immediateContext->PSSetShader(this->PS, nullptr, 0);
+		immediateContext->DSSetShader(this->DS, nullptr, 0);
+		immediateContext->HSSetShader(this->HS, nullptr, 0);
+	}
+	else if (flag == 1) {
+		immediateContext->VSSetShader(this->VS, nullptr, 0);
+		immediateContext->DSSetShader(this->DS, nullptr, 0);
+		immediateContext->HSSetShader(this->HS, nullptr, 0);
+	}
+
+
+}
+
+void MeshObj::updatePS(Graphics*& gfx)
+{
+	getKdKaKsNs(gfx->getPcb()->kd.element, gfx->getPcb()->ka.element, gfx->getPcb()->ks.element);
+	D3D11_MAPPED_SUBRESOURCE resource;
+	gfx->get_IC()->Map(Pg_pConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
+	memcpy(resource.pData, gfx->getPcb(), sizeof(Pcb));
+	gfx->get_IC()->Unmap(Pg_pConstantBuffer, 0);
+	ZeroMemory(&resource, sizeof(D3D11_MAPPED_SUBRESOURCE));
+}
+
+Material& MeshObj::getMatrial()
+{
+	return this->matrial;
 }
 
 

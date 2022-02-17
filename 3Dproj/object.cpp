@@ -5,7 +5,7 @@
 
 object::object()
 {
-    Pg_pConstantBuffer = nullptr;
+    //Pg_pConstantBuffer = nullptr;
     Vg_pConstantBuffer = nullptr;
 }
 
@@ -15,7 +15,7 @@ object::object(vec3 pos):
     rPoint(0,0,0)
 {
     this->pos = pos;
-    Pg_pConstantBuffer = nullptr;
+    //Pg_pConstantBuffer = nullptr;
     Vg_pConstantBuffer = nullptr;
 }
 
@@ -24,9 +24,9 @@ object::~object()
     if (Vg_pConstantBuffer != nullptr) {
         Vg_pConstantBuffer->Release();
     };
-    if (Pg_pConstantBuffer != nullptr) {
-        Pg_pConstantBuffer->Release();
-    };
+    //if (Pg_pConstantBuffer != nullptr) {
+    //    Pg_pConstantBuffer->Release();
+    //};
 }
 
 vec3 object::getPos()
@@ -89,15 +89,16 @@ void object::addScale(vec3 scale)
     this->scale = this->scale + scale;
 }
 
+
 ID3D11Buffer*& object::getVertexConstBuffer()
 {
     return this->Vg_pConstantBuffer;
 }
 
-ID3D11Buffer*& object::getPixelConstBuffer()
-{
-    return this->Pg_pConstantBuffer;
-}
+//ID3D11Buffer*& object::getPixelConstBuffer()
+//{
+//    return this->Pg_pConstantBuffer;
+//}
 
 float object::normalMapping()
 {
@@ -114,6 +115,16 @@ void object::getKdKa(float kd[4], float ka[4])
 float& object::getxRot()
 {
     return this->rot.y;
+}
+
+float& object::getyRot()
+{
+    return this->rot.x;
+}
+
+float& object::getzRot()
+{
+    return this->rot.z;
 }
 
 void object::setModel(ModelObj* m)
@@ -170,13 +181,8 @@ void object::updateVertexShader(Graphics*& gfx)
 
 void object::updatePixelShader(Graphics*& gfx)
 {
-    //mMesh->getKdKa(gfx->getPcb()->kd.element, gfx->getPcb()->ka.element);
-
-    //changing pixel shader cBuffer
-    D3D11_MAPPED_SUBRESOURCE resource;
-    gfx->get_IC()->Map(this->getPixelConstBuffer(), 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
-    memcpy(resource.pData, gfx->getPcb(), sizeof(Pcb));
-    gfx->get_IC()->Unmap(this->getPixelConstBuffer(), 0);
-    ZeroMemory(&resource, sizeof(D3D11_MAPPED_SUBRESOURCE));
+    for (int i = 0; i < model->getMehses().size(); i++) {
+        model->getMehses()[i].updatePS(gfx);
+    }
 }
 

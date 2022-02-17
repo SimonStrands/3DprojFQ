@@ -114,6 +114,56 @@ bool loadCShader(std::string name, ID3D11Device* device, ID3D11ComputeShader*& c
 	return true;
 }
 
+bool loadHShader(std::string name, ID3D11Device* device, ID3D11HullShader*& hShader)
+{
+	std::string shaderData;
+	std::ifstream reader;
+	reader.open("../x64/Debug/" + name, std::ios::binary | std::ios::ate);
+	if (!reader.is_open())
+	{
+		std::cerr << "cannot open pixel file" << std::endl;
+		return false;
+	}
+
+	reader.seekg(0, std::ios::end);
+	shaderData.reserve(static_cast<unsigned int>(reader.tellg()));
+	reader.seekg(0, std::ios::beg);
+
+	shaderData.assign((std::istreambuf_iterator<char>(reader)),
+		std::istreambuf_iterator<char>());
+	if (FAILED(device->CreateHullShader(shaderData.c_str(), shaderData.length(), nullptr, &hShader)))
+	{
+		std::cerr << "cannot create ComputeShader" << std::endl;
+		return false;
+	}
+	return true;
+}
+
+bool loadDShader(std::string name, ID3D11Device* device, ID3D11DomainShader*& dShader)
+{
+	std::string shaderData;
+	std::ifstream reader;
+	reader.open("../x64/Debug/" + name, std::ios::binary | std::ios::ate);
+	if (!reader.is_open())
+	{
+		std::cerr << "cannot open pixel file" << std::endl;
+		return false;
+	}
+
+	reader.seekg(0, std::ios::end);
+	shaderData.reserve(static_cast<unsigned int>(reader.tellg()));
+	reader.seekg(0, std::ios::beg);
+
+	shaderData.assign((std::istreambuf_iterator<char>(reader)),
+		std::istreambuf_iterator<char>());
+	if (FAILED(device->CreateDomainShader(shaderData.c_str(), shaderData.length(), nullptr, &dShader)))
+	{
+		std::cerr << "cannot create ComputeShader" << std::endl;
+		return false;
+	}
+	return true;
+}
+
 bool CreateInputLayout(ID3D11Device* device, ID3D11InputLayout*& inputLayout, std::string& VbyteCode) 
 {
 	const int nrOfEl = 5;
@@ -224,6 +274,7 @@ bool CreateSamplerState(ID3D11Device* device, ID3D11SamplerState*& sampler)
 
 bool SetupPipeline(ID3D11Device* device, ID3D11VertexShader**& vShader,
 	ID3D11PixelShader**& pShader, ID3D11GeometryShader**& gShader,
+	ID3D11HullShader**& hShader, ID3D11DomainShader**& dShader,
 	ID3D11InputLayout**& inputLayout,
 	ID3D11Texture2D*& tex, ID3D11SamplerState*& sampler)
 {
@@ -231,12 +282,16 @@ bool SetupPipeline(ID3D11Device* device, ID3D11VertexShader**& vShader,
 #pragma region shaderloading
 	if (loadVShader("VertexShader.cso", device, vShader[0], vShaderByteCode[0]) &&
 		loadVShader("VertexBillBoard.cso", device, vShader[1], vShaderByteCode[1]) &&
-		loadVShader("SkeletonAnimationVS.cso", device, vShader[2], vShaderByteCode[2]) &&
+		loadVShader("VertexDisplaysment.cso",device, vShader[2], vShaderByteCode[2])&&
 		loadGShader("GeometryShader.cso", device, gShader[0]) &&
 		loadGShader("Debugging_test.cso", device, gShader[1]) &&
 		loadPShader("PSSHNormal.cso", device, pShader[0]) && 
 		loadPShader("PixelBillShader.cso", device, pShader[1])&&
-		loadPShader("PSSH.cso", device, pShader[2]))
+		loadPShader("PSSH.cso", device, pShader[2])&&
+		loadHShader("HullDisplaysment.cso", device, hShader[0])&&
+		loadHShader("PhongTessHull.cso", device, hShader[1])&&
+		loadDShader("DomainDisplaysment.cso", device, dShader[0])&&
+		loadDShader("PhongTessDomain.cso", device, dShader[1]))
 	{
 		//continoue
 	}
@@ -245,19 +300,7 @@ bool SetupPipeline(ID3D11Device* device, ID3D11VertexShader**& vShader,
 		return false;
 	}
 #pragma endregion
-	//hereChange
-	/*
-	D3D11_INPUT_ELEMENT_DESC inputDesc[7] =
-	{
-		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"UV", 0, DXGI_FORMAT_R32G32_FLOAT, 0,D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"TANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"BITANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"BONEID", 0, DXGI_FORMAT_R32G32B32A32_UINT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"WEIGHTS", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
 
-	};*/
 	if (!CreateInputLayout(device, inputLayout[0], vShaderByteCode[0]))
 	{
 		std::cerr << "cant load inputlayout" << std::endl;
@@ -268,7 +311,6 @@ bool SetupPipeline(ID3D11Device* device, ID3D11VertexShader**& vShader,
 		std::cerr << "cant load inputlayout2" << std::endl;
 		return false;
 	}
-	//hereChange
 	/*if (!CreateInputLayoutOwn(device, inputLayout[2], vShaderByteCode[2], inputDesc, 7)) {
 		std::cerr << "cant load inputlayout 3" << std::endl;
 		return false;

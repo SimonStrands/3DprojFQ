@@ -7,7 +7,6 @@ GameObject::GameObject(ModelObj*file, Graphics*& gfx, vec3 pos, vec3 rot, vec3 s
 	this->changeRot(rot);
 	this->model = file;
 	CreateVertexConstBuffer(gfx, this->getVertexConstBuffer());
-	CreatePixelConstBuffer(gfx, this->getPixelConstBuffer());
 	object::setModel(model);
 }
 
@@ -16,19 +15,35 @@ GameObject::~GameObject()
 	
 }
 static bool once = false;
-void GameObject::draw(ID3D11DeviceContext*& immediateContext, bool sm)
+void GameObject::draw(Graphics *&gfx, bool sm)
 {
-	immediateContext->VSSetConstantBuffers(0, 1, &this->getVertexConstBuffer());
-	immediateContext->PSSetConstantBuffers(0, 1, &this->getPixelConstBuffer());
-	model->draw(immediateContext, sm);
-	
+	gfx->get_IC()->VSSetConstantBuffers(0, 1, &this->getVertexConstBuffer());
+	gfx->get_IC()->DSSetConstantBuffers(0, 1, &this->getVertexConstBuffer());
+	gfx->get_IC()->HSSetConstantBuffers(0, 1, &this->getVertexConstBuffer());
+	model->draw(gfx, sm);
 }
 
 void GameObject::drawDefTest(ID3D11DeviceContext*& immediateContext)
 {
 	immediateContext->VSSetConstantBuffers(0, 1, &this->getVertexConstBuffer());
-	immediateContext->PSSetConstantBuffers(0, 1, &this->getPixelConstBuffer());
 	model->drawDefTest(immediateContext);
+}
+
+void GameObject::setTesselation(bool tess, Graphics*& gfx)
+{
+	for (int i = 0; i < model->getMehses().size(); i++) {
+	
+		model->getMehses()[i].getMatrial().flags.Maps[4] = tess;
+		if (tess) {
+			model->getMehses()[i].SetShaders(gfx->getVS()[2]);
+			model->getMehses()[i].SetShaders(gfx->getHS()[1], gfx->getDS()[1]);
+		}
+		else {
+			model->getMehses()[i].SetShaders(gfx->getVS()[0]);
+			model->getMehses()[i].SetShaders((ID3D11HullShader*)nullptr, nullptr);
+		}
+	
+	}
 }
 
 void GameObject::Updateshaders(Graphics*& gfx, bool vertex, bool pixel)

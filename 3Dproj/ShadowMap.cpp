@@ -22,14 +22,6 @@ ShadowMap::~ShadowMap()
 	if (dsTexture != nullptr) {
 		dsTexture->Release();
 	}
-	//for (int i = 0; i < nrOfLights; i++) {
-	//	if (dsViews[i] != nullptr) {
-	//		dsViews[i]->Release();
-	//	}
-	//}
-	//if (vertexShadow != nullptr) {
-	//	vertexShadow->Release();
-	//}
 	if (pixelShadow != nullptr) {
 		pixelShadow->Release();
 	}
@@ -94,7 +86,7 @@ void ShadowMap::inUpdateShadow(int i)
 	gfx->get_IC()->OMSetRenderTargets(1, &pNullRTV, this->Getdepthview(i));
 
 	//don't think about this now
-	gfx->getVcb()->lightView.element = this->light[i]->getLightView();
+	//gfx->getVcb()->lightView.element = this->light[i]->getLightView();
 	gfx->getVcb()->view.element = this->light[i]->getLightView();
 	gfx->getGcb()->lightView.element = this->light[i]->getLightView();
 }
@@ -115,12 +107,6 @@ bool ShadowMap::CreateDepthStencil(ID3D11Device* device, UINT width, UINT height
 	textureDesc.CPUAccessFlags = 0;
 	textureDesc.MiscFlags = 0;
 	
-	//D3D11_SUBRESOURCE_DATA* sSubData = new D3D11_SUBRESOURCE_DATA[nrOfLights];
-	//for (int i = 0; i < nrOfLights; i++) {
-	//	sSubData[i].pSysMem = shadowRes;
-	//	sSubData[i].SysMemPitch = (UINT)(width * 1);
-	//	sSubData[i].SysMemSlicePitch = (UINT)(width * height * 1);
-	//}
 
 	if (FAILED(device->CreateTexture2D(&textureDesc, nullptr, &dsTexture)))
 	{

@@ -3,11 +3,13 @@
 DeferredRendering::DeferredRendering(Graphics*& gfx)
 {
 	this->gfx = gfx;
+	nrOfRTV = 5;
 	if (!InitDeferred()) {
 		std::cout << "stop" << std::endl;
 	}
 	//set compute shader and a extra test for pixel shader
 	std::string a;
+	
 	//load cs
 	loadCShader("DeferredLightningCS.cso", gfx->getDevice(), DeferredComputeS);
 	loadPShader("TestFragmentshader.cso", gfx->getDevice(), DeferredPixelS);
@@ -15,19 +17,19 @@ DeferredRendering::DeferredRendering(Graphics*& gfx)
 
 DeferredRendering::~DeferredRendering()
 {
-	for (int i = 0; i < 3; i++) {
+	for (int i = 0; i < nrOfRTV; i++) {
 		DeferredResV[i]->Release();
 		DeferredTex[i]->Release();
 		DeferredRTV[i]->Release();
 	}
+	dsView->Release();
+	DeferredPixelS->Release();
+	DeferredComputeS->Release();
+	UAV->Release();
 }
 
-//code helped from Hilze Vonck
-//https://www.youtube.com/watch?v=2ThW4Gz6oYM
 bool DeferredRendering::InitDeferred()
 {	
-
-
 	//change so depth is 1 float???
 	D3D11_TEXTURE2D_DESC textureDesc;
 	textureDesc.Width = (UINT)gfx->getWH().x;
@@ -42,7 +44,7 @@ bool DeferredRendering::InitDeferred()
 	textureDesc.CPUAccessFlags = 0;
 	textureDesc.MiscFlags = 0;
 
-	for (int i = 0; i < 3; i++) {
+	for (int i = 0; i < nrOfRTV; i++) {
 		if (FAILED(gfx->getDevice()->CreateTexture2D(&textureDesc, NULL, &DeferredTex[i]))) {
 			printf("doesn't work tex2d");
 			return false;
@@ -53,7 +55,7 @@ bool DeferredRendering::InitDeferred()
 	renderTargetViewDesc.Format = textureDesc.Format;
 	renderTargetViewDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
 
-	for (int i = 0; i < 3; i++) {
+	for (int i = 0; i < nrOfRTV; i++) {
 		if (FAILED(gfx->getDevice()->CreateRenderTargetView(DeferredTex[i], &renderTargetViewDesc, &DeferredRTV[i]))) {
 			printf("doesn't work RTV");
 			return false;
@@ -64,7 +66,7 @@ bool DeferredRendering::InitDeferred()
 	shaderResourceViewDesc.Format = textureDesc.Format;
 	shaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 	shaderResourceViewDesc.Texture2D.MipLevels = 1;
-	for (int i = 0; i < 3; i++) {
+	for (int i = 0; i < nrOfRTV; i++) {
 		if (FAILED(gfx->getDevice()->CreateShaderResourceView(DeferredTex[i], &shaderResourceViewDesc, &DeferredResV[i])))
 		{
 			printf("failed create RSV");
@@ -111,15 +113,16 @@ bool DeferredRendering::InitDeferred()
 
 void DeferredRendering::BindFirstPass()
 {
-	//SET INPUT LAYOUT
 	FLOAT color[4] = { 0.1f,0.1f,0.1f,1.f };
 	//gfx->get_IC()->RSSetViewports(1, &viewPort);//?
 	//set render targets
-	gfx->get_IC()->OMSetRenderTargets(3, DeferredRTV, gfx->getDepthStencil());
+	gfx->get_IC()->OMSetRenderTargets(5, DeferredRTV, gfx->getDepthStencil());
 	gfx->get_IC()->ClearRenderTargetView(DeferredRTV[0], color);
 	gfx->get_IC()->ClearRenderTargetView(DeferredRTV[1], color);
 	gfx->get_IC()->ClearRenderTargetView(DeferredRTV[2], color);
-	//gfx->get_IC()->ClearDepthStencilView(dsView, D3D11_CLEAR_DEPTH, 1.0f, 0);
+	gfx->get_IC()->ClearRenderTargetView(DeferredRTV[3], color);
+	gfx->get_IC()->ClearRenderTargetView(DeferredRTV[4], color);
+	gfx->get_IC()->ClearDepthStencilView(dsView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 
 
 }
@@ -135,13 +138,37 @@ void DeferredRendering::BindSecondPass(ID3D11ShaderResourceView*& ShadowMapping)
 	//is this for compute shading
 	gfx->get_IC()->CSSetShader(DeferredComputeS, nullptr, 0);
 
-	gfx->get_IC()->CSSetShaderResources(0, 3, DeferredResV);//add ShadowMapping
-	gfx->get_IC()->CSSetShaderResources(3, 1, &ShadowMapping);
+	gfx->get_IC()->CSSetShaderResources(0, 5, DeferredResV);
+	gfx->get_IC()->CSSetShaderResources(5, 1, &ShadowMapping);//add ShadowMapping
 	
 	gfx->get_IC()->CSSetUnorderedAccessViews(0, 1, &this->UAV, nullptr);
 	//köra computeShader
 	gfx->get_IC()->Dispatch(60, 135, 1);
-	ID3D11ShaderResourceView* nullSRV[4] = { nullptr };
+	ID3D11ShaderResourceView* nullSRV[6] = { nullptr };
+	gfx->get_IC()->CSSetShaderResources(0, _countof(nullSRV), nullSRV);
+	//nulla unorderedaccesview
+	gfx->get_IC()->CSSetUnorderedAccessViews(0, 1, &nullUAV, nullptr);
+}
+
+//using these for dynamic cube mapping
+void DeferredRendering::BindSecondPassFunc(ID3D11ShaderResourceView*& ShadowMapping, ID3D11UnorderedAccessView* UAV, int dx, int dy)
+{
+	FLOAT color[4] = { 0.1f,0.1f,0.1f,1.f };
+	ID3D11UnorderedAccessView* nullUAV = nullptr;
+	ID3D11RenderTargetView* nullRTV[3] = { nullptr };
+	//set till null?
+	gfx->get_IC()->OMSetRenderTargets(3, nullRTV, nullptr);
+
+	//is this for compute shading
+	gfx->get_IC()->CSSetShader(DeferredComputeS, nullptr, 0);
+
+	gfx->get_IC()->CSSetShaderResources(0, 5, DeferredResV);
+	gfx->get_IC()->CSSetShaderResources(5, 1, &ShadowMapping);//add ShadowMapping
+
+	gfx->get_IC()->CSSetUnorderedAccessViews(0, 1, &UAV, nullptr);
+	//köra computeShader
+	gfx->get_IC()->Dispatch(dx, dy, 1);
+	ID3D11ShaderResourceView* nullSRV[6] = { nullptr };
 	gfx->get_IC()->CSSetShaderResources(0, _countof(nullSRV), nullSRV);
 	//nulla unorderedaccesview
 	gfx->get_IC()->CSSetUnorderedAccessViews(0, 1, &nullUAV, nullptr);

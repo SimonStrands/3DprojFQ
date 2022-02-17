@@ -100,34 +100,51 @@ bool Model::LoadModel(const std::string& modelfile)
 
 ModelObj::ModelObj(const std::string& ModelFile, Graphics*& gfx, ID3D11ShaderResourceView** def)
 {
-	std::vector<FileTextureData> textures;
 	std::vector<Material> matrial;
-	textures = getTextureNames(ModelFile);
-	matrial.resize(textures.size());
-	for (int i = 0; i < textures.size(); i++) {
-		textures[i].fromFTDToMaterial(matrial[i], gfx, def);
-	}
+	getMatrialFromFile(ModelFile, matrial, gfx, def);
 	readObjFile(mMeshes, ModelFile, matrial, gfx);
 }
 
-void ModelObj::draw(ID3D11DeviceContext*& immediateContext, bool sm)
+void ModelObj::draw(Graphics*& gfx, bool sm)
 {
 	for (int i = 0; i < mMeshes.size(); i++) {
 		if (!sm) {
-			this->mMeshes[i].SetShader(immediateContext);
+			this->mMeshes[i].SetShader(gfx->get_IC());
+			if (this->mMeshes[i].getMatrial().flags.Maps[4]) {
+				gfx->get_IC()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST);
+			}
+			else {
+				gfx->get_IC()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+			}
 		}
-		mMeshes[i].draw(immediateContext);
+		else{//this is not "really true" but
+			//if (this->mMeshes[i].getMatrial().flags.Maps[4]) {
+			//	this->mMeshes[i].SetShader(gfx->get_IC(), 1);
+			//	gfx->get_IC()->IASetInputLayout(gfx->getInputL()[0]);
+			//	gfx->get_IC()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST);
+			//}
+			//else {
+			//	gfx->get_IC()->VSSetShader(gfx->getVS()[1], nullptr, 0);
+			//	gfx->get_IC()->PSSetShader(nullptr, nullptr, 0);
+			//	gfx->get_IC()->DSSetShader(nullptr, nullptr, 0);
+			//	gfx->get_IC()->HSSetShader(nullptr, nullptr, 0);
+			//	gfx->get_IC()->IASetInputLayout(gfx->getInputL()[1]);
+			//	gfx->get_IC()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+			//}
+
+		}
+		mMeshes[i].draw(gfx->get_IC(), sm);
 	}
 }
 
 void ModelObj::drawDefTest(ID3D11DeviceContext*& immediateContext)
 {
 	for (int i = 0; i < mMeshes.size(); i++) {
-		mMeshes[i].draw(immediateContext);
+		mMeshes[i].draw(immediateContext, true);
 	}
 }
 
-std::vector<MeshObj> ModelObj::getMehses()
+std::vector<MeshObj> &ModelObj::getMehses()
 {
 	return this->mMeshes;
 }

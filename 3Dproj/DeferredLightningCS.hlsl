@@ -4,73 +4,74 @@ RWTexture2D<unorm float4> backBuffer;
 Texture2D<float4> gTexPosition : register(t0);
 Texture2D<float4> gTexNormal : register(t1);
 Texture2D<float4> gTexDiffuse : register(t2);
-Texture2DArray<float4> shadowMapping : register(t3);
-//SamplerState testSampler;
+Texture2D<float4> gTexAmbient : register(t3);
+Texture2D<float4> gTexSpecular : register(t4);
+//maps
+Texture2DArray<float4> shadowMapping : register(t5);
 
 [numthreads(32, 8, 1)]//32 16
 void main( uint3 DTid : SV_DispatchThreadID )
 {
-    float4 fragPos = gTexPosition.Load(int3(DTid.xy, 0));
-    float4 normal = gTexNormal.Load(int3(DTid.xy, 0));
-    float4 color = gTexDiffuse.Load(int3(DTid.xy, 0));
-					
+    float4 fragPos  = gTexPosition.Load( int3(DTid.xy, 0));
+    float4 normal   = gTexNormal.Load(   int3(DTid.xy, 0));
+    float4 color    = gTexDiffuse.Load(  int3(DTid.xy, 0));
+    float4 gAmbient  = gTexAmbient.Load(  int3(DTid.xy, 0));
+    float4 gSpecular = gTexSpecular.Load( int3(DTid.xy, 0));
+    
+    const float SMWIDTH = 1920;
+    const float SMHEIGHT = 1080;
+    const int nrOfTempLight = 2;
     if (length(normal.xyz) > 0.2f)//check if there is any object at all
     {			//nroflights
+        //gets wrong fragpos???
         float4 lightning = float4(0, 0, 0, 0);
-        for (int i = 0; i < 2; i++)
+        for (int i = 0; i < nrOfTempLight; i++)
         {
-            float3 ka = float3(0.1, 0.1, 0.1);
-            float3 kd = float3(0.2, 0.2, 0.2);
-            float3 ks = float3(0.5, 0.5, 0.5);
             float3 lightColor = float3(1, 1, 1);
-            
-			//ambient
-			//float3 ambient_light = ka.xyz * lightColor.xyz;
-            float3 ambient_light = float3(0.1, 0.1, 0.1);
-            float3 specular;
-            float3 defuse_light;
-            
+            float4x4 LVT = lightView[i];
+            float4 lightPos = float4(LVT[3][0], LVT[3][1], LVT[3][2], LVT[3][3]);
+            float3 lightDir = normalize(lightPos.xyz - fragPos.xyz);
 			//calculate if we are in shadow
-            const float4 shadowCamera = float4(fragPos.xyz, 1);
+            const float4 shadowCamera = fragPos;
             const float4 shadowHomo = mul(shadowCamera, mul(lightView[i], projection));
             float4 shadowMapCoords = shadowHomo * float4(0.5, -0.5, 1.0f, 1.0f) + (float4(0.5f, 0.5f, 0.0f, 0.0f) * shadowHomo.w);
-			shadowMapCoords.xyz = shadowMapCoords.xyz / shadowMapCoords.w;
-            float4 SM = shadowMapping.Load(int4(DTid.xy, i, 0));
-			if (SM.r > shadowMapCoords.z - 0.0000001 &&
+            shadowMapCoords.xyz = shadowMapCoords.xyz / shadowMapCoords.w;
+            float4 SM = shadowMapping.Load(int4(shadowMapCoords.x * SMWIDTH, shadowMapCoords.y * SMHEIGHT, i, 0));
+            //ambient
+            float3 ambient_light = gAmbient.xyz * lightColor;
+            if (SM.r > shadowMapCoords.z - 0.0001 &&
 				shadowMapCoords.x < 1 && shadowMapCoords.x > 0 &&
-				shadowMapCoords.y < 1 && shadowMapCoords.y > 0)
+				shadowMapCoords.y < 1 && shadowMapCoords.y > 0 &&
+                dot(normal.xyz, lightDir) > 0.0)//don't know if this works with normal maps (haha it doesn't)
             {
-                float4x4 LVT = lightView[i];
-                float4 lightPos = float4(LVT[3][0], LVT[3][1], LVT[3][2], LVT[3][3]);
                 
-                float3 posToView = normalize(fragPos.xyz - cameraPos.xyz);
+                    
+                float3 viewDir = normalize(cameraPos.xyz - fragPos.xyz);
+                float3 halfWayDir = normalize(lightDir - viewDir);
+                
 				//////calc lightning//////
+                
+                
 				//defuse
-                float3 lightDir = normalize(fragPos.xyz - lightPos.xyz);
-                float ammount_diffuse = max(dot(-normal.xyz, lightDir), 0.0f);
-                defuse_light = ammount_diffuse * kd.xyz * lightColor.xyz;
+                float3 defuse_light;
+                float ammount_diffuse = max(dot(normal.xyz, lightDir), 0.0f);
+                defuse_light = ammount_diffuse * color.xyz * lightColor.xyz;
                 
                 //specular
-                float const_spec = 1.0f;
-                float3 reflection = normalize(reflect(-lightDir, normalize(normal.xyz)));
-                float spec = pow(max(0.f, dot(posToView, reflection)), 32);
-                specular = ks.xyz * (lightColor.xyz * ammount_diffuse) * const_spec * ks.xyz * spec;
+                float3 reflectDir = reflect(-lightDir, normal.xyz);
+                float spec = pow(max(dot(viewDir, reflectDir), 0.0), gSpecular.w);
+                float3 specular = gSpecular.xyz * spec;
                 
-                		//get final lightning
-                float3 lightning = saturate(ambient_light + defuse_light) + specular;
-
-		        //add the texture
+                lightning.xyz += saturate(ambient_light + defuse_light) + specular;
                 
             }
             else
             {
 				//we are in shadow
-                lightning += float4(ambient_light, 0);
+                lightning += float4((gAmbient.xyz * color.xyz * lightColor), 0);
             }
         }
-        float4 final = color * lightning;
-        backBuffer[DTid.xy] = float4(final.xyz, 0.9);
+        backBuffer[DTid.xy] = float4(lightning.xyz, 1);
+        //backBuffer[DTid.xy] = float4(normal);
     }	
 }
-
-//1920*1080

@@ -52,7 +52,6 @@ std::vector<vec3> calcTangent(vertex* vex1, vertex* vex2, vertex* vex3)
 	return theReturn;
 }
 
-
 void fixtangent(std::vector<vertex> &vertecies)
 {
 	for (int i = 0; i < vertecies.size();) {
@@ -65,18 +64,18 @@ void fixtangent(std::vector<vertex> &vertecies)
 	}
 }
 
-std::vector<FileTextureData> getTextureNames(std::string fileName)
+bool getMatrialFromFile(std::string fileName, std::vector<Material> &matrial, Graphics*& gfx, ID3D11ShaderResourceView** def)
 {
 	std::ifstream infile(fileName);
 	std::string readWord;
 	std::string trash;
 	std::string mtlname;
-	std::string TextureName;
-	int CTR = -1;
-	std::vector<FileTextureData> theReturn;
+	std::string mapName;
+	int CTR = 0;
+	
 	if (!infile.is_open()) {
 		printf("cannot open textures");
-		return std::vector<FileTextureData>();
+		return false;
 	}
 	bool done = false;
 	while (std::getline(infile, readWord) && !done) {
@@ -90,56 +89,71 @@ std::vector<FileTextureData> getTextureNames(std::string fileName)
 	infile.close();
 	infile.open("obj/" + mtlname);
 	if (done && infile.is_open()) {
+		matrial.resize(1);
 		while (std::getline(infile, readWord)) {
 			if (readWord.substr(0, 6) == "newmtl") {
 				CTR++;
-				theReturn.resize(CTR + 1);
+				matrial.resize(CTR + 1);
 				std::istringstream a;
 				std::string b;
 				a.str(readWord);
-				a >> trash >> theReturn[CTR].name;
+				a >> trash >> matrial[CTR].name;
 			}
-			if (readWord.substr(0, 2) == "Ns") {
+			else if (readWord.substr(0, 2) == "Ns") {
 				//do something
 				std::istringstream a;
 				std::string b;
 				a.str(readWord);
-				a >> trash >> theReturn[CTR].Ns;
+				a >> trash >> matrial[CTR].Ns;
 			}
-			if (readWord.substr(0, 2) == "Ka") {
+			else if (readWord.substr(0, 2) == "Ka") {
 				//ambient
 				std::istringstream a;
 				a.str(readWord);
-				a >> trash >> theReturn[CTR].Ka[0] >> theReturn[CTR].Ka[1] >> theReturn[CTR].Ka[2];
+				a >> trash >> matrial[CTR].Ka[0] >> matrial[CTR].Ka[1] >> matrial[CTR].Ka[2];
 			}
-			if (readWord.substr(0, 2) == "Kd") {
+			else if (readWord.substr(0, 2) == "Kd") {
 				//deffuse
 				std::istringstream a;
 				a.str(readWord);
-				a >> trash >> theReturn[CTR].Kd[0] >> theReturn[CTR].Kd[1] >> theReturn[CTR].Kd[2];
+				a >> trash >> matrial[CTR].Kd[0] >> matrial[CTR].Kd[1] >> matrial[CTR].Kd[2];
 			}
-			if (readWord.substr(0, 6) == "map_Ka") {
+			else if (readWord.substr(0, 2) == "Ks") {
+				//deffuse
+				std::istringstream a;
+				a.str(readWord);
+				a >> trash >> matrial[CTR].Ks[0] >> matrial[CTR].Ks[1] >> matrial[CTR].Ks[2];
+			}
+			else if (readWord.substr(0, 6) == "map_Ka") {
 				//map_ambient
 				std::istringstream a;
 				a.str(readWord);
-				a >> trash >> theReturn[CTR].Map_Ka;
-				theReturn[CTR].nrOfTextures++;
+				//a >> trash >> theReturn[CTR].Map_Ka;
+				a >> trash >> mapName;
+				matrial[CTR].loadTexture(mapName, gfx, 1, def);
 			}
-			if (readWord.substr(0, 6) == "map_Kd") {
+			else if (readWord.substr(0, 6) == "map_Kd") {
 				//map_diffuse
 				std::istringstream a;
 				a.str(readWord);
-				a >> trash >> theReturn[CTR].Map_Kd;
-				theReturn[CTR].nrOfTextures++;
+				a >> trash >> mapName;
+				matrial[CTR].loadTexture(mapName, gfx, 0, def);
 			}
-			if (readWord.substr(0, 6) == "map_Ks") {
+			else if (readWord.substr(0, 6) == "map_Ks") {
 				//map_Specular
 				std::istringstream a;
 				a.str(readWord);
-				a >> trash >> theReturn[CTR].Map_Ks;
-				theReturn[CTR].nrOfTextures++;
+				a >> trash >> mapName;
+				matrial[CTR].loadTexture(mapName, gfx, 2, def);
 			}
-			if (readWord.substr(0, 8) == "map_Bump") {
+			else if (readWord.substr(0, 4) == "disp") {
+				//map_Specular
+				std::istringstream a;
+				a.str(readWord);
+				a >> trash >> mapName;
+				matrial[CTR].loadTexture(mapName, gfx, 4, def);
+			}
+			else if (readWord.substr(0, 8) == "map_Bump") {
 				//map_normal
 				std::istringstream a;
 				a.str(readWord);
@@ -148,8 +162,7 @@ std::vector<FileTextureData> getTextureNames(std::string fileName)
 				while (a >> b && !done) {
 					if (!(b.substr(0, 2) == "-bm" || b.substr(0, 8) == "map_Bump" || int(b[0]) < 58)) {
 						done = true;
-						theReturn[CTR].Map_Bump = b;
-						theReturn[CTR].nrOfTextures++;
+						matrial[CTR].loadTexture(b, gfx, 2, def);
 					}
 				}
 			}
@@ -157,10 +170,10 @@ std::vector<FileTextureData> getTextureNames(std::string fileName)
 	}
 	else {
 		//we didnt get what we wanted
-		return std::vector<FileTextureData>();
+		return false;
 	}
 
-	return theReturn;
+	return true;
 }
 
 bool readObjFile(std::vector<MeshObj>& Meshes, std::string fileName, std::vector<Material> matrial, Graphics *& gfx)
@@ -248,11 +261,15 @@ bool readObjFile(std::vector<MeshObj>& Meshes, std::string fileName, std::vector
 			if (!first) {
 				fixtangent(vertecies);
 				Meshes.push_back(MeshObj(gfx, vertecies, matrial[currentMatrial]));
-				if (matrial[currentMatrial].flags & TexFlags::Map_Bump) {
+				if (matrial[currentMatrial].flags.Maps[3]) {
 					Meshes[Meshes.size() - 1].SetShaders(gfx->getVS()[0], gfx->getPS()[0]);
 				}
 				else {
 					Meshes[Meshes.size() - 1].SetShaders(gfx->getVS()[0], gfx->getPS()[2]);
+				}
+				if (matrial[currentMatrial].flags.Maps[4]) {
+					Meshes[Meshes.size() - 1].SetShaders(gfx->getVS()[2]);
+					Meshes[Meshes.size() - 1].SetShaders(gfx->getHS()[0], gfx->getDS()[0]);
 				}
 				vertecies.clear();
 			}
@@ -272,11 +289,16 @@ bool readObjFile(std::vector<MeshObj>& Meshes, std::string fileName, std::vector
 	}
 	fixtangent(vertecies);
 	Meshes.push_back(MeshObj(gfx, vertecies, matrial[currentMatrial]));
-	if (matrial[currentMatrial].flags & TexFlags::Map_Bump) {
+	if (matrial[currentMatrial].flags.Maps[3]) {
 		Meshes[Meshes.size() - 1].SetShaders(gfx->getVS()[0], gfx->getPS()[0]);
 	}
 	else {
 		Meshes[Meshes.size() - 1].SetShaders(gfx->getVS()[0], gfx->getPS()[2]);
+	}
+	if (matrial[currentMatrial].flags.Maps[4]) {
+		Meshes[Meshes.size() - 1].SetShaders(gfx->getVS()[2]);
+		Meshes[Meshes.size() - 1].SetShaders(gfx->getHS()[0], gfx->getDS()[0]);
+		//Meshes[Meshes.size() - 1].SetShaders(gfx->getHS()[1], gfx->getDS()[1]);
 	}
 	
 	return true;

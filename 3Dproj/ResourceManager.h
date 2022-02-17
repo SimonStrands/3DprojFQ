@@ -1,6 +1,7 @@
 #pragma once
 #include "Model.h"
 #include "plHelper.h"
+#include <map>
 
 class ResourceManager {
 public:
@@ -14,9 +15,10 @@ public:
 #pragma endregion
 
 #pragma region Meshes
+	ModelObj* get_Models(std::string key);
 	ModelObj* get_Ball();
 	ModelObj* get_Stol();
-	ModelObj*get_IDK();
+	ModelObj* get_IDK();
 	//Mesh* get_starwars();
 #pragma endregion
 	
@@ -28,6 +30,7 @@ private:
 
 #pragma region Meshes
 	//meshes
+	std::map<std::string, ModelObj*> Models;
 	ModelObj *ball;
 	ModelObj *stol;
 	ModelObj *IDK;

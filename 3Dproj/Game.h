@@ -14,6 +14,7 @@
 #include "DeferredRendering.h"
 #include "ShadowMap.h"
 #include "Graphics.h"
+#include "DynamicCubeEnviroment.h"
 
 //git
 class Game {
@@ -22,6 +23,7 @@ public:
 	virtual ~Game();
 	void run();
 	void DrawToBuffer();
+	void DrawDynamicCube();
 	void ForwardDraw();
 	void DrawAllShadowObject();//without any otherShaders
 private:
@@ -43,6 +45,7 @@ private:
 	Light **light;
 	GameObject** LightVisualizers;
 
+	DynamicCube* DCube;
 	GameObject** obj;
 	BillBoard *bill;
 

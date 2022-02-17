@@ -13,7 +13,7 @@ public:
 	BillBoard(Graphics *&gfx, vec3 pos, ID3D11ShaderResourceView* texSRV, ID3D11ShaderResourceView* NDef, int nrOfCol = 1, int nrOfRow = 1);
 	virtual ~BillBoard();
 	void update(float dt);
-	void draw(ID3D11DeviceContext*& immediateContext, bool sm = false);
+	void draw(Graphics*& gfx, bool sm = false);
 	void getKdKa(float(&kd)[4], float(&ka)[4]);
 	ID3D11Buffer* getGCB();
 	point points;
@@ -25,4 +25,5 @@ private:
 	ID3D11ShaderResourceView* texSRV;
 	ID3D11ShaderResourceView* NDef;
 	ID3D11Buffer* Gg_pConstantBuffer;
+	ID3D11Buffer* Pg_pConstantBuffer;
 };

@@ -14,7 +14,7 @@ BillBoard::BillBoard(Graphics*& gfx, vec3 pos, ID3D11ShaderResourceView* texSRV,
 	}
 	CreateVertexConstBuffer(gfx, this->getVertexConstBuffer());
 	CreateGeometryConstBuffer(gfx, Gg_pConstantBuffer);
-	CreatePixelConstBuffer(gfx, this->getPixelConstBuffer());
+	CreatePixelConstBuffer(gfx, Pg_pConstantBuffer);
 	D3D11_BUFFER_DESC bDesc = {};
 	bDesc.ByteWidth = sizeof(points);
 	bDesc.Usage = D3D11_USAGE_DYNAMIC;
@@ -50,18 +50,18 @@ void BillBoard::update(float dt)
 	anim.update(dt);
 }
 
-void BillBoard::draw(ID3D11DeviceContext*& immediateContext, bool sm)
+void BillBoard::draw(Graphics*& gfx, bool sm)
 {
-	immediateContext->PSSetShaderResources(0, 1, &texSRV);
-	immediateContext->PSSetShaderResources(1, 1, &texSRV);
-	immediateContext->PSSetShaderResources(2, 1, &NDef);
+	gfx->get_IC()->PSSetShaderResources(0, 1, &texSRV);
+	gfx->get_IC()->PSSetShaderResources(1, 1, &texSRV);
+	gfx->get_IC()->PSSetShaderResources(2, 1, &NDef);
 	static UINT strid = sizeof(point);
 	static UINT offset = 0;
-	immediateContext->VSSetConstantBuffers(0, 1, &this->getVertexConstBuffer());
-	immediateContext->GSSetConstantBuffers(0, 1, &Gg_pConstantBuffer);
-	immediateContext->PSSetConstantBuffers(0, 1, &this->getPixelConstBuffer());
-	immediateContext->IASetVertexBuffers(0, 1, &pointBuffer, &strid, &offset);
-	immediateContext->Draw(1, 0);
+	gfx->get_IC()->VSSetConstantBuffers(0, 1, &this->getVertexConstBuffer());
+	gfx->get_IC()->GSSetConstantBuffers(0, 1, &Gg_pConstantBuffer);
+	gfx->get_IC()->PSSetConstantBuffers(0, 1, &Pg_pConstantBuffer);
+	gfx->get_IC()->IASetVertexBuffers(0, 1, &pointBuffer, &strid, &offset);
+	gfx->get_IC()->Draw(1, 0);
 }
 
 void BillBoard::getKdKa(float(&kd)[4], float(&ka)[4])
@@ -93,9 +93,9 @@ void BillBoard::UpdateShader(Graphics*& gfx, vec3 cameraPos, bool v, bool p, boo
 
 	//changing pixel shader cBuffer
 	D3D11_MAPPED_SUBRESOURCE resource;
-	gfx->get_IC()->Map(this->getPixelConstBuffer(), 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
+	gfx->get_IC()->Map(Pg_pConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
 	memcpy(resource.pData, gfx->getPcb(), sizeof(Pcb));
-	gfx->get_IC()->Unmap(this->getPixelConstBuffer(), 0);
+	gfx->get_IC()->Unmap(Pg_pConstantBuffer, 0);
 	ZeroMemory(&resource, sizeof(D3D11_MAPPED_SUBRESOURCE));
 
 	//GCB

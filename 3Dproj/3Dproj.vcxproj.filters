@@ -76,6 +76,18 @@
     <Filter Include="Resource Files\Shaders\DeferedRendering">
       <UniqueIdentifier>{312e419a-fa88-469d-b44c-dc63cfcca7a9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\Shaders\Buffers\Tesselation">
+      <UniqueIdentifier>{c8d9b148-b2e5-4750-8b35-65fc95e58f13}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Shaders\Pixel\CubeMap">
+      <UniqueIdentifier>{45a2d36b-60a3-4518-a4aa-eef17a05710c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Shaders\Buffers\Tesselation\Displaysment">
+      <UniqueIdentifier>{41cceb18-099b-4ede-92c7-7be3af7f680c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Shaders\Buffers\Tesselation\PhongTess">
+      <UniqueIdentifier>{098efd97-25b9-424d-a244-774b56b5ff0d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -193,6 +205,9 @@
       <Filter>Source Files\Graphic\Animation &amp; other</Filter>
     </ClCompile>
     <ClCompile Include="DeferredRendering.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DynamicCubeEnviroment.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -332,6 +347,9 @@
     <ClInclude Include="DeferredRendering.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="DynamicCubeEnviroment.h">
+      <Filter>Header Files\Game</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md">
@@ -339,6 +357,9 @@
     </None>
     <None Include="Transforms.hlsli">
       <Filter>Resource Files\Shaders\Buffers</Filter>
+    </None>
+    <None Include="MVP.hlsli">
+      <Filter>Resource Files\Shaders\Buffers\Tesselation</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -377,6 +398,27 @@
     </FxCompile>
     <FxCompile Include="TestFragmentshader.hlsl">
       <Filter>Resource Files\Shaders\DeferedRendering</Filter>
+    </FxCompile>
+    <FxCompile Include="VertexDisplaysment.hlsl">
+      <Filter>Resource Files\Shaders\Buffers\Tesselation</Filter>
+    </FxCompile>
+    <FxCompile Include="DynamicCubicPS.hlsl">
+      <Filter>Resource Files\Shaders\Pixel\CubeMap</Filter>
+    </FxCompile>
+    <FxCompile Include="CreateTextureToCubeMapPS.hlsl">
+      <Filter>Resource Files\Shaders\Pixel\CubeMap</Filter>
+    </FxCompile>
+    <FxCompile Include="DomainDisplaysment.hlsl">
+      <Filter>Resource Files\Shaders\Buffers\Tesselation\Displaysment</Filter>
+    </FxCompile>
+    <FxCompile Include="PhongTessDomain.hlsl">
+      <Filter>Resource Files\Shaders\Buffers\Tesselation\PhongTess</Filter>
+    </FxCompile>
+    <FxCompile Include="HullDisplaysment.hlsl">
+      <Filter>Resource Files\Shaders\Buffers\Tesselation\Displaysment</Filter>
+    </FxCompile>
+    <FxCompile Include="PhongTessHull.hlsl">
+      <Filter>Resource Files\Shaders\Buffers\Tesselation\PhongTess</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

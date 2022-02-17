@@ -46,11 +46,6 @@ struct Vcb : public CB{
 	struct {
 		DirectX::XMMATRIX element;
 	}projection;
-	//for shadow
-	struct {
-		DirectX::XMMATRIX element;
-	}lightView;
-
 };
 
 struct Pcb: CB {
@@ -61,7 +56,7 @@ struct Pcb: CB {
 		float element[4];
 	}ks;
 	struct {
-		float element[4];
+		float element[4];//last element is ns so no padding
 	}ka;
 };
 
@@ -99,12 +94,16 @@ private:
 	ID3D11DepthStencilView* dsView;
 	D3D11_VIEWPORT viewPort;
 	ID3D11InputLayout** inputLayout;
-	ID3D11VertexShader** vShader;
-	ID3D11PixelShader** pShader;
-	ID3D11GeometryShader** gShader;
 	ID3D11Buffer* Pg_pConstantBuffer;
 	ID3D11RasterizerState* pRS;
-	ID3D11BlendState* bs;
+	ID3D11BlendState** bs;
+
+	//// Shaders ////
+	ID3D11VertexShader**	vShader;
+	ID3D11PixelShader**		pShader;
+	ID3D11GeometryShader**	gShader;
+	ID3D11HullShader**		hShader;
+	ID3D11DomainShader**	dShader;
 	////////////////////////
 
 	//VertexConstantBuffer
@@ -141,6 +140,7 @@ private:
 
 	//functions
 	void Projection();
+	void CreateBlendState(int wBlend, bool transparance);
 
 public:
 	//get things 
@@ -155,14 +155,20 @@ public:
 	ID3D11Device* getDevice();
 	ID3D11DeviceContext*& get_IC();
 	ID3D11Texture2D*& getTexture();
+
+	/// shaders ///
 	ID3D11VertexShader** getVS();
 	ID3D11PixelShader** getPS();
 	ID3D11GeometryShader** getGS();
+	ID3D11HullShader** getHS();
+	ID3D11DomainShader** getDS();
+
 	ID3D11InputLayout** getInputL();
 	ID3D11RenderTargetView*& getRenderTarget();
 	ID3D11DepthStencilView* getDepthStencil();
 	ID3D11Buffer*& getTransGCB();
 	IDXGISwapChain*& getSwapChain();
+	void setTransparant(bool transparance);
 	SpotLight**getLight();
 	vec2 getWH();
 	//to gfx

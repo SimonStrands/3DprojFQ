@@ -17,21 +17,25 @@ public:
 	ID3D11Buffer*& getVertexBuffer();
 	ID3D11ShaderResourceView** getTextures();
 	int& getNrOfVertex();
-	int& getNrOfTextures();
-	void getKdKa(float (&kd)[4], float (&ka)[4]);
-	void draw(ID3D11DeviceContext*& immediateContext);
+	void getKdKaKsNs(float (&kd)[4], float (&ka)[4], float(&ks)[4]);
+	void draw(ID3D11DeviceContext*& immediateContext, bool sm);
+	void SetShaders(ID3D11VertexShader* VS);
 	void SetShaders(ID3D11VertexShader* VS, ID3D11PixelShader* PS);
-	void SetShader(ID3D11DeviceContext*& immediateContext);
+	void SetShaders(ID3D11HullShader* HS, ID3D11DomainShader* DS);
+	void SetShader(ID3D11DeviceContext*& immediateContext, int flag = 0);
+	void updatePS(Graphics*& gfx);
+	Material &getMatrial();
 	//DEBUG
 	ID3D11PixelShader* PS;
 	ID3D11VertexShader* VS;
+	ID3D11HullShader* HS;
+	ID3D11DomainShader* DS;
 private:
 	int nrOfVertexes;
 	bool defTexture[4] = { false, false, false, false };
 	Material matrial;
 	ID3D11Buffer* vertexBuffer;
-	//ID3D11PixelShader* PS;
-	//ID3D11VertexShader* VS;
+	ID3D11Buffer* Pg_pConstantBuffer;
 	
 };
 

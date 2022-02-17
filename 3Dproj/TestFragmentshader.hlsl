@@ -7,50 +7,43 @@ struct PixelShaderInput
 	float3 tangent : TANGENT;
 	float3 bitangent : BITANGENT;
 	float4 fragpos: FRAG_POS;
-	float4 shadowMapCoords : SM_COORDS;
+    float4 shadowMapCoords : SM_COORDS;
 };
 
 struct PixelShaderOutput {
-	float4 Position : SV_Target0;//depth
-	float4 Normal :	SV_Target1;
-	float4 Color :	SV_Target2;
+	float4 Position :   SV_Target0;//depth
+	float4 Normal   :	SV_Target1;//normal
+	float4 Color    : 	SV_Target2;//map_kd * kd
+	float4 ambient  :   SV_Target3;//map_ka * ka
+	float4 specular :	SV_Target4;//map_ks * ks //can I put NS as last element?
 };
 
 cbuffer CBuf
 {
 	float4 kd;
-	float4 ks;
+	float4 ks;//last element is ns
 	float4 ka;
 };
 
 Texture2D diffuseTex : register(t1); // diffuse base color
 Texture2D ambientTex : register(t2); //normal light(without light)
-Texture2D specularTex : register(t3); // specular //shinyness
+Texture2D specularTex : register(t3); // specular
 Texture2D SM : register(t4); // shadow map
 SamplerState testSampler;
 
 
-//float4 main(PixelShaderInput input) : SV_TARGET
 PixelShaderOutput main(PixelShaderInput input)
 {
 	PixelShaderOutput output;
 	
-	//calc normal
-	float3 posToView = normalize(input.fragpos.xyz - cameraPos.xyz);
-	if (dot(posToView, input.normal) > 0) {
-		input.normal = -input.normal;
-	}
-	////else here calc normalMapping
 
 	output.Normal = float4(input.normal.xyz, 1);
 	output.Position = float4(input.fragpos);
-	output.Color = diffuseTex.Sample(testSampler, input.uv);
-	//TEST
-	//output.Position = float4(1, 0, 0, 1);
-	//output.Normal =   float4(0, 1, 0, 1);
-	//output.Color =    float4(0, 0, 1, 1);
-	
+	output.Color = diffuseTex.Sample(testSampler, input.uv) * kd;
+    output.ambient = ambientTex.Sample(testSampler, input.uv) * ka;
+    output.specular = specularTex.Sample(testSampler, input.uv) * ks;
+    output.specular.w = ks.w;
+
 	return output;
-	//return float4(1,0,0,1);
 
 }

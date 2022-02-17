@@ -1,18 +1,19 @@
 #include "DepthStencil.h"
 #include <iostream>
 
-DepthStencil::DepthStencil()
+DepthStencil::DepthStencil(std::string name)
 {
     dsTexture = nullptr;
     dShaderResourceView = nullptr;
     dsview = nullptr;
+    this->name = name;
 }
 
 DepthStencil::~DepthStencil()
 {
-    if (dsTexture != nullptr) {
-        dsTexture->Release();
-    }
+    //if (dsTexture != nullptr) {
+    //    dsTexture->Release();
+    //}
     if (dShaderResourceView != nullptr) {
         dShaderResourceView->Release();
     }

@@ -47,11 +47,24 @@ void ResourceManager::loadThings(Graphics*& gfx)
 	}
 	//mesh
 
-	ball = new ModelObj("obj/roundsol.obj", gfx, def);
-	//ball = new ModelObj("", gfx);
+	ball = new ModelObj("obj/GroundLowPloy.obj", gfx, def);
+
 	stol = new ModelObj("obj/DoubleMesh.obj" , gfx, def);
-	//IDK = new  ModelObj("obj/stormtrooper.obj"     , gfx, def);
+
 	IDK = new  ModelObj("obj/quad2.obj"     , gfx, def);
+	std::string names[] = {
+		"roundsol.obj",
+		"stormtrooper.obj"
+	};
+	for (int i = 0; i < _countof(names); i++) {
+		ModelObj* model = new ModelObj("obj/" + names[i], gfx, def);
+		Models.insert(std::make_pair(names[i], model));
+	}
+}
+
+ModelObj* ResourceManager::get_Models(std::string key)
+{
+	return Models.find(key)->second;
 }
 
 ModelObj*ResourceManager::get_Ball()

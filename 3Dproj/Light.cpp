@@ -10,7 +10,7 @@ SpotLight::~SpotLight()
 {
 }
 
-vec3 SpotLight::getRotation()
+vec3& SpotLight::getRotation()
 {
 	return this->rot;
 }
@@ -45,6 +45,16 @@ Light::Light(vec3 pos)
 
 Light::~Light()
 {
+}
+
+vec3& Light::getRotation()
+{
+	SpotLight* SL = dynamic_cast<SpotLight*>(this);
+	if (SL != nullptr) {
+		return SL->getRotation();
+	}
+	vec3 a(0, 0, 0);
+	return a;
 }
 
 vec3& Light::getPos()
