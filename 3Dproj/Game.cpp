@@ -206,6 +206,7 @@ void Game::DrawAllShadowObject()
 	gfx->get_IC()->IASetInputLayout(gfx->getInputL()[1]);
 	gfx->get_IC()->GSSetShader(nullptr, nullptr, 0);
 	for (int i = 0; i < nrOfObj; i++) {
+		
 		obj[i]->draw(gfx, true);
 	}
 }
