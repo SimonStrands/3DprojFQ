@@ -30,7 +30,7 @@ cbuffer CBuf
 Texture2D diffuseTex : register(t0); // diffuse base color
 Texture2D ambientTex : register(t1); //normal light(without light)
 Texture2D specularTex : register(t2); // specular //shinyness
-Texture2D nMap : register(t4); // normal map
+Texture2D nMap : register(t3); // normal map
 SamplerState testSampler;
 
 PixelShaderOutput main(PixelShaderInput input)
@@ -54,7 +54,7 @@ PixelShaderOutput main(PixelShaderInput input)
     nMapNormal.x = normalSample.x * 2.0f - 1.0f;
     nMapNormal.y = normalSample.y * 2.0f - 1.0f;
     nMapNormal.z = normalSample.z * 2.0f - 1.0f;
-    //input.normal = mul(nMapNormal, (float3x3) TBN);
+    input.normal = mul(nMapNormal, (float3x3) TBN);
     
     output.Normal = float4(input.normal.xyz, 1);
     output.Position = float4(input.fragpos);

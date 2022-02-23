@@ -57,11 +57,22 @@ void MeshObj::draw(ID3D11DeviceContext*& immediateContext, bool sm)
 	static UINT strid = sizeof(vertex);
 
 	immediateContext->DSSetShaderResources(0, 1, this->matrial.texSRVDS);
-	immediateContext->PSSetShaderResources(0, 4, this->matrial.texSRVPS);//denna är fel på något sätt
+	immediateContext->PSSetShaderResources(0, 4, this->matrial.texSRVPS);
 	immediateContext->PSSetConstantBuffers(0, 1, &this->Pg_pConstantBuffer);
 	immediateContext->IASetVertexBuffers(0, 1, &this->vertexBuffer, &strid, &offset);
 	immediateContext->Draw(this->nrOfVertexes, 0);
 }
+
+void MeshObj::draw2(ID3D11DeviceContext*& immediateContext)
+{
+	UINT offset = 0;
+	static UINT strid = sizeof(vertex);
+	SetShader(immediateContext, 0);
+	immediateContext->IASetVertexBuffers(0, 1, &this->vertexBuffer, &strid, &offset);
+	immediateContext->Draw(this->nrOfVertexes, 0);
+}
+
+
 
 void MeshObj::SetShaders(ID3D11VertexShader* VS)
 {

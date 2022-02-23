@@ -19,6 +19,16 @@ struct Material {
 			texSRVDS[i] = nullptr;//do I need to do this?
 		}
 	};
+	Material(ID3D11ShaderResourceView** def) {
+		texSRVPS = new ID3D11ShaderResourceView * [4];
+		texSRVDS = new ID3D11ShaderResourceView * [1];
+		for (int i = 0; i < 4; i++) {
+			texSRVPS[i] = def[i];//do I need to do this?
+		}
+		for (int i = 0; i < 1; i++) {
+			texSRVDS[i] = nullptr;//do I need to do this?
+		}
+	}
 	void loadTexture(std::string filename, Graphics*& gfx, int WhatRSV, ID3D11ShaderResourceView** def)
 	{
 		ID3D11Texture2D* tex;

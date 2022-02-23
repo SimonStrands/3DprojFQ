@@ -122,7 +122,7 @@ void DeferredRendering::BindFirstPass()
 	gfx->get_IC()->ClearRenderTargetView(DeferredRTV[2], color);
 	gfx->get_IC()->ClearRenderTargetView(DeferredRTV[3], color);
 	gfx->get_IC()->ClearRenderTargetView(DeferredRTV[4], color);
-	gfx->get_IC()->ClearDepthStencilView(dsView, D3D11_CLEAR_DEPTH, 1.0f, 0);
+	gfx->get_IC()->ClearDepthStencilView(dsView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
 
 }
@@ -131,9 +131,9 @@ void DeferredRendering::BindSecondPass(ID3D11ShaderResourceView*& ShadowMapping)
 {
 	FLOAT color[4] = { 0.1f,0.1f,0.1f,1.f };
 	ID3D11UnorderedAccessView* nullUAV = nullptr;
-	ID3D11RenderTargetView* nullRTV[3] = { nullptr };
+	ID3D11RenderTargetView* nullRTV[5] = { nullptr };
 	//set till null?
-	gfx->get_IC()->OMSetRenderTargets(3, nullRTV, nullptr);
+	gfx->get_IC()->OMSetRenderTargets(5, nullRTV, nullptr);
 
 	//is this for compute shading
 	gfx->get_IC()->CSSetShader(DeferredComputeS, nullptr, 0);
@@ -155,9 +155,9 @@ void DeferredRendering::BindSecondPassFunc(ID3D11ShaderResourceView*& ShadowMapp
 {
 	FLOAT color[4] = { 0.1f,0.1f,0.1f,1.f };
 	ID3D11UnorderedAccessView* nullUAV = nullptr;
-	ID3D11RenderTargetView* nullRTV[3] = { nullptr };
+	ID3D11RenderTargetView* nullRTV[5] = { nullptr };
 	//set till null?
-	gfx->get_IC()->OMSetRenderTargets(3, nullRTV, nullptr);
+	gfx->get_IC()->OMSetRenderTargets(5, nullRTV, nullptr);
 
 	//is this for compute shading
 	gfx->get_IC()->CSSetShader(DeferredComputeS, nullptr, 0);

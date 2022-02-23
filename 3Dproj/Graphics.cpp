@@ -49,15 +49,21 @@ Graphics::Graphics(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	Pg_pConstantBuffer = nullptr;
 	normalMapping = true;//?
 	inputLayout = new ID3D11InputLayout * [2]{nullptr, nullptr};
-	vShader = new ID3D11VertexShader * [3]{ nullptr, nullptr, nullptr };
+	vShader = new ID3D11VertexShader * [4]{ nullptr, nullptr, nullptr };
 	gShader = new ID3D11GeometryShader * [2]{ nullptr, nullptr };
-	pShader = new ID3D11PixelShader * [3] { nullptr, nullptr,nullptr };
+	pShader = new ID3D11PixelShader * [4] { nullptr, nullptr,nullptr, nullptr };
 	hShader = new ID3D11HullShader * [2] { nullptr,nullptr };
 	dShader = new ID3D11DomainShader * [2] { nullptr,nullptr };
 
 	//setting normal value for pcbd
 	this->LCBG.lightColor = { 1,1,1,0 };
 	this->LCBG.cameraPos = { 0,0,1,1 };
+	for (int i = 0; i < 4; i++) {
+		for (int o = 0; o < 6; o++) {
+			this->LCBG.lightPos.element[o][i] = 255;
+		}
+	}
+	
 	this->pcbd.ka = { 0.5f,0.5f,0.5f,1 };
 	this->pcbd.kd = { 1.f,1.f,1.f,0 };
 	this->pcbd.ks = {1.f,1.f,1.f,0};
@@ -174,6 +180,10 @@ void Graphics::Update(float dt)
 	LCBG.projection.element = vcbd.projection.element;
 	for (int i = 0; i < nrOfLights; i++) {
 		LCBG.lightView.element[i] = this->light[i]->getLightView();
+		LCBG.lightPos.element[i][0] = light[i]->getPos().x;
+		LCBG.lightPos.element[i][1] = light[i]->getPos().y;
+		LCBG.lightPos.element[i][2] = light[i]->getPos().z;
+		LCBG.lightPos.element[i][3] = 0;
 	}
 	D3D11_MAPPED_SUBRESOURCE resource;
 	immediateContext->Map(this->Pg_pConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
@@ -313,8 +323,8 @@ void Graphics::setRenderTarget()
 	immediateContext->OMSetRenderTargets(1, &renderTarget, dsView);
 }
 
-void Graphics::present()
+void Graphics::present(int lightNr)
 {
-	this->imguimanager->updateRender();
+	this->imguimanager->updateRender(lightNr);
 	swapChain->Present(0, 0);
 }

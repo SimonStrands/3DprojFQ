@@ -13,7 +13,7 @@ public:
 	~ImguiManager();
 	void takeObject(object* obj);
 	void takeLight(Light* light);
-	void updateRender();
+	void updateRender(int lightNr);
 private:
 	std::vector<object*> obj;
 	std::vector<Light*> light;

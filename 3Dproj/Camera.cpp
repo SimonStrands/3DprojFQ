@@ -42,6 +42,17 @@ vec3 Camera::getPos()
 	return vec3(xCamPos, yCamPos, zCamPos);
 }
 
+vec3 Camera::getRot()
+{
+	return vec3(xCamRot, yCamRot, 0);
+}
+
+void Camera::setRotation(vec3 newRot)
+{
+	this->xCamRot = newRot.x;
+	this->yCamRot = newRot.y;
+}
+
 void Camera::setPosition(vec3 newpos)
 {
 	this->xCamPos = newpos.x;

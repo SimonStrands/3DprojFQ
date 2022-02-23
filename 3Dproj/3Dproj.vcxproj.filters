@@ -67,9 +67,6 @@
     <Filter Include="Source Files\Graphic\Animation &amp; other\Paricle">
       <UniqueIdentifier>{76b250a2-9755-4e96-951d-af0fb06089f7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Graphic\Animation\Particle">
-      <UniqueIdentifier>{eca78a50-2288-49b2-a3c8-216a00da14de}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Resource Files\Shaders\Buffers">
       <UniqueIdentifier>{66e45ce6-50f5-41a1-8417-a61a2b91662f}</UniqueIdentifier>
     </Filter>
@@ -87,6 +84,12 @@
     </Filter>
     <Filter Include="Resource Files\Shaders\Buffers\Tesselation\PhongTess">
       <UniqueIdentifier>{098efd97-25b9-424d-a244-774b56b5ff0d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Shaders\Billboarding">
+      <UniqueIdentifier>{0573c576-229e-4216-905f-892d3790cd15}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Graphic\Particle">
+      <UniqueIdentifier>{eca78a50-2288-49b2-a3c8-216a00da14de}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -198,9 +201,6 @@
     <ClCompile Include="Model.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Convertions.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="AnimationModel.cpp">
       <Filter>Source Files\Graphic\Animation &amp; other</Filter>
     </ClCompile>
@@ -208,6 +208,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="DynamicCubeEnviroment.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Convertions.cpp">
+      <Filter>Source Files\Other</Filter>
+    </ClCompile>
+    <ClCompile Include="BillBoardManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -297,7 +303,7 @@
       <Filter>Header Files\Graphic\Animation</Filter>
     </ClInclude>
     <ClInclude Include="BillBoard.h">
-      <Filter>Header Files\Graphic\Animation\Particle</Filter>
+      <Filter>Header Files\Graphic\Particle</Filter>
     </ClInclude>
     <ClInclude Include="Mesh.h">
       <Filter>Header Files\Game</Filter>
@@ -350,6 +356,9 @@
     <ClInclude Include="DynamicCubeEnviroment.h">
       <Filter>Header Files\Game</Filter>
     </ClInclude>
+    <ClInclude Include="BillBoardManager.h">
+      <Filter>Header Files\Graphic\Particle</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md">
@@ -363,9 +372,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="GeometryShader.hlsl">
-      <Filter>Resource Files\Shaders\Geometry</Filter>
-    </FxCompile>
     <FxCompile Include="VertexBillBoard.hlsl">
       <Filter>Resource Files\Shaders\Vertex</Filter>
     </FxCompile>
@@ -405,9 +411,6 @@
     <FxCompile Include="DynamicCubicPS.hlsl">
       <Filter>Resource Files\Shaders\Pixel\CubeMap</Filter>
     </FxCompile>
-    <FxCompile Include="CreateTextureToCubeMapPS.hlsl">
-      <Filter>Resource Files\Shaders\Pixel\CubeMap</Filter>
-    </FxCompile>
     <FxCompile Include="DomainDisplaysment.hlsl">
       <Filter>Resource Files\Shaders\Buffers\Tesselation\Displaysment</Filter>
     </FxCompile>
@@ -419,6 +422,12 @@
     </FxCompile>
     <FxCompile Include="PhongTessHull.hlsl">
       <Filter>Resource Files\Shaders\Buffers\Tesselation\PhongTess</Filter>
+    </FxCompile>
+    <FxCompile Include="GeometryShader.hlsl">
+      <Filter>Resource Files\Shaders\Billboarding</Filter>
+    </FxCompile>
+    <FxCompile Include="BillBoardUpdate.hlsl">
+      <Filter>Resource Files\Shaders\Billboarding</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

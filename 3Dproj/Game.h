@@ -23,9 +23,11 @@ public:
 	virtual ~Game();
 	void run();
 	void DrawToBuffer();
+	void DrawToBufferDebug();
 	void DrawDynamicCube();
 	void ForwardDraw();
 	void DrawAllShadowObject();//without any otherShaders
+	void updateShaders(bool vs = true, bool ps = true);
 private:
 	//width and height of window
 	MSG msg = {};
@@ -53,4 +55,7 @@ private:
 	int nrOfLight;
 	int nrOfObj;
 	float currentTime;
+
+	//debug var
+	int lightNr;
 };

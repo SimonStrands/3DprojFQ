@@ -32,8 +32,8 @@ float4 main(PixelShaderInput input) : SV_TARGET
 	}
 
 	//ambient
-	float3 ambient_light = ka.xyz * lightColor.xyz;
-	//float3 ambient_light = float3(0.1, 0.1, 0.1) * lightColor.xyz;
+    float3 ambient_light = float3(0.1, 0.1, 0.1) * lightColor.xyz;
+    ambient_light = float3(0.9, 0.9, 0.9);
 	//return float4(ka.xyz, 1);
 
 	float3 specular;

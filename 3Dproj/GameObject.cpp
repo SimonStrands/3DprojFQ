@@ -23,6 +23,14 @@ void GameObject::draw(Graphics *&gfx, bool sm)
 	model->draw(gfx, sm);
 }
 
+void GameObject::drawDebug(Graphics*& gfx, bool sm)
+{
+	gfx->get_IC()->VSSetConstantBuffers(0, 1, &this->getVertexConstBuffer());
+	gfx->get_IC()->DSSetConstantBuffers(0, 1, &this->getVertexConstBuffer());
+	gfx->get_IC()->HSSetConstantBuffers(0, 1, &this->getVertexConstBuffer());
+	model->draw(gfx, sm);
+}
+
 void GameObject::drawDefTest(ID3D11DeviceContext*& immediateContext)
 {
 	immediateContext->VSSetConstantBuffers(0, 1, &this->getVertexConstBuffer());

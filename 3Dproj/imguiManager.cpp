@@ -22,7 +22,7 @@ void ImguiManager::takeLight(Light* light)
 	this->light.push_back(light);
 }
 
-void ImguiManager::updateRender()
+void ImguiManager::updateRender(int lightNr)
 {
 	ImGui_ImplDX11_NewFrame();
 	ImGui_ImplWin32_NewFrame();
@@ -39,18 +39,16 @@ void ImguiManager::updateRender()
 		}
 		ImGui::End();
 	}
-	for (int i = 0; i < light.size(); i++) {
-		std::string name = "light " + std::to_string(i);
-		if (ImGui::Begin(name.c_str())) {
-			ImGui::SliderFloat("Xpos", &light[i]->getPos().x, 40.0f, -40.0f);
-			ImGui::SliderFloat("Ypos", &light[i]->getPos().y, 40.0f, -40.0f);
-			ImGui::SliderFloat("Zpos", &light[i]->getPos().z, 40.0f, -40.0f);
-			ImGui::SliderFloat("XRot", &light[i]->getRotation().x, 6.3f, -6.3f);
-			ImGui::SliderFloat("YRot", &light[i]->getRotation().y, 6.3f, -6.3f);
-			ImGui::SliderFloat("ZRot", &light[i]->getRotation().z, 6.3f, -6.3f);
-		}
-		ImGui::End();
+	std::string name = "light" + std::to_string(lightNr);
+	if (ImGui::Begin(name.c_str())) {
+		ImGui::SliderFloat("Xpos", &light[lightNr]->getPos().x, 40.0f, -40.0f);
+		ImGui::SliderFloat("Ypos", &light[lightNr]->getPos().y, 40.0f, -40.0f);
+		ImGui::SliderFloat("Zpos", &light[lightNr]->getPos().z, 40.0f, -40.0f);
+		ImGui::SliderFloat("XRot", &light[lightNr]->getRotation().x, 6.3f, -6.3f);
+		ImGui::SliderFloat("YRot", &light[lightNr]->getRotation().y, 6.3f, -6.3f);
+		ImGui::SliderFloat("ZRot", &light[lightNr]->getRotation().z, 6.3f, -6.3f);
 	}
+	ImGui::End();
 	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 }

@@ -14,9 +14,11 @@ public:
 	virtual ~GameObject();
 	void Updateshaders(Graphics*& gfx, bool vertex = true, bool pixel = true);
 	void draw(Graphics*& gfx, bool sm = false);
+	void drawDebug(Graphics*& gfx, bool sm = false);
 	void drawDefTest(ID3D11DeviceContext*& immediateContext);
 	void setTesselation(bool tess, Graphics*& gfx);
-private:
+protected:
 	ModelObj* model;
+private:
 	bool tess;
 };

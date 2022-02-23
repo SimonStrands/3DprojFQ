@@ -27,6 +27,7 @@ cbuffer CBuf
 float GetTessLevel(float Distance0, float Distance1)
 {
     float AvgDistance = (Distance0 + Distance1) / 2.0;
+   // float MaxDistance = 50.f;
     float MaxDistance = 50.f;
     float McDDistance = 5.f; //maccers is oppisete of max
     float MaxLod = 12;

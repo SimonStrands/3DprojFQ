@@ -1,4 +1,4 @@
-#include "Transforms.hlsli"
+
 struct PixelShaderInput
 {
     float4 position : SV_POSITION;
@@ -7,7 +7,6 @@ struct PixelShaderInput
     float3 tangent : TANGENT;
     float3 bitangent : BITANGENT;
     float4 fragpos : FRAG_POS;
-    float4 shadowMapCoords : SM_COORDS;
 };
 
 struct PixelShaderOutput
@@ -25,20 +24,23 @@ cbuffer CBuf
     float4 ka;
 };
 
-Texture2D ambientTex : register(t0); //normal light(without light)
-Texture2D specularTex : register(t1); // specular
-Texture2DArray<float4> shadowMapping : register(t2);
+TextureCube mirrorTex : register(t0);
 SamplerState testSampler;
 
 PixelShaderOutput main(PixelShaderInput input) : SV_TARGET
 {
     PixelShaderOutput output;
+    //float3 posToFrag = input.fragpos;
     output.Normal = float4(input.normal.xyz, 1);
     output.Position = float4(input.fragpos);
-    //output.Color =      diffuseTex.Sample(testSampler, input.uv) * kd;
-    output.Color = float4(1, 1, 1, 1);
-    output.ambient =    ambientTex.Sample(testSampler, input.uv) * ka;
-    output.specular =   specularTex.Sample(testSampler, input.uv) * ks;
+    //output.Color = mirrorTex.Sample(testSampler, output.Position.xyz);
+    //output.Color = mirrorTex.Sample(testSampler, float3());
+    output.Color = float4(0, 0, 1, 1);
+    //output.Color = float4(1, 0, 0, 1);
+    //output.ambient =    ambientTex.Sample(testSampler, input.uv) * ka;
+    output.ambient = float4(0.5, 0.5, 0.5, 1);
+    //output.specular =   specularTex.Sample(testSampler, input.uv) * ks;
+    output.specular = float4(0.8, 0.8, 0.8, 0) * ks;
     output.specular.w = ks.w;
     
     return output;

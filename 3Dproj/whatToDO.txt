@@ -1,1 +1,3 @@
-pixel shadow dosn't need
+fix so that its the player pos and not camera pos that fixes tesselation
+fix dynamic cube mapping
+

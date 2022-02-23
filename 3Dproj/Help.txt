@@ -1,6 +1,5 @@
-I render tycker jag att jag gör fel behöver jag värkligen sätta varje gång jag gör något
+DCube:
+Hur man får en UAV binda till en texture-textureCube.
 
-Få en video som textur
-
-Hur kan jag bara skicka in en point och inte mer i billboard particle
-borde jag inte skicka in höjd och bredd också eller avstånd
+BillBoard:
+Hur fungerar det när man bindar en UAV till en vertexBuffer?

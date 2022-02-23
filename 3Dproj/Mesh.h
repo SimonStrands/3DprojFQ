@@ -19,6 +19,7 @@ public:
 	int& getNrOfVertex();
 	void getKdKaKsNs(float (&kd)[4], float (&ka)[4], float(&ks)[4]);
 	void draw(ID3D11DeviceContext*& immediateContext, bool sm);
+	void draw2(ID3D11DeviceContext*& immediateContext);
 	void SetShaders(ID3D11VertexShader* VS);
 	void SetShaders(ID3D11VertexShader* VS, ID3D11PixelShader* PS);
 	void SetShaders(ID3D11HullShader* HS, ID3D11DomainShader* DS);
@@ -36,7 +37,8 @@ private:
 	Material matrial;
 	ID3D11Buffer* vertexBuffer;
 	ID3D11Buffer* Pg_pConstantBuffer;
-	
+
+	std::vector<MeshObj> SubMeshes;
 };
 
 /*class Mesh {

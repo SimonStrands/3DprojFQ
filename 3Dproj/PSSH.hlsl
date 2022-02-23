@@ -36,21 +36,13 @@ PixelShaderOutput main(PixelShaderInput input)
 {
     PixelShaderOutput output;
 	
-	//calc normal
-    //float3 posToView = normalize(input.position.xyz - cameraPos.xyz);
-	//if (dot(posToView, input.normal) > 0) {
-	//	input.normal = -input.normal;
-	//}
-	//else here calc normalMapping
 
     output.Normal = float4(input.normal.xyz, 1);
     output.Position = float4(input.fragpos);
-	//output.Color = diffuseTex.Sample(testSampler, input.uv);
     output.Color = diffuseTex.Sample(testSampler, input.uv) * kd;
     output.ambient = ambientTex.Sample(testSampler, input.uv) * ka;
     output.specular = specularTex.Sample(testSampler, input.uv) * ks;
     output.specular.w = ks.w;
-    //output.specular.xyzw = float4(0.5f, 0.5f, 0.5f, 0.5f);
 
     return output;
 

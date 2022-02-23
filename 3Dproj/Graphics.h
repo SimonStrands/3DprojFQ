@@ -28,12 +28,17 @@ struct LCBGS : public CB {
 		float element[4];
 	}lightColor;
 	struct {
+		float element[6][4];//6 pc of float4
+	}lightPos;
+	struct {
 		DirectX::XMMATRIX element;
 	}projection;
 	struct {
 		DirectX::XMMATRIX element[6];
 	}lightView;
-	
+	struct {
+		int element;
+	}nrOfLights;
 };
 
 struct Vcb : public CB{
@@ -181,7 +186,7 @@ public:
 	//draw
 	void clearScreen();
 	void setRenderTarget();
-	void present();
+	void present(int lightNr = 0);
 	
 private:
 	//Debug shit

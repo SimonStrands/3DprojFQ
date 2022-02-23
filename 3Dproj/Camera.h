@@ -12,6 +12,8 @@ public:
 	virtual ~Camera();
 	void updateCamera(float dt);
 	vec3 getPos();
+	vec3 getRot();
+	void setRotation(vec3 newRot);
 	void setPosition(vec3 newpos);
 private:
 	Mouse *mus;

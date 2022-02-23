@@ -45,6 +45,7 @@ void ResourceManager::loadThings(Graphics*& gfx)
 	if (!CreateTexture("Textures/Fire.png", gfx->getDevice(), gfx->getTexture(), Fire)) {
 		cantLoad(L"Fire cant load");
 	}
+	def[3] = nullptr;
 	//mesh
 
 	ball = new ModelObj("obj/GroundLowPloy.obj", gfx, def);
@@ -54,7 +55,8 @@ void ResourceManager::loadThings(Graphics*& gfx)
 	IDK = new  ModelObj("obj/quad2.obj"     , gfx, def);
 	std::string names[] = {
 		"roundsol.obj",
-		"stormtrooper.obj"
+		"stormtrooper.obj",
+		"DCube.obj"
 	};
 	for (int i = 0; i < _countof(names); i++) {
 		ModelObj* model = new ModelObj("obj/" + names[i], gfx, def);
