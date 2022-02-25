@@ -13,8 +13,6 @@ ShadowMap::ShadowMap(SpotLight** light, int nrOfLights, Graphics* gfx)
 	if (!CreateDepthStencil(gfx->getDevice(), (UINT)gfx->getWH().x, (UINT)gfx->getWH().y)) {
 		printf("something didnt go right");
 	}
-
-	//fromDepthToSRV();
 }
 
 ShadowMap::~ShadowMap()
@@ -64,10 +62,6 @@ ID3D11ShaderResourceView*& ShadowMap::fromDepthToSRV()
 	return shadowResV;
 }
 
-DirectX::XMMATRIX ShadowMap::getLightView()
-{
-	return this->lightView;
-}
 
 void ShadowMap::setUpdateShadow()
 {
@@ -88,7 +82,7 @@ void ShadowMap::inUpdateShadow(int i)
 	gfx->Projection((int)this->light[i]->whatOfLight());
 	
 	gfx->getVcb()->view.element = this->light[i]->getLightView();
-	gfx->getGcb()->lightView.element = this->light[i]->getLightView();
+	//gfx->getGcb()->lightView.element = this->light[i]->getLightView();
 }
 
 bool ShadowMap::CreateDepthStencil(ID3D11Device* device, UINT width, UINT height)

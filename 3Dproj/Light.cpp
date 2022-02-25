@@ -5,6 +5,7 @@ Light(pos)
 {
 	this->rot = rot;
 	this->flag = wTofL::SPOT;
+	this->Projection = DirectX::XMMatrixPerspectiveFovLH(DirectX::XMConvertToRadians(90), 16.f/9, 0.1, 2000);
 }
 
 SpotLight::~SpotLight()
@@ -24,6 +25,21 @@ void SpotLight::changeRot(vec3 rot)
 void SpotLight::addRot(vec3 rot)
 {
 	this->rot = this->rot + rot;
+}
+
+DirectX::XMMATRIX SpotLight::getLightViewProj()
+{
+	DirectX::XMMATRIX temp(
+		1.0f, 0.0f, 0.0f, 0.0f,
+		0.0f, 1.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 1.0f, 0.0f,
+		-getPos().x, -getPos().y, -getPos().z, 1.0f
+	);
+	XRotation(temp, rot.x);
+	YRotation(temp, rot.y);
+	temp = -temp * Projection;
+	//temp = FlipDiagonal(temp);
+	return temp;
 }
 
 DirectX::XMMATRIX SpotLight::getLightView()
@@ -72,6 +88,5 @@ DirLight::DirLight(vec3 pos, vec3 rot, float W, float H):
 	SpotLight(pos, rot)
 {
 	this->flag = wTofL::DIR;
-	this->width = W;
-	this->height = H;
+	this->Projection = DirectX::XMMatrixOrthographicLH(W, H, 0.1, 2000);
 }

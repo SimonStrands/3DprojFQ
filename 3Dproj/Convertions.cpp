@@ -36,3 +36,16 @@ Quaternion assimpQuartToQuart(aiQuaternion quart)
 	theReturn.z = quart.z;
 	return theReturn;
 };
+
+DirectX::XMMATRIX FlipDiagonal(DirectX::XMMATRIX oth) {
+	DirectX::XMFLOAT4 v2F[4];
+	for (int i = 0; i < 4; i++) {
+		DirectX::XMStoreFloat4(&v2F[i], oth.r[i]);
+	}
+	
+	return DirectX::XMMATRIX(	v2F[0].x, v2F[1].x, v2F[2].x, v2F[3].x,
+								v2F[0].y, v2F[1].y, v2F[2].y, v2F[3].y, 
+								v2F[0].z, v2F[1].z, v2F[2].z, v2F[3].z, 
+								v2F[0].w, v2F[1].w, v2F[2].w, v2F[3].w
+	);
+}

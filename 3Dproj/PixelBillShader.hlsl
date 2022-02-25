@@ -24,8 +24,7 @@ SamplerState testSampler;
 float4 main(PixelShaderInput input) : SV_TARGET
 {
 	//for culling none
-    float4x4 LVT = lightView[0];
-    float4 lightPos = float4(LVT[3][0], LVT[3][1], LVT[3][2], LVT[3][3]);
+    float4 lightPosB = float4(lightPos[0].xyz,1);
 	float3 posToView = normalize(input.fragpos.xyz - cameraPos.xyz);
 	if (dot(posToView, input.normal) > 0) {
 		input.normal = -input.normal;
@@ -39,7 +38,7 @@ float4 main(PixelShaderInput input) : SV_TARGET
 	float3 specular;
 	float3 defuse_light;
 	//defuse
-	float3 lightDir = normalize(input.fragpos.xyz - lightPos.xyz);
+	float3 lightDir = normalize(input.fragpos.xyz - lightPosB.xyz);
 	float ammount_diffuse = max(dot(-input.normal.xyz, lightDir), 0.0f);
 	defuse_light = ammount_diffuse * kd.xyz * lightColor.xyz;
 

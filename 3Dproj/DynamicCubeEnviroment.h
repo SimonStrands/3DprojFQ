@@ -11,6 +11,6 @@ private:
 	bool initCubeMapping(Graphics*& gfx);
 	ID3D11ShaderResourceView* CubeResV;
 	ID3D11Texture2D* CubeTex;
-	ID3D11RenderTargetView** CubeRTV;
+	//ID3D11RenderTargetView** CubeRTV;
 	ID3D11UnorderedAccessView** UAVs;
 };

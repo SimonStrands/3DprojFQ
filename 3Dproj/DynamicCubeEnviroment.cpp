@@ -35,8 +35,8 @@ bool DynamicCube::initCubeMapping(Graphics*& gfx)
 {
 	const int nrOfRTV = 6;
 	D3D11_TEXTURE2D_DESC textureDesc;
-	textureDesc.Width = 1080;
-	textureDesc.Height = 1080;
+	textureDesc.Width = 640;
+	textureDesc.Height = 640;
 	textureDesc.MipLevels = 1;
 	textureDesc.ArraySize = nrOfRTV;
 	textureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
@@ -77,13 +77,11 @@ bool DynamicCube::initCubeMapping(Graphics*& gfx)
 	
 	for (int i = 0; i < nrOfRTV; i++) {
 		UAVdesc.Texture2DArray.FirstArraySlice = D3D11CalcSubresource(0, i, 1);
-		ID3D11UnorderedAccessView* tUAV;
-		HRESULT hr = gfx->getDevice()->CreateUnorderedAccessView(CubeTex, &UAVdesc, &tUAV);
+		HRESULT hr = gfx->getDevice()->CreateUnorderedAccessView(CubeTex, &UAVdesc, &UAVs[i]);
 		if (hr != S_OK) {
 			printf("doesn't work");
 			return false;
 		}
-		UAVs[i] = tUAV;
 	}
 
 	//this->model->getMehses()[0].getMatrial().texSRVPS[0] = CubeResV;

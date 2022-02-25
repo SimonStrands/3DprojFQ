@@ -14,6 +14,11 @@ public:
 		int dx = 60, int dy = 135
 	);
 	ID3D11PixelShader* getPS();
+	//should'nt exist
+	void changeUAV(ID3D11UnorderedAccessView* UAV) {
+		this->UAV = UAV;
+	}
+
 private:
 	//functions
 	bool InitDeferred();

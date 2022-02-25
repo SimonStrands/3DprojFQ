@@ -10,3 +10,4 @@ DirectX::XMMATRIX assimpToDX(aiMatrix4x4& mat);
 vec3 assimpToVec(aiVector3D vec);
 vec4 assimpQuartToVec4(aiQuaternion quart);
 Quaternion assimpQuartToQuart(aiQuaternion quart);
+DirectX::XMMATRIX FlipDiagonal(DirectX::XMMATRIX oth);

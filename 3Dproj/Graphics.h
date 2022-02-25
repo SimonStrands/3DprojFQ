@@ -31,13 +31,13 @@ struct LCBGS : public CB {
 		float element[6][4];//6 pc of float4
 	}lightPos;
 	struct {
-		DirectX::XMMATRIX element;
+		DirectX::XMMATRIX element;//max nr of projections is 2
 	}projection;
 	struct {
 		DirectX::XMMATRIX element[6];
 	}lightView;
 	struct {
-		int element;
+		int element;//use this as a flag so nroflights = i - MAXNROFLIGHTS;
 	}nrOfLights;
 };
 

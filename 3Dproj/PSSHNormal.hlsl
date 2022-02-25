@@ -1,4 +1,4 @@
-#include "Transforms.hlsli"
+
 struct PixelShaderInput
 {
     float4 position : SV_POSITION;
@@ -36,14 +36,7 @@ SamplerState testSampler;
 PixelShaderOutput main(PixelShaderInput input)
 {
     PixelShaderOutput output;
-    float4x4 LVT = lightView[0];
-    float4 lightPos = float4(LVT[3][0], LVT[3][1], LVT[3][2], LVT[3][3]);
-    float3 posToView = normalize(input.position.xyz - cameraPos.xyz);
-    //if (dot(posToView, input.normal) > 0)
-    //{
-    //    input.normal = -input.normal;
-    //}
-	//do the normal map thing
+
     float3 nMapNormal;
     float3x3 TBN = float3x3(
 		input.tangent.xyz,

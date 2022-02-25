@@ -1,6 +1,7 @@
 #pragma once
 #include "Vec.h"
 #include "rotation.h"
+#include "Convertions.h"
 //git
 
 //whatTypeOfLight so I don't ahve to do a dynamic_ thing
@@ -27,9 +28,11 @@ public:
 	void changeRot(vec3 rot);
 	void addRot(vec3 rot);
 	DirectX::XMMATRIX getLightView();
+	DirectX::XMMATRIX getLightViewProj();
 	const wTofL whatOfLight();
 protected:
 	wTofL flag;
+	DirectX::XMMATRIX Projection;
 private:
 	vec3 rot;
 };
@@ -37,7 +40,4 @@ private:
 class DirLight : public SpotLight {
 public:
 	DirLight(vec3 pos, vec3 rot = vec3(0, 0, 1), float W = 50, float H = 50);
-private:
-	float width;
-	float height;
 };

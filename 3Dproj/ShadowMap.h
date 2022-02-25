@@ -14,7 +14,6 @@ public:
 	ID3D11DepthStencilView* Getdepthview(int i);
 	ID3D11ShaderResourceView*& GetshadowResV();
 	ID3D11ShaderResourceView*& fromDepthToSRV();
-	DirectX::XMMATRIX getLightView();
 	void setUpdateShadow();
 	void inUpdateShadow(int i);
 private:
@@ -25,9 +24,7 @@ private:
 	SpotLight** light;
 	Graphics* gfx;
 
-	DirectX::XMMATRIX lightView;
 	ID3D11Texture2D* dsTexture;
-	//ID3D11DepthStencilView* dsViews;
 	std::vector<ID3D11DepthStencilView*> dsViews;
 	ID3D11VertexShader* vertexShadow;
 	ID3D11PixelShader* pixelShadow;
