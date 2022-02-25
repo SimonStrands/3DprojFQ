@@ -9,13 +9,13 @@ Game::Game(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWS
 	//Resource manager
 	rm = new ResourceManager(gfx);
 	//we need mor light
-	nrOfLight = 4;
+	nrOfLight = 2;
 	gfx->getLCB()->nrOfLights.element = nrOfLight;
 	light = new Light * [nrOfLight];
-	light[0] = new SpotLight(vec3(0,0,0), vec3(0,0,-1));
-	light[1] = new SpotLight(vec3(0,0,20), vec3(-2.8f,0.f,-1.f));
-	light[2] = new SpotLight(vec3(10,0,0), vec3(0.f,0.f,-1.f));
-	light[3] = new SpotLight(vec3(-10,0,0), vec3(0,0,-1));
+	light[0] = new SpotLight(vec3(0,0,40), vec3(0,0,-1));
+	light[1] = new DirLight(vec3(0,0,0), vec3(0, 0, -1));
+	//light[2] = new SpotLight(vec3(10,0,0), vec3(0.f,0.f,-1.f));
+	//light[3] = new SpotLight(vec3(-10,0,0), vec3(0,0,-1));
 
 	//shadow map needs to take more lights
 	this->shadowMap = new ShadowMap((SpotLight**)light, nrOfLight, gfx);
@@ -25,7 +25,7 @@ Game::Game(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWS
 	camera = new Camera(gfx, mus, vec3(0,0,0));
 
 	//////OBJECTS///////////
-	nrOfObj = 5;
+	nrOfObj = 6;
 	obj = new GameObject * [nrOfObj];
 	//OBJECTS
 	obj[0] = new GameObject(rm->get_Ball(), gfx, vec3(0.f, 0.f, 10.f), vec3(0.f, 0.f, 0.f), vec3(2.f, 2.0f, 2.0f));
@@ -33,7 +33,7 @@ Game::Game(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWS
 	obj[2] = new GameObject(rm->get_IDK(), gfx, vec3(0.f, 5.f, 20.f), vec3(-1.6f, -1.6f, 3.2f), vec3(20.f, 20.f, 20.f));
 	obj[3] = new GameObject(rm->get_Ball(), gfx, vec3(-5.f, 10.f, 10.f), vec3(0.f, 0.f, 1.6f), vec3(1.f, 1.f, 1.f));
 	obj[4] = new GameObject(rm->get_Models("stormtrooper.obj"), gfx, vec3(-15.f, 0.f, 15.f), vec3(0.f, 1.56f, 0.f), vec3(1.f, 1.f, 1.f));
-	obj[4] = new GameObject(rm->get_Models("stormtrooper.obj"), gfx, vec3(-15.f, 0.f, 15.f), vec3(0.f, 1.56f, 0.f), vec3(1.f, 1.f, 1.f));
+	obj[5] = new GameObject(rm->get_Models("stormtrooper.obj"), gfx, vec3(0.f, 0.f, -5.f), vec3(0.f, 1.56f, 0.f), vec3(1.f, 1.f, 1.f));
 	obj[0]->setTesselation(false, gfx);
 
 
@@ -100,17 +100,18 @@ void Game::run()
 			bill->UpdateShader(gfx, camera->getPos());
 			DrawAllShadowObject();
 		}
+		gfx->Projection(0);//last can be dir light
 
 
 		Update();
 		updateShaders();
 		bill->UpdateShader(gfx, camera->getPos());
-
+		DrawDynamicCube();//cant be before bindfirstPass();
 		//
 		defRend->BindFirstPass();
 
-		//DrawDynamicCube();
 		this->DrawToBuffer();
+		DCube->draw(gfx->get_IC());
 
 		defRend->BindSecondPass(shadowMap->GetshadowResV());
 
@@ -233,29 +234,20 @@ void Game::DrawDynamicCube()
 	//draw all textures
 	
 	for (int i = 0; i < 6; i++) {
-	//for (int i = 0; i < 3; i++) {
-		//update vertex|pixel, shit here here
-		
 		//change camera angel 2
 		camera->setRotation(vec3(camera->getRot().x + i, camera->getRot().y, 0));
-		camera->updateCamera(0);
-		updateShaders();
+		camera->updateCamera();
+		//updateShaders(false, true);
+		defRend->BindFirstPass();//needed
 		this->DrawToBufferDebug();
 		defRend->BindSecondPassFunc(shadowMap->GetshadowResV(), DCube->getUAVs()[i],33,60);
-
-		defRend->BindFirstPass();//needed
-		
-
 		
 	}
 	//draw the cube
 	camera->setPosition(camLP);
 	camera->setRotation(camRT);
-	gfx->get_IC()->IASetInputLayout(gfx->getInputL()[0]);
-	//updateShaders();
-	DCube->draw(gfx->get_IC());
-	DCube->draw(gfx->get_IC());
-
+	camera->updateCamera();
+	//updateShaders(false, true);
 	
 }
 

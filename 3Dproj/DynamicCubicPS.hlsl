@@ -33,14 +33,14 @@ PixelShaderOutput main(PixelShaderInput input) : SV_TARGET
     //float3 posToFrag = input.fragpos;
     output.Normal = float4(input.normal.xyz, 1);
     output.Position = float4(input.fragpos);
-    //output.Color = mirrorTex.Sample(testSampler, output.Position.xyz);
+    output.Color = mirrorTex.Sample(testSampler, output.Position.xyz);
     //output.Color = mirrorTex.Sample(testSampler, float3());
-    output.Color = float4(0, 0, 1, 1);
+    //output.Color = float4(0, 0, 1, 1);
     //output.Color = float4(1, 0, 0, 1);
     //output.ambient =    ambientTex.Sample(testSampler, input.uv) * ka;
     output.ambient = float4(0.5, 0.5, 0.5, 1);
     //output.specular =   specularTex.Sample(testSampler, input.uv) * ks;
-    output.specular = float4(0.8, 0.8, 0.8, 0) * ks;
+    output.specular = float4(0.0, 0.0, 0.0, 0) * ks;
     output.specular.w = ks.w;
     
     return output;

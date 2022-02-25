@@ -85,8 +85,8 @@ void ShadowMap::inUpdateShadow(int i)
 	ID3D11RenderTargetView* pNullRTV = NULL;
 	gfx->get_IC()->OMSetRenderTargets(1, &pNullRTV, this->Getdepthview(i));
 
-	//don't think about this now
-	//gfx->getVcb()->lightView.element = this->light[i]->getLightView();
+	gfx->Projection((int)this->light[i]->whatOfLight());
+	
 	gfx->getVcb()->view.element = this->light[i]->getLightView();
 	gfx->getGcb()->lightView.element = this->light[i]->getLightView();
 }

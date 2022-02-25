@@ -122,7 +122,7 @@ void DeferredRendering::BindFirstPass()
 	gfx->get_IC()->ClearRenderTargetView(DeferredRTV[2], color);
 	gfx->get_IC()->ClearRenderTargetView(DeferredRTV[3], color);
 	gfx->get_IC()->ClearRenderTargetView(DeferredRTV[4], color);
-	gfx->get_IC()->ClearDepthStencilView(dsView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+	gfx->get_IC()->ClearDepthStencilView(gfx->getDepthStencil(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
 
 }

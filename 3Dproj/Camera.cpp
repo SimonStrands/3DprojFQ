@@ -19,6 +19,20 @@ Camera::~Camera()
 {
 }
 
+void Camera::updateCamera() {
+	DirectX::XMMATRIX viewMatrix = DirectX::XMMATRIX(
+		1.0f, 0.0f, 0.0f, 0.0f,
+		0.0f, 1.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 1.0f, 0.0f,
+		-xCamPos, -yCamPos, -zCamPos, 1.0f
+	);
+	rotaiton(viewMatrix);
+
+
+	//just add it to the pixel shader
+	movement();
+	Vcbd->view.element = viewMatrix;
+}
 void Camera::updateCamera(float dt)
 {	
 	handleEvent(dt);

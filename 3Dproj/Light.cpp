@@ -4,6 +4,7 @@ SpotLight::SpotLight(vec3 pos, vec3 rot):
 Light(pos)
 {
 	this->rot = rot;
+	this->flag = wTofL::SPOT;
 }
 
 SpotLight::~SpotLight()
@@ -38,6 +39,11 @@ DirectX::XMMATRIX SpotLight::getLightView()
 	return temp;
 }
 
+const wTofL SpotLight::whatOfLight()
+{
+	return this->flag;
+}
+
 Light::Light(vec3 pos)
 {
 	this->pos = pos;
@@ -62,3 +68,10 @@ vec3& Light::getPos()
 	return this->pos;
 }
 
+DirLight::DirLight(vec3 pos, vec3 rot, float W, float H):
+	SpotLight(pos, rot)
+{
+	this->flag = wTofL::DIR;
+	this->width = W;
+	this->height = H;
+}

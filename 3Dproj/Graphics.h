@@ -144,10 +144,10 @@ private:
 	
 
 	//functions
-	void Projection();
 	void CreateBlendState(int wBlend, bool transparance);
 
 public:
+	void Projection(int flag = 0);
 	//get things 
 	//from gfx
 	Vcb *getVcb();

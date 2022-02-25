@@ -14,10 +14,22 @@ void Graphics::keyboardDebug()
 }
 
 
-void Graphics::Projection()
+void Graphics::Projection(int flag)
 {
 	//setting projection matrix
-	vcbd.projection.element = DirectX::XMMatrixPerspectiveFovLH(DirectX::XMConvertToRadians(fov), ratio, nearPlane, farPlane);
+	switch (flag)
+	{
+	case 0:
+		vcbd.projection.element = DirectX::XMMatrixPerspectiveFovLH(DirectX::XMConvertToRadians(fov), ratio, nearPlane, farPlane);
+		break;
+	case 1:
+		vcbd.projection.element = DirectX::XMMatrixOrthographicLH(50, 50, nearPlane, farPlane);
+		break;
+	default:
+		vcbd.projection.element = DirectX::XMMatrixPerspectiveFovLH(DirectX::XMConvertToRadians(fov), ratio, nearPlane, farPlane);
+		break;
+	}
+	//vcbd.projection.element = DirectX::XMMatrixOrthographicLH(50, 50, nearPlane, farPlane);//orthogonal
 }
 void Graphics::CreateBlendState(int wBlend, bool transparance) {
 	D3D11_BLEND_DESC bd = {};
