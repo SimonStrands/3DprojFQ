@@ -2,11 +2,11 @@
 #include "GameObject.h"
 #include "plHelper.h"
 
-struct DCCB : public CB {
-	struct {
-		float element[4];
-	}cameraPos;
-};
+//struct DCCB : public CB {
+//	struct {
+//		float element[4];
+//	}cameraPos;
+//};
 
 class DynamicCube : public GameObject {
 public:
@@ -21,7 +21,4 @@ private:
 	ID3D11Texture2D* CubeTex;
 	ID3D11UnorderedAccessView** UAVs;
 	ID3D11ComputeShader* CSShader;
-
-	ID3D11Buffer* CBbuffer;
-	DCCB ConstBufferElements = {};
 };

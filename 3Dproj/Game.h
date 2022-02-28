@@ -8,7 +8,7 @@
 #include "ResourceManager.h"
 
 #include "GameObject.h"
-#include "BillBoard.h"
+#include "BillBoardManager.h"
 #include "Light.h"
 
 #include "DeferredRendering.h"
@@ -49,6 +49,7 @@ private:
 
 	DynamicCube* DCube;
 	GameObject** obj;
+	BillBoardManager *billManager;
 	BillBoard *bill;
 
 	//var

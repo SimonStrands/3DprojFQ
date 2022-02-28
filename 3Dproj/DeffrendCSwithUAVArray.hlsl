@@ -13,18 +13,14 @@ SamplerState theSampler;
 [numthreads(32, 8, 1)] //32 16
 void main(uint3 DTid : SV_DispatchThreadID)
 {
-    int wh = 640;
-    float4 fragPos =   gTexPosition.Load(int3(DTid.x * 3, DTid.y * 1.6875, 0));
-    float4 normal =    gTexNormal.Load  (int3(DTid.x * 3, DTid.y * 1.6875, 0));
-    float4 color =     gTexDiffuse.Load (int3(DTid.x * 3, DTid.y * 1.6875, 0));
-    float4 gAmbient =  gTexAmbient.Load (int3(DTid.x * 3, DTid.y * 1.6875, 0));
-    float4 gSpecular = gTexSpecular.Load(int3(DTid.x * 3, DTid.y * 1.6875, 0));
-    
-    //float4 fragPos = gTexPosition.Sample(theSampler, (float)DTid.xy/wh);
-    //float4 normal = gTexNormal.Sample(theSampler, (float) DTid.xy / wh);
-    //float4 color = gTexDiffuse.Sample(theSampler, (float) DTid.xy / wh);
-    //float4 gAmbient = gTexAmbient.Sample(theSampler, (float) DTid.xy / wh);
-    //float4 gSpecular = gTexSpecular.Sample(theSampler, (float) DTid.xy / wh);
+    int wh = 320;
+    float x = 1920 / wh;
+    float y = 1080 / wh;
+    float4 fragPos =   gTexPosition.Load(int3(DTid.x * x, DTid.y * y, 0));
+    float4 normal =    gTexNormal.Load  (int3(DTid.x * x, DTid.y * y, 0));
+    float4 color =     gTexDiffuse.Load (int3(DTid.x * x, DTid.y * y, 0));
+    float4 gAmbient =  gTexAmbient.Load (int3(DTid.x * x, DTid.y * y, 0));
+    float4 gSpecular = gTexSpecular.Load(int3(DTid.x * x, DTid.y * y, 0));
     
     const float SMWIDTH = 1920;
     const float SMHEIGHT = 1080;
@@ -72,7 +68,6 @@ void main(uint3 DTid : SV_DispatchThreadID)
                 
                 lightning.xyz += saturate(ambient_light + defuse_light) + specular;
             }
-            //}
             else
             {
 				//we are in shadow
@@ -80,6 +75,5 @@ void main(uint3 DTid : SV_DispatchThreadID)
             }
         }
         backBuffer[DTid.xyz] = float4(lightning.xyz, 1);
-        //backBuffer[DTid.xy] = float4(normal.xyz, 1);
     }
 }

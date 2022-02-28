@@ -181,7 +181,6 @@ void DeferredRendering::BindSecondPassFunc(
 	gfx->get_IC()->CSSetUnorderedAccessViews(0, 1, &UAV, 0);
 	//köra computeShader
 	gfx->get_IC()->Dispatch(dx, dy, 1);
-	std::cout << "hello" << std::endl;
 	ID3D11ShaderResourceView* nullSRV[6] = { nullptr };
 	gfx->get_IC()->CSSetShaderResources(0, _countof(nullSRV), nullSRV);
 	//nulla unorderedaccesview

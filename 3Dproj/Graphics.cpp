@@ -13,6 +13,22 @@ void Graphics::keyboardDebug()
 
 }
 
+ID3D11Buffer*& Graphics::getConstBuffers(int i)
+{
+	switch (i)
+	{
+	case 0:
+		return this->Pg_pConstantBuffer;
+		break;
+	case 1:
+		return this->camConstBuffer;
+		break;
+	default:
+		return this->Pg_pConstantBuffer;
+		break;
+	}
+}
+
 
 void Graphics::Projection(int flag)
 {
@@ -182,7 +198,7 @@ Graphics::~Graphics()
 }
 
 float nextFpsUpdate = 0;
-void Graphics::Update(float dt)
+void Graphics::Update(float dt, vec3 camPos)
 {
 
 	if (getkey('N')) {
@@ -208,6 +224,17 @@ void Graphics::Update(float dt)
 	ZeroMemory(&resource, sizeof(D3D11_MAPPED_SUBRESOURCE));
 	this->immediateContext->PSSetConstantBuffers(3, 1, &this->Pg_pConstantBuffer);
 	this->immediateContext->CSSetConstantBuffers(6, 1, &this->Pg_pConstantBuffer);
+
+	this->CPCB.cameraPos.element[0] = camPos.x;
+	this->CPCB.cameraPos.element[1] = camPos.y;
+	this->CPCB.cameraPos.element[2] = camPos.z;
+	this->CPCB.cameraPos.element[3] = 0;
+
+	immediateContext->Map(camConstBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
+	memcpy(resource.pData, &CPCB, sizeof(CamPosCB));
+	immediateContext->Unmap(camConstBuffer, 0);
+	ZeroMemory(&resource, sizeof(D3D11_MAPPED_SUBRESOURCE));
+	immediateContext->PSSetConstantBuffers(5, 1, &camConstBuffer);
 
 	//fps
 	nextFpsUpdate += (float)dt;
@@ -287,13 +314,13 @@ ID3D11RenderTargetView*& Graphics::getRenderTarget()
 {
 	return this->renderTarget;
 }
+CamPosCB* Graphics::getCPCB()
+{
+	return &this->CPCB;
+}
 ID3D11DepthStencilView* Graphics::getDepthStencil()
 {
 	return this->dsView;
-}
-ID3D11Buffer*& Graphics::getTransGCB()
-{
-	return this->Pg_pConstantBuffer;
 }
 SpotLight **Graphics::getLight()
 {

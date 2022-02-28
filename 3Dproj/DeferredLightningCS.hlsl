@@ -22,8 +22,7 @@ void main( uint3 DTid : SV_DispatchThreadID )
     const float SMHEIGHT = 1080;
     const int nrOfTempLight = 1;
     if (length(normal.xyz) > 0.2f)//check if there is any object at all
-    {			//nroflights
-        //gets wrong fragpos???
+    {
         float4 lightning = float4(0, 0, 0, 0);
         for (int i = 0; i < nrOfLight; i++)
         {
@@ -36,35 +35,33 @@ void main( uint3 DTid : SV_DispatchThreadID )
             float4 shadowMapCoords = shadowHomo * float4(0.5, -0.5, 1.0f, 1.0f) + (float4(0.5f, 0.5f, 0.0f, 0.0f) * shadowHomo.w);
             shadowMapCoords.xyz = shadowMapCoords.xyz / shadowMapCoords.w;
             float4 SM = shadowMapping.Load(int4(shadowMapCoords.x * SMWIDTH, shadowMapCoords.y * SMHEIGHT, i, 0));
+            
             //ambient
             float3 ambient_light = gAmbient.xyz * lightColor;
+            
             if (SM.r > shadowMapCoords.z - 0.0001 &&
+                shadowMapCoords.z <= 1.0f &&//E
 				shadowMapCoords.x < 1 && shadowMapCoords.x > 0 &&
 				shadowMapCoords.y < 1 && shadowMapCoords.y > 0 &&
                 dot(normal.xyz, lightDir.xyz) > -0.1
                )
             {
-                //if (dot(normal.xyz, lightDir) > -1.0)//don't know if this works with normal maps (haha it doesn't)
-               // {
-                    float3 viewDir = normalize(cameraPos.xyz - fragPos.xyz);
-                    float3 halfWayDir = normalize(lightDir - viewDir);
+                float3 viewDir = normalize(cameraPos.xyz - fragPos.xyz);
+                float3 halfWayDir = normalize(lightDir - viewDir);
                 
 				//////calc lightning//////
-                
-                
 				//defuse
-                    float3 defuse_light;
-                    float ammount_diffuse = max(dot(normal.xyz, lightDir), 0.0f);
-                    defuse_light = ammount_diffuse * color.xyz * lightColor.xyz;
+                float3 defuse_light;
+                float ammount_diffuse = max(dot(normal.xyz, lightDir), 0.0f);
+                defuse_light = ammount_diffuse * color.xyz * lightColor.xyz;
                 
                 //specular
-                    float3 reflectDir = reflect(-lightDir, normal.xyz);
-                    float spec = pow(max(dot(viewDir, reflectDir), 0.0), gSpecular.w);
-                    float3 specular = gSpecular.xyz * spec;
+                float3 reflectDir = reflect(-lightDir, normal.xyz);
+                float spec = pow(max(dot(viewDir, reflectDir), 0.0), gSpecular.w);
+                float3 specular = gSpecular.xyz * spec;
                 
-                    lightning.xyz += saturate(ambient_light + defuse_light) + specular;
-                }
-            //}
+                lightning.xyz += saturate(ambient_light + defuse_light) + specular;
+            }
             else
             {
 				//we are in shadow
@@ -72,6 +69,5 @@ void main( uint3 DTid : SV_DispatchThreadID )
             }
         }
         backBuffer[DTid.xy] = float4(lightning.xyz, 1);
-        //backBuffer[DTid.xy] = float4(normal.xyz, 1);
     }	
 }

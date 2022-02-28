@@ -15,6 +15,11 @@ struct HS_CONSTANT_OUTPUT
     float InsideTessFactor : SV_InsideTessFactor; // e.g. would be Inside[2] for a quad domain
 };
 
+cbuffer CBuf : register(b5) //some place special? YES
+{
+    float4 camPos;
+};
+
 cbuffer CBuf
 {
     row_major matrix transform; //model
@@ -50,20 +55,19 @@ HS_CONSTANT_OUTPUT CalcHSPatchConstants(
 	uint PatchID : SV_PrimitiveID)
 {
     HS_CONSTANT_OUTPUT Output;
-    float3 camPos = float3(-view[3].x, -view[3].y, -view[3].z);
     float4x4 tv = mul(transform, view);
     float DistToVertex0 = mul(ip[0].position, tv).z; //what wrong here
     float DistToVertex1 = mul(ip[1].position, tv).z;
     float DistToVertex2 = mul(ip[2].position, tv).z;
-	//make this dynamic later
-    for (int i = 0; i < NUM_CONTROL_POINTS; i++)
-        //Output.EdgeTessFactor[i] = 50;
-        Output.EdgeTessFactor[0] = GetTessLevel(DistToVertex1, DistToVertex2);
+    //float DistToVertex0 = distance(frag1.xyz, camPos.xyz);
+    //float DistToVertex1 = distance(frag2.xyz, camPos.xyz);
+    //float DistToVertex2 = distance(frag3.xyz, camPos.xyz);
+	
+    Output.EdgeTessFactor[0] = GetTessLevel(DistToVertex1, DistToVertex2);
     Output.EdgeTessFactor[1] = GetTessLevel(DistToVertex2, DistToVertex0);
     Output.EdgeTessFactor[2] = GetTessLevel(DistToVertex0, DistToVertex1);
     
     Output.InsideTessFactor = Output.EdgeTessFactor[2];
-    //Output.InsideTessFactor = 50;
 
     return Output;
 }

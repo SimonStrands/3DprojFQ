@@ -8,13 +8,3 @@ cbuffer lightOCameraCBuf : register (b6)
     row_major matrix lightViewProj[MAXNROFLIGHTS]; 
 	int nrOfLight; 
 }
-/*
-
-Om jag har en matris som ser ut:
-| 1  | 2 |
-| 3 | 4 |
-finns det något i hlsl eller directx där man gör om den till:
-| 1  | 3 |
-| 2 | 4 |
-
-*/

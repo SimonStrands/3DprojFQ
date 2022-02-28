@@ -5,15 +5,16 @@ Game::Game(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWS
 	gfx = new Graphics(hInstance, hPrevInstance, lpCmdLine, nCmdShow);
 	defRend = new DeferredRendering(gfx);
 	//Create a buffer for the light const buffer(hlsli)
-	CreateConstBuffer(gfx, gfx->getTransGCB(), sizeof(*gfx->getLCB()), gfx->getLCB());
+	CreateConstBuffer(gfx, gfx->getConstBuffers(0), sizeof(*gfx->getLCB()), gfx->getLCB());
+	CreateConstBuffer(gfx, gfx->getConstBuffers(1), sizeof(*gfx->getCPCB()), gfx->getCPCB());
 	//Resource manager
 	rm = new ResourceManager(gfx);
 	//we need mor light
 	nrOfLight = 2;
 	gfx->getLCB()->nrOfLights.element = nrOfLight;
 	light = new Light * [nrOfLight];
-	light[0] = new SpotLight(vec3(1,0.2f,0), vec3(0.1f,0,-1));
-	light[1] = new DirLight(vec3(0,0,0), vec3(0, 0, -1));
+	light[0] = new DirLight(vec3(0,0,0), vec3(0, 0, -1));
+	light[1] = new SpotLight(vec3(1, 0.2f, 0), vec3(0.1f, 0, -1));
 	//light[2] = new SpotLight(vec3(10,0,0), vec3(0.f,0.f,-1.f));
 	//light[3] = new SpotLight(vec3(-10,0,0), vec3(0,0,-1));
 
@@ -25,7 +26,7 @@ Game::Game(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWS
 	camera = new Camera(gfx, mus, vec3(0,0,0));
 
 	//////OBJECTS///////////
-	nrOfObj = 10;
+	nrOfObj = 6;
 	obj = new GameObject * [nrOfObj];
 	//OBJECTS
 	obj[0] = new GameObject(rm->get_Ball(), gfx, vec3(0.f, 0.f, 10.f), vec3(0.f, 0.f, 0.f), vec3(2.f, 2.0f, 2.0f));
@@ -36,14 +37,15 @@ Game::Game(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWS
 	obj[4] = new GameObject(rm->get_IDK(), gfx, vec3(0.f, 5.f, -20.f), vec3(-1.6f, 1.6f, 3.2f), vec3(20.f, 20.f, 20.f));
 	obj[5] = new GameObject(rm->get_IDK(), gfx, vec3(-20.f, 5.f, 0.f), vec3(-1.6f, 3.f, 3.2f), vec3(20.f, 20.f, 20.f));
 
-	obj[6] = new GameObject(rm->get_Models("stormtrooper.obj"), gfx, vec3(5.f, 0.f, 0.f), vec3(0.f, 1.56f, 0.f), vec3(1.f, 1.f, 1.f));
-	obj[7] = new GameObject(rm->get_Models("stormtrooper.obj"), gfx, vec3(0.f, 0.f, 5.f), vec3(1.6f, 1.56f, 0.f), vec3(1.f, 1.f, 1.f));
-	obj[8] = new GameObject(rm->get_Models("stormtrooper.obj"), gfx, vec3(-5.f, 0.f, 0.f), vec3(3.2f, 1.56f, 0.f), vec3(1.f, 1.f, 1.f));
-	obj[9] = new GameObject(rm->get_Models("stormtrooper.obj"), gfx, vec3(0.f, 0.f, -5.f), vec3(-1.6f, 1.56f, 0.f), vec3(1.f, 1.f, 1.f));
+	//obj[6] = new GameObject(rm->get_Models("stormtrooper.obj"), gfx, vec3(5.f, 0.f, 0.f), vec3(0.f, 1.56f, 0.f), vec3(1.f, 1.f, 1.f));
+	//obj[7] = new GameObject(rm->get_Models("stormtrooper.obj"), gfx, vec3(0.f, 0.f, 5.f), vec3(1.6f, 1.56f, 0.f), vec3(1.f, 1.f, 1.f));
+	//obj[8] = new GameObject(rm->get_Models("stormtrooper.obj"), gfx, vec3(-5.f, 0.f, 0.f), vec3(3.2f, 1.56f, 0.f), vec3(1.f, 1.f, 1.f));
+	//obj[9] = new GameObject(rm->get_Models("stormtrooper.obj"), gfx, vec3(0.f, 0.f, -5.f), vec3(-1.6f, 1.56f, 0.f), vec3(1.f, 1.f, 1.f));
 	obj[0]->setTesselation(false, gfx);
 
-
 	bill = new BillBoard(gfx, vec3(0.f, 0.f, 9.f), rm->getFire(), rm->getDef()[1], 6);
+	billManager = new BillBoardManager(gfx, 10);
+
 	//DCube cannot use standard obj:s without fucking others shaders
 	DCube = new DynamicCube(rm->get_Models("roundsol.obj"), gfx, vec3(0.f, 0.f, 0.f), vec3(0.f, 0.f, 0.f), vec3(2.f, 2.0f, 2.0f));
 	//DCube = new DynamicCube(rm->get_Models("DCube.obj"), gfx, vec3(0.f, 0.f, 0.f), vec3(0.f, 0.f, 0.f), vec3(2.f, 2.0f, 2.0f));
@@ -58,7 +60,7 @@ Game::Game(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWS
 	for (int i = 0; i < nrOfLight; i++) {
 		UIManager.takeLight(light[i]);
 	}
-	UIManager.takeObject(DCube);
+	//UIManager.takeObject(DCube);
 	UIManager.takeObject(obj[0]);
 	
 	
@@ -79,6 +81,7 @@ Game::~Game()
 	}
 	delete[] obj;
 	delete bill;
+	delete billManager;
 	delete mus;
 	if (shadowMap != nullptr) {
 		delete shadowMap;
@@ -104,6 +107,7 @@ void Game::run()
 			shadowMap->inUpdateShadow(i);
 			updateShaders(true, false);
 			bill->UpdateShader(gfx, camera->getPos());
+			billManager->update(dt.dt(),gfx);
 			DrawAllShadowObject();
 		}
 		gfx->Projection(0);//last can be dir light
@@ -143,7 +147,8 @@ void Game::Update()
 		LightVisualizers[i]->changePos(light[i]->getPos());
 	}
 	
-	gfx->Update((float)dt.dt());
+	gfx->Update((float)dt.dt(), camera->getPos());
+
 	if (getkey('C')) {
 		camera->setPosition(light[lightNr]->getPos());
 		camera->setRotation(light[lightNr]->getRotation());
@@ -265,7 +270,7 @@ void Game::DrawDynamicCube()
 		updateShaders(true, false);
 		defRend->BindFirstPass();//needed
 		this->DrawToBufferDebug();
-		defRend->BindSecondPassFunc(shadowMap->GetshadowResV(), DCube->getUAVs()[i],32,80, DCube->getCSShader());
+		defRend->BindSecondPassFunc(shadowMap->GetshadowResV(), DCube->getUAVs()[i],16,40, DCube->getCSShader());
 	}
 
 

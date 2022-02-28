@@ -77,6 +77,11 @@ struct Gcb {
 	}lightView;
 };
 
+struct CamPosCB : public CB {
+	struct {
+		float element[4];
+	}cameraPos;
+};
 
 
 class Graphics {
@@ -99,7 +104,10 @@ private:
 	ID3D11DepthStencilView* dsView;
 	D3D11_VIEWPORT viewPort;
 	ID3D11InputLayout** inputLayout;
+
 	ID3D11Buffer* Pg_pConstantBuffer;
+	ID3D11Buffer* camConstBuffer;
+
 	ID3D11RasterizerState* pRS;
 	ID3D11BlendState** bs;
 
@@ -127,6 +135,7 @@ private:
 		{0,0,0,0},
 		{0,0,0,0},
 	};
+	CamPosCB CPCB = {};
 
 	//gonna clean up here later
 	ID3D11Texture2D* tex;
@@ -153,6 +162,7 @@ public:
 	Vcb *getVcb();
 	Pcb *getPcb();
 	Gcb* getGcb();
+	CamPosCB* getCPCB();
 	LCBGS* getLCB();
 	void setVView(DirectX::XMMATRIX &mat);
 	void setVProj(DirectX::XMMATRIX &mat);
@@ -172,6 +182,7 @@ public:
 	ID3D11RenderTargetView*& getRenderTarget();
 	ID3D11DepthStencilView* getDepthStencil();
 	ID3D11Buffer*& getTransGCB();
+	ID3D11Buffer*& getConstBuffers(int i = 0);
 	IDXGISwapChain*& getSwapChain();
 	void setTransparant(bool transparance);
 	SpotLight**getLight();
@@ -181,7 +192,7 @@ public:
 	void takeIM(ImguiManager* manager);
 
 	//update
-	void Update(float dt);
+	void Update(float dt, vec3 camPos = vec3(0,0,0));
 
 	//draw
 	void clearScreen();

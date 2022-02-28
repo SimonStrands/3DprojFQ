@@ -9,7 +9,7 @@ struct PixelShaderInput
     float4 fragpos : FRAG_POS;
 };
 
-cbuffer CBuf//some place special?
+cbuffer CBuf : register(b5) //some place special? YES
 {
     float4 camPos;
 };

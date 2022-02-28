@@ -10,7 +10,6 @@ DynamicCube::DynamicCube(ModelObj* model, Graphics*& gfx, vec3 pos, vec3 rot, ve
 	}
 	loadCShader("DeffrendCSwithUAVArray.cso", gfx->getDevice(), CSShader);
 	initCubeMapping(gfx);
-	CreateConstBuffer(gfx, CBbuffer, sizeof(DCCB), nullptr);
 }
 
 void DynamicCube::draw(ID3D11DeviceContext*& immediateContext)
@@ -39,25 +38,15 @@ ID3D11ComputeShader *DynamicCube::getCSShader()
 
 void DynamicCube::update(vec3 camPos, Graphics*& gfx)
 {
-	this->ConstBufferElements.cameraPos.element[0] = camPos.x;
-	this->ConstBufferElements.cameraPos.element[1] = camPos.y;
-	this->ConstBufferElements.cameraPos.element[2] = camPos.z;
-	this->ConstBufferElements.cameraPos.element[3] = 0;
 
-	D3D11_MAPPED_SUBRESOURCE resource;
-	gfx->get_IC()->Map(this->CBbuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
-	memcpy(resource.pData, &ConstBufferElements, sizeof(DCCB));
-	gfx->get_IC()->Unmap(this->CBbuffer, 0);
-	ZeroMemory(&resource, sizeof(D3D11_MAPPED_SUBRESOURCE));
-	gfx->get_IC()->PSSetConstantBuffers(0, 1, &CBbuffer);
 }
 
 bool DynamicCube::initCubeMapping(Graphics*& gfx)
 {
 	const int nrOfRTV = 6;
 	D3D11_TEXTURE2D_DESC textureDesc;
-	textureDesc.Width = 640;
-	textureDesc.Height = 640;
+	textureDesc.Width = 320;
+	textureDesc.Height = 320;
 	textureDesc.MipLevels = 1;
 	textureDesc.ArraySize = nrOfRTV;
 	textureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
