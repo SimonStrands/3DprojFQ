@@ -1,10 +1,15 @@
-RWTexture2D<unorm float4> backBuffer;
 //another gbuffer for shadowMapCoords?
 //maps
-
+cbuffer Time
+{
+    float dt;
+};
+RWBuffer<float3> particlePos;
 [numthreads(32, 1, 1)]
 void main(uint3 DTid : SV_DispatchThreadID)
 {
-    //float4 fragPos = gTexPosition.Load(int3(DTid.xy, 0));
+    //particlePos[DTid.x][0] = cos(0);
+    //particlePos[DTid.x][1] = sin(0);
+    //particlePos[DTid.x][2] = tan(0);
 
 }

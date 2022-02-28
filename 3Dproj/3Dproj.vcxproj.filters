@@ -76,9 +76,6 @@
     <Filter Include="Resource Files\Shaders\Buffers\Tesselation">
       <UniqueIdentifier>{c8d9b148-b2e5-4750-8b35-65fc95e58f13}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Resource Files\Shaders\Pixel\CubeMap">
-      <UniqueIdentifier>{45a2d36b-60a3-4518-a4aa-eef17a05710c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Resource Files\Shaders\Buffers\Tesselation\Displaysment">
       <UniqueIdentifier>{41cceb18-099b-4ede-92c7-7be3af7f680c}</UniqueIdentifier>
     </Filter>
@@ -90,6 +87,9 @@
     </Filter>
     <Filter Include="Header Files\Graphic\Particle">
       <UniqueIdentifier>{eca78a50-2288-49b2-a3c8-216a00da14de}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Shaders\CubeMap">
+      <UniqueIdentifier>{45a2d36b-60a3-4518-a4aa-eef17a05710c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -214,7 +214,7 @@
       <Filter>Source Files\Other</Filter>
     </ClCompile>
     <ClCompile Include="BillBoardManager.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Graphic\Animation &amp; other\Paricle</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -409,7 +409,7 @@
       <Filter>Resource Files\Shaders\Buffers\Tesselation</Filter>
     </FxCompile>
     <FxCompile Include="DynamicCubicPS.hlsl">
-      <Filter>Resource Files\Shaders\Pixel\CubeMap</Filter>
+      <Filter>Resource Files\Shaders\CubeMap</Filter>
     </FxCompile>
     <FxCompile Include="DomainDisplaysment.hlsl">
       <Filter>Resource Files\Shaders\Buffers\Tesselation\Displaysment</Filter>
@@ -428,6 +428,9 @@
     </FxCompile>
     <FxCompile Include="BillBoardUpdate.hlsl">
       <Filter>Resource Files\Shaders\Billboarding</Filter>
+    </FxCompile>
+    <FxCompile Include="DeffrendCSwithUAVArray.hlsl">
+      <Filter>Resource Files\Shaders\CubeMap</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

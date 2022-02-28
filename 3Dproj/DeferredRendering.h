@@ -9,9 +9,10 @@ public:
 	void BindFirstPass();
 	void BindSecondPass(ID3D11ShaderResourceView*& ShadowMapping);
 	void BindSecondPassFunc(
-		ID3D11ShaderResourceView*& ShadowMapping, 
+		ID3D11ShaderResourceView*& ShadowMapping,
 		ID3D11UnorderedAccessView* UAV,
-		int dx = 60, int dy = 135
+		int dx = 60, int dy = 135,
+		ID3D11ComputeShader* CSShader = nullptr
 	);
 	ID3D11PixelShader* getPS();
 	//should'nt exist

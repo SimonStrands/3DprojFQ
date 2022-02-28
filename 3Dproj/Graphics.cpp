@@ -19,18 +19,21 @@ void Graphics::Projection(int flag)
 	//setting projection matrix
 	switch (flag)
 	{
-	case 0:
+	case 0://normal
 		vcbd.projection.element = DirectX::XMMatrixPerspectiveFovLH(DirectX::XMConvertToRadians(fov), ratio, nearPlane, farPlane);
 		break;
-	case 1:
+	case 1://orthographic
 		vcbd.projection.element = DirectX::XMMatrixOrthographicLH(50, 50, nearPlane, farPlane);
+		break;
+	case 2://6:6
+		vcbd.projection.element = DirectX::XMMatrixPerspectiveFovLH(DirectX::XMConvertToRadians(fov), 1, nearPlane, farPlane);
 		break;
 	default:
 		vcbd.projection.element = DirectX::XMMatrixPerspectiveFovLH(DirectX::XMConvertToRadians(fov), ratio, nearPlane, farPlane);
 		break;
 	}
-	//vcbd.projection.element = DirectX::XMMatrixOrthographicLH(50, 50, nearPlane, farPlane);//orthogonal
 }
+
 void Graphics::CreateBlendState(int wBlend, bool transparance) {
 	D3D11_BLEND_DESC bd = {};
 	if (transparance) {
@@ -104,6 +107,7 @@ Graphics::Graphics(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	
 	//set settings up
 	immediateContext->PSSetSamplers(0, 1, &sampler);
+	//immediateContext->CSSetSamplers(0, 1, &sampler);
 	immediateContext->DSSetSamplers(0, 1, &sampler);
 
 	immediateContext->PSSetShader(getPS()[0], nullptr, 0);

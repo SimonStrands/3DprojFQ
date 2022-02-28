@@ -8,8 +8,9 @@ DynamicCube::DynamicCube(ModelObj* model, Graphics*& gfx, vec3 pos, vec3 rot, ve
 		this->model->getMehses()[i].SetShaders((ID3D11HullShader*)nullptr, (ID3D11DomainShader*) nullptr);
 		this->model->getMehses()[i].SetShaders(gfx->getVS()[0], gfx->getPS()[3]);
 	}
+	loadCShader("DeffrendCSwithUAVArray.cso", gfx->getDevice(), CSShader);
 	initCubeMapping(gfx);
-
+	CreateConstBuffer(gfx, CBbuffer, sizeof(DCCB), nullptr);
 }
 
 void DynamicCube::draw(ID3D11DeviceContext*& immediateContext)
@@ -20,7 +21,7 @@ void DynamicCube::draw(ID3D11DeviceContext*& immediateContext)
 	UINT offset = 0;
 	static UINT strid = sizeof(vertex);
 	immediateContext->PSSetShaderResources(0, 1, &this->CubeResV);
-	//draw 2?
+
 	for (int i = 0; i < this->model->getMehses().size(); i++) {
 		this->model->getMehses()[i].draw2(immediateContext);
 	}
@@ -29,6 +30,26 @@ void DynamicCube::draw(ID3D11DeviceContext*& immediateContext)
 ID3D11UnorderedAccessView** DynamicCube::getUAVs()
 {
 	return this->UAVs;
+}
+
+ID3D11ComputeShader *DynamicCube::getCSShader()
+{
+	return this->CSShader;
+}
+
+void DynamicCube::update(vec3 camPos, Graphics*& gfx)
+{
+	this->ConstBufferElements.cameraPos.element[0] = camPos.x;
+	this->ConstBufferElements.cameraPos.element[1] = camPos.y;
+	this->ConstBufferElements.cameraPos.element[2] = camPos.z;
+	this->ConstBufferElements.cameraPos.element[3] = 0;
+
+	D3D11_MAPPED_SUBRESOURCE resource;
+	gfx->get_IC()->Map(this->CBbuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
+	memcpy(resource.pData, &ConstBufferElements, sizeof(DCCB));
+	gfx->get_IC()->Unmap(this->CBbuffer, 0);
+	ZeroMemory(&resource, sizeof(D3D11_MAPPED_SUBRESOURCE));
+	gfx->get_IC()->PSSetConstantBuffers(0, 1, &CBbuffer);
 }
 
 bool DynamicCube::initCubeMapping(Graphics*& gfx)
@@ -70,8 +91,7 @@ bool DynamicCube::initCubeMapping(Graphics*& gfx)
 	UAVs = new ID3D11UnorderedAccessView * [nrOfRTV];
 	D3D11_UNORDERED_ACCESS_VIEW_DESC UAVdesc;
 	UAVdesc.Format = textureDesc.Format;
-	//UAVdesc.ViewDimension = D3D11_UAV_DIMENSION_TEXTURE2DARRAY;
-	UAVdesc.ViewDimension = D3D11_UAV_DIMENSION_TEXTURE2D;
+	UAVdesc.ViewDimension = D3D11_UAV_DIMENSION_TEXTURE2DARRAY;
 	UAVdesc.Texture2DArray.MipSlice = 0;
 	UAVdesc.Texture2DArray.ArraySize = 1;
 	
@@ -84,6 +104,5 @@ bool DynamicCube::initCubeMapping(Graphics*& gfx)
 		}
 	}
 
-	//this->model->getMehses()[0].getMatrial().texSRVPS[0] = CubeResV;
 	return true;
 }

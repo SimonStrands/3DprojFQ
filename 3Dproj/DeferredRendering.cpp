@@ -151,8 +151,14 @@ void DeferredRendering::BindSecondPass(ID3D11ShaderResourceView*& ShadowMapping)
 }
 
 //using these for dynamic cube mapping
-void DeferredRendering::BindSecondPassFunc(ID3D11ShaderResourceView*& ShadowMapping, ID3D11UnorderedAccessView* UAV, int dx, int dy)
+void DeferredRendering::BindSecondPassFunc(
+	ID3D11ShaderResourceView*& ShadowMapping,
+	ID3D11UnorderedAccessView* UAV,
+	int dx, int dy,
+	ID3D11ComputeShader* CSShader
+)
 {
+	
 	FLOAT color[4] = { 0.1f,0.1f,0.1f,1.f };
 	ID3D11UnorderedAccessView* nullUAV = nullptr;
 	ID3D11RenderTargetView* nullRTV[5] = { nullptr };
@@ -160,14 +166,22 @@ void DeferredRendering::BindSecondPassFunc(ID3D11ShaderResourceView*& ShadowMapp
 	gfx->get_IC()->OMSetRenderTargets(5, nullRTV, nullptr);
 
 	//is this for compute shading
-	gfx->get_IC()->CSSetShader(DeferredComputeS, nullptr, 0);
+	if (CSShader == nullptr) {
+		gfx->get_IC()->CSSetShader(DeferredComputeS, nullptr, 0);
+	}
+	else {
+		gfx->get_IC()->CSSetShader(CSShader, nullptr, 0);
+	}
+	
 
 	gfx->get_IC()->CSSetShaderResources(0, 5, DeferredResV);
 	gfx->get_IC()->CSSetShaderResources(5, 1, &ShadowMapping);//add ShadowMapping
 
-	gfx->get_IC()->CSSetUnorderedAccessViews(0, 1, &UAV, nullptr);
+	UINT s = 6;
+	gfx->get_IC()->CSSetUnorderedAccessViews(0, 1, &UAV, 0);
 	//köra computeShader
 	gfx->get_IC()->Dispatch(dx, dy, 1);
+	std::cout << "hello" << std::endl;
 	ID3D11ShaderResourceView* nullSRV[6] = { nullptr };
 	gfx->get_IC()->CSSetShaderResources(0, _countof(nullSRV), nullSRV);
 	//nulla unorderedaccesview
