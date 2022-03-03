@@ -16,11 +16,11 @@ void main(uint3 DTid : SV_DispatchThreadID)
     int wh = 320;
     float x = 1920 / wh;
     float y = 1080 / wh;
-    float4 fragPos =   gTexPosition.Load(int3(DTid.x * x, DTid.y * y, 0));
-    float4 normal =    gTexNormal.Load  (int3(DTid.x * x, DTid.y * y, 0));
-    float4 color =     gTexDiffuse.Load (int3(DTid.x * x, DTid.y * y, 0));
-    float4 gAmbient =  gTexAmbient.Load (int3(DTid.x * x, DTid.y * y, 0));
-    float4 gSpecular = gTexSpecular.Load(int3(DTid.x * x, DTid.y * y, 0));
+    float4 fragPos =   gTexPosition.Load(int3(DTid.x * 1, DTid.y * 1, 0));
+    float4 normal =    gTexNormal.Load  (int3(DTid.x * 1, DTid.y * 1, 0));
+    float4 color =     gTexDiffuse.Load (int3(DTid.x * 1, DTid.y * 1, 0));
+    float4 gAmbient =  gTexAmbient.Load (int3(DTid.x * 1, DTid.y * 1, 0));
+    float4 gSpecular = gTexSpecular.Load(int3(DTid.x * 1, DTid.y * 1, 0));
     
     const float SMWIDTH = 1920;
     const float SMHEIGHT = 1080;

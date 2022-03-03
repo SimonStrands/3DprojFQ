@@ -197,6 +197,11 @@ Graphics::~Graphics()
 	bs[1]->Release();
 }
 
+void Graphics::sVP()
+{
+	immediateContext->RSSetViewports(1, &viewPort);
+}
+
 float nextFpsUpdate = 0;
 void Graphics::Update(float dt, vec3 camPos)
 {

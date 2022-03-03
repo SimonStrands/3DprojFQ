@@ -10,7 +10,6 @@ BillBoard::BillBoard(Graphics*& gfx, vec3 pos, ID3D11ShaderResourceView* texSRV,
 	this->NDef = NDef;
 	for (int i = 0; i < 4; i++) {
 		
-		
 	}
 	CreateVertexConstBuffer(gfx, this->getVertexConstBuffer());
 	CreateGeometryConstBuffer(gfx, Gg_pConstantBuffer);

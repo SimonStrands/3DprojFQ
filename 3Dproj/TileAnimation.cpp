@@ -2,6 +2,11 @@
 
 TileAnimation::TileAnimation(int noaw, int noah, float timebeetween)
 {
+	setAnimation(noaw, noah, timebeetween);
+}
+
+void TileAnimation::setAnimation(int noaw, int noah, float timebeetween)
+{
 	this->noah = noah;
 	this->noaw = noaw;
 	this->timebeetween = timebeetween;

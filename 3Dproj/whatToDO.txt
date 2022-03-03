@@ -1,4 +1,7 @@
 fix so that its the player pos and not camera pos that fixes tesselation//maybe change it so no shadows
-DirLight lightUps whole map //is this ok?
-Hur fungerar det med DCube med billboards om jag har deffered rendering och forward rendering
-updateBillBoards med computeSHader
+
+ändra så att dispatch inte tar in exakt hur många bill boards
+
+dynamic har lite problem med billboards (fel sida av speglen)
+
+FRÅGOR:

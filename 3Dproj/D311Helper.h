@@ -5,6 +5,9 @@
 //git
 //static DepthStencil depth;
 
+bool CreateDepthStencil(ID3D11Device* device, UINT width, UINT height, ID3D11Texture2D*& dsTexture, ID3D11DepthStencilView*& dsview);
+void SetViewport(D3D11_VIEWPORT& viewPort, UINT width, UINT height);
+
 bool SetupD3D11(UINT width,
 	UINT height,
 	HWND wnd,

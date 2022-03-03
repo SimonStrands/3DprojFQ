@@ -26,6 +26,7 @@ public:
 	void DrawToBufferDebug();
 	void DrawDynamicCube();
 	void ForwardDraw();
+	void ForwardDrawCube();
 	void DrawAllShadowObject();//without any otherShaders
 	void updateShaders(bool vs = true, bool ps = true);
 private:
@@ -51,6 +52,7 @@ private:
 	GameObject** obj;
 	BillBoardManager *billManager;
 	BillBoard *bill;
+	BillBoard **bills;
 
 	//var
 	int nrOfLight;

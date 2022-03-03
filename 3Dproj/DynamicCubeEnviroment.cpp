@@ -1,14 +1,17 @@
 #include "DynamicCubeEnviroment.h"
-
-DynamicCube::DynamicCube(ModelObj* model, Graphics*& gfx, vec3 pos, vec3 rot, vec3 scale):
-	GameObject(model, gfx, pos, rot, scale)
+static const int whdCube = 320;
+DynamicCube::DynamicCube(ModelObj* model, Graphics*& gfx, vec3 pos, vec3 rot, vec3 scale) :
+	GameObject(model, gfx, pos, rot, scale),
+	dCubeDeff(gfx, whdCube, whdCube)
 {
+	SetViewport(this->DviewPort, whdCube, whdCube);
 	//set PS VS GS DS
 	for (int i = 0; i < this->model->getMehses().size(); i++) {
 		this->model->getMehses()[i].SetShaders((ID3D11HullShader*)nullptr, (ID3D11DomainShader*) nullptr);
 		this->model->getMehses()[i].SetShaders(gfx->getVS()[0], gfx->getPS()[3]);
 	}
 	loadCShader("DeffrendCSwithUAVArray.cso", gfx->getDevice(), CSShader);
+	CreateDepthStencil(gfx->getDevice(), whdCube, whdCube, dsTexture, dsview);
 	initCubeMapping(gfx);
 }
 
@@ -36,17 +39,50 @@ ID3D11ComputeShader *DynamicCube::getCSShader()
 	return this->CSShader;
 }
 
+void DynamicCube::ClearRenderTarget(Graphics*& gfx) {
+	FLOAT color[4] = { 0.1f,0.1f,0.1f,1.f };
+	for (int i = 0; i < 6; i++) {
+		gfx->get_IC()->ClearRenderTargetView(RTV[i], color);
+	}
+}
+
+void DynamicCube::setRenderTarget(Graphics*& gfx, int i)
+{
+	dCubeDeff.BindFirstPass(dsview);
+	gfx->get_IC()->ClearDepthStencilView(dsview, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+	gfx->get_IC()->OMSetRenderTargets(1, &RTV[i], dsview);
+}
+
 void DynamicCube::update(vec3 camPos, Graphics*& gfx)
 {
 
 }
 
+void DynamicCube::setViewPort(Graphics*& gfx)
+{
+	gfx->get_IC()->RSSetViewports(1, &this->DviewPort);
+}
+
+void DynamicCube::firstPass()
+{
+	this->dCubeDeff.BindFirstPass(this->dsview);
+}
+
+void DynamicCube::secondPass(ID3D11ShaderResourceView*& ShadowMapping,
+	ID3D11UnorderedAccessView* UAV,
+	int dx, int dy,
+	ID3D11ComputeShader* CSShader)
+{
+	this->dCubeDeff.BindSecondPassFunc(ShadowMapping, UAV, dx, dy, CSShader);
+}
+
 bool DynamicCube::initCubeMapping(Graphics*& gfx)
 {
+	HRESULT hr;
 	const int nrOfRTV = 6;
 	D3D11_TEXTURE2D_DESC textureDesc;
-	textureDesc.Width = 320;
-	textureDesc.Height = 320;
+	textureDesc.Width = whdCube;
+	textureDesc.Height = whdCube;
 	textureDesc.MipLevels = 1;
 	textureDesc.ArraySize = nrOfRTV;
 	textureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
@@ -70,7 +106,7 @@ bool DynamicCube::initCubeMapping(Graphics*& gfx)
 	RSVdesc.Texture2DArray.MipLevels = 1;
 	RSVdesc.Texture2DArray.ArraySize = nrOfRTV;
 
-	HRESULT hr = gfx->getDevice()->CreateShaderResourceView(CubeTex, &RSVdesc, &CubeResV);
+	hr = gfx->getDevice()->CreateShaderResourceView(CubeTex, &RSVdesc, &CubeResV);
 	if (hr != S_OK)
 	{
 		printf("failed create RSV");
@@ -86,12 +122,30 @@ bool DynamicCube::initCubeMapping(Graphics*& gfx)
 	
 	for (int i = 0; i < nrOfRTV; i++) {
 		UAVdesc.Texture2DArray.FirstArraySlice = D3D11CalcSubresource(0, i, 1);
-		HRESULT hr = gfx->getDevice()->CreateUnorderedAccessView(CubeTex, &UAVdesc, &UAVs[i]);
+		hr = gfx->getDevice()->CreateUnorderedAccessView(CubeTex, &UAVdesc, &UAVs[i]);
 		if (hr != S_OK) {
 			printf("doesn't work");
 			return false;
 		}
 	}
+
+	RTV = new ID3D11RenderTargetView * [nrOfRTV];
+	D3D11_RENDER_TARGET_VIEW_DESC RTVdesc{};
+	RTVdesc.Format = textureDesc.Format;
+	RTVdesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2DARRAY;
+	RTVdesc.Texture2DArray.ArraySize = 1;
+	RTVdesc.Texture2DArray.MipSlice = 0;
+
+	for (int i = 0; i < nrOfRTV; i++) {
+		RTVdesc.Texture2DArray.FirstArraySlice = D3D11CalcSubresource(0, i, 1);
+		hr = gfx->getDevice()->CreateRenderTargetView(CubeTex, &RTVdesc, &RTV[i]);
+		if (hr != S_OK)
+		{
+			printf("failed create RTV");
+			return false;
+		}
+	}
+	
 
 	return true;
 }

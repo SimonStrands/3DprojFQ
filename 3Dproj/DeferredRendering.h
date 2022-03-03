@@ -4,9 +4,9 @@
 
 class DeferredRendering {
 public:
-	DeferredRendering(Graphics*& gfx);
+	DeferredRendering(Graphics*& gfx, int w = 0, int h = 0);
 	~DeferredRendering();
-	void BindFirstPass();
+	void BindFirstPass(ID3D11DepthStencilView* depth = nullptr);
 	void BindSecondPass(ID3D11ShaderResourceView*& ShadowMapping);
 	void BindSecondPassFunc(
 		ID3D11ShaderResourceView*& ShadowMapping,
@@ -22,7 +22,7 @@ public:
 
 private:
 	//functions
-	bool InitDeferred();
+	bool InitDeferred(int w = 0, int h = 0);
 	
 	int nrOfRTV;
 	//objects/classes

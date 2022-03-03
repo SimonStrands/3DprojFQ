@@ -1,11 +1,18 @@
 #include "DeferredRendering.h"
 
-DeferredRendering::DeferredRendering(Graphics*& gfx)
+DeferredRendering::DeferredRendering(Graphics*& gfx, int w, int h)
 {
 	this->gfx = gfx;
 	nrOfRTV = 5;
-	if (!InitDeferred()) {
-		std::cout << "stop" << std::endl;
+	if (w == 0 && h == 0) {
+		if (!InitDeferred((UINT)gfx->getWH().x, (UINT)gfx->getWH().y)) {
+			std::cout << "stop" << std::endl;
+		}
+	}
+	else {
+		if (!InitDeferred(w, h)) {
+			std::cout << "stop" << std::endl;
+		}
 	}
 	//set compute shader and a extra test for pixel shader
 	std::string a;
@@ -28,12 +35,12 @@ DeferredRendering::~DeferredRendering()
 	UAV->Release();
 }
 
-bool DeferredRendering::InitDeferred()
+bool DeferredRendering::InitDeferred(int w, int h)
 {	
 	//change so depth is 1 float???
 	D3D11_TEXTURE2D_DESC textureDesc;
-	textureDesc.Width = (UINT)gfx->getWH().x;
-	textureDesc.Height = gfx->getWH().y;
+	textureDesc.Width = w;
+	textureDesc.Height = h;
 	textureDesc.MipLevels = 1;
 	textureDesc.ArraySize = 1;
 	textureDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
@@ -111,20 +118,22 @@ bool DeferredRendering::InitDeferred()
 	return !FAILED(hr);
 }
 
-void DeferredRendering::BindFirstPass()
+void DeferredRendering::BindFirstPass(ID3D11DepthStencilView* depth)
 {
+	if (depth == nullptr) {
+		gfx->get_IC()->OMSetRenderTargets(5, DeferredRTV, gfx->getDepthStencil());
+		gfx->get_IC()->ClearDepthStencilView(gfx->getDepthStencil(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+	}
+	else {
+		gfx->get_IC()->OMSetRenderTargets(5, DeferredRTV, depth);
+		gfx->get_IC()->ClearDepthStencilView(depth, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+	}
 	FLOAT color[4] = { 0.1f,0.1f,0.1f,1.f };
-	//gfx->get_IC()->RSSetViewports(1, &viewPort);//?
-	//set render targets
-	gfx->get_IC()->OMSetRenderTargets(5, DeferredRTV, gfx->getDepthStencil());
 	gfx->get_IC()->ClearRenderTargetView(DeferredRTV[0], color);
 	gfx->get_IC()->ClearRenderTargetView(DeferredRTV[1], color);
 	gfx->get_IC()->ClearRenderTargetView(DeferredRTV[2], color);
 	gfx->get_IC()->ClearRenderTargetView(DeferredRTV[3], color);
 	gfx->get_IC()->ClearRenderTargetView(DeferredRTV[4], color);
-	gfx->get_IC()->ClearDepthStencilView(gfx->getDepthStencil(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
-
-
 }
 
 void DeferredRendering::BindSecondPass(ID3D11ShaderResourceView*& ShadowMapping)

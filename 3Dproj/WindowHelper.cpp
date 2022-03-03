@@ -28,8 +28,8 @@ bool setUpWindow(HINSTANCE hInstance, UINT WIDTH, UINT HEIGHT, int nCmdShow, HWN
 	wc.lpszClassName = CLASS_NAME;
 
 	RegisterClass(&wc);
-
-	wnd = CreateWindowEx(0, CLASS_NAME, L"hej", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, 0, WIDTH, HEIGHT, nullptr, nullptr, hInstance, nullptr);
+																	//CW_USEDEFAULT
+	wnd = CreateWindowEx(0, CLASS_NAME, L"hej", WS_OVERLAPPEDWINDOW, 1850, 100, WIDTH, HEIGHT, nullptr, nullptr, hInstance, nullptr);
 
 	if (wnd == nullptr) {
 		std::cout << "cant create window" << std::endl;

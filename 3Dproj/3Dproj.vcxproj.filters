@@ -216,6 +216,9 @@
     <ClCompile Include="BillBoardManager.cpp">
       <Filter>Source Files\Graphic\Animation &amp; other\Paricle</Filter>
     </ClCompile>
+    <ClCompile Include="Random.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ConstantBuffer.h">
@@ -358,6 +361,9 @@
     </ClInclude>
     <ClInclude Include="BillBoardManager.h">
       <Filter>Header Files\Graphic\Particle</Filter>
+    </ClInclude>
+    <ClInclude Include="Random.h">
+      <Filter>Header Files\Other</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
