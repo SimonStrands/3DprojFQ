@@ -7,6 +7,7 @@
 class DynamicCube : public GameObject {
 public:
 	DynamicCube(ModelObj* model, Graphics*& gfx, vec3 pos = vec3(0, 0, 0), vec3 rot = vec3(0, 0, 0), vec3 scale = vec3(1, 1, 1));
+	virtual ~DynamicCube();
 	void draw(ID3D11DeviceContext*& immediateContext);
 	ID3D11UnorderedAccessView** getUAVs();
 	ID3D11ComputeShader *getCSShader();
@@ -25,12 +26,12 @@ private:
 	bool initCubeMapping(Graphics*& gfx);
 	ID3D11ShaderResourceView* CubeResV;
 	ID3D11Texture2D* CubeTex;
-	ID3D11UnorderedAccessView** UAVs;
 	ID3D11ComputeShader* CSShader;
-	ID3D11RenderTargetView** RTV;
 	ID3D11DepthStencilView* dsview;
 	ID3D11Texture2D* dsTexture;
 
+	ID3D11UnorderedAccessView** UAVs;
+	ID3D11RenderTargetView** RTV;
 	D3D11_VIEWPORT DviewPort;
 	DeferredRendering dCubeDeff;
 };

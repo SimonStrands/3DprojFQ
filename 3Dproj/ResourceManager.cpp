@@ -7,17 +7,22 @@ ResourceManager::ResourceManager(Graphics*& gfx)
 
 ResourceManager::~ResourceManager()
 {
-	for (int i = 0; i < 2; i++) {
+	for (int i = 0; i < 4; i++) {
 		if (def[i] != nullptr) {
 			def[i]->Release();
 		}
 	}
-	if (def != nullptr) {
-		delete def;
-	}
+	delete[] def;
+	
 	if (Fire != nullptr) {
 		Fire->Release();
 	}
+	
+	std::map<std::string, ModelObj*>::iterator it;
+	for (it = Models.begin(); it != Models.end(); it++) {
+		delete it->second;
+	}
+	
 	delete ball;
 	delete stol;
 	delete IDK;
@@ -41,17 +46,17 @@ void ResourceManager::loadThings(Graphics*& gfx)
 	}
 	//specular//orkar inte
 	def[3] = def[2];
-
+	
 	if (!CreateTexture("Textures/Fire.png", gfx->getDevice(), gfx->getTexture(), Fire)) {
 		cantLoad(L"Fire cant load");
 	}
 	def[3] = nullptr;
 	//mesh
-
+	
 	ball = new ModelObj("obj/GroundLowPloy.obj", gfx, def);
-
+	
 	stol = new ModelObj("obj/DoubleMesh.obj" , gfx, def);
-
+	
 	IDK = new  ModelObj("obj/quad2.obj"     , gfx, def);
 	std::string names[] = {
 		"roundsol.obj",

@@ -100,9 +100,15 @@ bool Model::LoadModel(const std::string& modelfile)
 
 ModelObj::ModelObj(const std::string& ModelFile, Graphics*& gfx, ID3D11ShaderResourceView** def)
 {
-	std::vector<Material> matrial;
 	getMatrialFromFile(ModelFile, matrial, gfx, def);
-	readObjFile(mMeshes, ModelFile, matrial, gfx);
+	//readObjFile(mMeshes, ModelFile, matrial, gfx);
+}
+
+ModelObj::~ModelObj()
+{
+	for (int i = 0; i < mMeshes.size(); i++) {
+		mMeshes[i].begone();
+	}
 }
 
 void ModelObj::draw(Graphics*& gfx, bool sm)

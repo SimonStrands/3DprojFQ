@@ -15,88 +15,97 @@ Game::Game(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWS
 	light = new Light * [nrOfLight];
 	light[0] = new DirLight(vec3(0,0,0), vec3(0, 0, -1));
 	light[1] = new SpotLight(vec3(1, 0.2f, 0), vec3(0.1f, 0, -1));
-
+	
 	//shadow map needs to take more lights
 	this->shadowMap = new ShadowMap((SpotLight**)light, nrOfLight, gfx);
-
+	
 	gfx->takeIM(&this->UIManager);
 	mus = new Mouse(gfx->getWH());
 	camera = new Camera(gfx, mus, vec3(0,0,0));
-
-	//////OBJECTS///////////
-	nrOfObj = 10;
+	//
+	////////OBJECTS///////////
+	nrOfObj = 1;
 	obj = new GameObject * [nrOfObj];
 	//OBJECTS
 	obj[0] = new GameObject(rm->get_Ball(), gfx, vec3(0.f, 0.f, 10.f), vec3(0.f, 0.f, 0.f), vec3(2.f, 2.0f, 2.0f));
-	obj[1] = new GameObject(rm->get_Stol(), gfx, vec3(10.f, 5.f, 10.f), vec3(-1.56f, 1.56f, 3.2f), vec3(1.f, 1.f, 1.f));
+	//obj[1] = new GameObject(rm->get_Stol(), gfx, vec3(10.f, 5.f, 10.f), vec3(-1.56f, 1.56f, 3.2f), vec3(1.f, 1.f, 1.f));
 	//walls
-	obj[2] = new GameObject(rm->get_IDK(), gfx, vec3(0.f, 5.f, 20.f), vec3(-1.6f, -1.6f, 3.2f), vec3(20.f, 20.f, 20.f));
-	obj[3] = new GameObject(rm->get_IDK(), gfx, vec3(20.f, 5.f, 0.f), vec3(-1.6f, 0.f, 3.2f), vec3(20.f, 20.f, 20.f));
-	obj[4] = new GameObject(rm->get_IDK(), gfx, vec3(0.f, 5.f, -20.f), vec3(-1.6f, 1.6f, 3.2f), vec3(20.f, 20.f, 20.f));
-	obj[5] = new GameObject(rm->get_IDK(), gfx, vec3(-20.f, 5.f, 0.f), vec3(-1.6f, 3.f, 3.2f), vec3(20.f, 20.f, 20.f));
-
-	obj[6] = new GameObject(rm->get_Models("stormtrooper.obj"), gfx, vec3(5.f, 0.f, 0.f), vec3(0.f, 1.56f, 0.f), vec3(1.f, 1.f, 1.f));
-	obj[7] = new GameObject(rm->get_Models("stormtrooper.obj"), gfx, vec3(0.f, 0.f, 5.f), vec3(1.6f, 1.56f, 0.f), vec3(1.f, 1.f, 1.f));
-	obj[8] = new GameObject(rm->get_Models("stormtrooper.obj"), gfx, vec3(-5.f, 0.f, 0.f), vec3(3.2f, 1.56f, 0.f), vec3(1.f, 1.f, 1.f));
-	obj[9] = new GameObject(rm->get_Models("stormtrooper.obj"), gfx, vec3(0.f, 0.f, -5.f), vec3(-1.6f, 1.56f, 0.f), vec3(1.f, 1.f, 1.f));
-	obj[0]->setTesselation(true, gfx);
-
-	bills = new BillBoard*[4];
-	bills[0] = new BillBoard(gfx, vec3(0.f, 0.f, 5.f), rm->getFire(), rm->getDef()[1], 6);
-	bills[1] = new BillBoard(gfx, vec3(0.f, 0.f, -9.f), rm->getFire(), rm->getDef()[1], 6);
-	bills[2] = new BillBoard(gfx, vec3(9.f, 0.f, 0.f), rm->getFire(), rm->getDef()[1], 6);
-	bills[3] = new BillBoard(gfx, vec3(-9.f, 0.f, 0.f), rm->getFire(), rm->getDef()[1], 6);
-
-	bill = new BillBoard(gfx, vec3(0.f, 0.f, 9.f), rm->getFire(), rm->getDef()[1], 6);
+	//obj[2] = new GameObject(rm->get_IDK(), gfx, vec3(0.f, 5.f, 20.f), vec3(-1.6f, -1.6f, 3.2f), vec3(20.f, 20.f, 20.f));
+	//obj[3] = new GameObject(rm->get_IDK(), gfx, vec3(20.f, 5.f, 0.f), vec3(-1.6f, 0.f, 3.2f), vec3(20.f, 20.f, 20.f));
+	//obj[4] = new GameObject(rm->get_IDK(), gfx, vec3(0.f, 5.f, -20.f), vec3(-1.6f, 1.6f, 3.2f), vec3(20.f, 20.f, 20.f));
+	//obj[5] = new GameObject(rm->get_IDK(), gfx, vec3(-20.f, 5.f, 0.f), vec3(-1.6f, 3.f, 3.2f), vec3(20.f, 20.f, 20.f));
+	//
+	//obj[6] = new GameObject(rm->get_Models("stormtrooper.obj"), gfx, vec3(5.f, 0.f, 0.f), vec3(0.f, 1.56f, 0.f), vec3(1.f, 1.f, 1.f));
+	//obj[7] = new GameObject(rm->get_Models("stormtrooper.obj"), gfx, vec3(0.f, 0.f, 5.f), vec3(1.6f, 1.56f, 0.f), vec3(1.f, 1.f, 1.f));
+	//obj[8] = new GameObject(rm->get_Models("stormtrooper.obj"), gfx, vec3(-5.f, 0.f, 0.f), vec3(3.2f, 1.56f, 0.f), vec3(1.f, 1.f, 1.f));
+	//obj[9] = new GameObject(rm->get_Models("stormtrooper.obj"), gfx, vec3(0.f, 0.f, -5.f), vec3(-1.6f, 1.56f, 0.f), vec3(1.f, 1.f, 1.f));
+	//obj[0]->setTesselation(true, gfx);
+	
+ 	bill = new BillBoard(gfx, vec3(0.f, 0.f, 9.f), rm->getFire(), rm->getDef()[1], 6);
 	billManager = new BillBoardManager(gfx, rm->getFire(), 10, vec3(0,0,0),vec3(5,5,1));
 	billManager->setAnimation(6, 1, 0.16);
-
-	//DCube cannot use standard obj:s without fucking others shaders
-	DCube = new DynamicCube(rm->get_Models("roundsol.obj"), gfx, vec3(5.f, 0.f, 0.f), vec3(0.f, 0.f, 0.f), vec3(2.f, 2.0f, 2.0f));
-	//DCube = new DynamicCube(rm->get_Models("DCube.obj"), gfx, vec3(0.f, 0.f, 0.f), vec3(0.f, 0.f, 0.f), vec3(2.f, 2.0f, 2.0f));
-	/////LIGHT////////
-	LightVisualizers = new GameObject * [nrOfLight];
-	for (int i = 0; i < nrOfLight; i++) {
-		LightVisualizers[i] = new GameObject(rm->get_Models("roundsol.obj"), gfx, light[i]->getPos(), vec3(0.f, 0.f, 0.f), vec3(0.1f, 0.1f, 0.1f));
-	}
-
-	//UI
-	for (int i = 0; i < nrOfLight; i++) {
-		UIManager.takeLight(light[i]);
-	}
+	//std::cout << "penis" << std::endl;
+	//
+	////DCube cannot use standard obj:s without fucking others shaders
+	//DCube = new DynamicCube(rm->get_Models("roundsol.obj"), gfx, vec3(5.f, 0.f, 0.f), vec3(0.f, 0.f, 0.f), vec3(2.f, 2.0f, 2.0f));
+	////DCube = new DynamicCube(rm->get_Models("DCube.obj"), gfx, vec3(0.f, 0.f, 0.f), vec3(0.f, 0.f, 0.f), vec3(2.f, 2.0f, 2.0f));
+	/////////LIGHT////////
+	//LightVisualizers = new GameObject * [nrOfLight];
+	//for (int i = 0; i < nrOfLight; i++) {
+	//	LightVisualizers[i] = new GameObject(rm->get_Models("roundsol.obj"), gfx, light[i]->getPos(), vec3(0.f, 0.f, 0.f), vec3(0.1f, 0.1f, 0.1f));
+	//}
+	//
+	////UI
+	//for (int i = 0; i < nrOfLight; i++) {
+	//	UIManager.takeLight(light[i]);
+	//}
+	////UIManager.takeObject(DCube);
+	//UIManager.takeObject(obj[0]);
 	//UIManager.takeObject(DCube);
-	UIManager.takeObject(obj[0]);
-	UIManager.takeObject(DCube);
-	
-	
-	gfx->takeLight((SpotLight**)light, nrOfLight);
-
-	currentTime = 0;
-	lightNr = 0;
+	//
+	//
+	//gfx->takeLight((SpotLight**)light, nrOfLight);
+	//
+	//currentTime = 0;
+	//lightNr = 0;
 }
 
 Game::~Game() 
 {
+	//part of game
 	delete gfx;
 	delete rm;
+
+	//logic and other
+	delete defRend;
+	delete mus;
 	delete camera;
-	delete light;
+	if (shadowMap != nullptr) {
+		delete shadowMap;
+	}
+
+	//objects
+	for (int i = 0; i < nrOfLight; i++) {
+		delete light[i];
+		//delete LightVisualizers[i];
+	}
+	delete[] light;
+	//delete[] LightVisualizers;
 	for (int i = 0; i < nrOfObj; i++) {
 		delete obj[i];
 	}
 	delete[] obj;
-	delete bill;
+	//delete DCube;
+	delete bill; 
 	delete billManager;
-	delete mus;
-	if (shadowMap != nullptr) {
-		delete shadowMap;
-	}
+	
 }
 
 
 void Game::run()
 {
-	while (msg.message != WM_QUIT)
+	static bool once = true;
+	while (msg.message != WM_QUIT && once)
 	{
 		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
 		{
@@ -112,9 +121,6 @@ void Game::run()
 			shadowMap->inUpdateShadow(i);
 			updateShaders(true, false);
 			//PEM
-			for (int i = 0; i < 4; i++) {
-				bills[i]->UpdateShader(gfx, camera->getPos());
-			}
 			bill->UpdateShader(gfx, camera->getPos());
 			DrawAllShadowObject();
 		}
@@ -124,9 +130,6 @@ void Game::run()
 		Update();
 		updateShaders();
 		//PEM
-		for (int i = 0; i < 4; i++) {
-			bills[i]->UpdateShader(gfx, camera->getPos());
-		}
 
 		bill->UpdateShader(gfx, camera->getPos());
 		DrawDynamicCube();//cant be before bindfirstPass();
@@ -141,16 +144,15 @@ void Game::run()
 		gfx->setRenderTarget();
 		this->ForwardDraw();
 		gfx->present(this->lightNr);
+		
+
+		once = false;
 	}
 	printf("quit");
 }
 
 void Game::Update()
 {
-	//PEM
-	for (int i = 0; i < 4; i++) {
-		bills[i]->update(dt.dt());
-	}
 	dt.restartClock();
 	//keyboard
 	obj[0]->addRot(vec3(0, 1.f * dt.dt(), 0));
@@ -278,10 +280,6 @@ void Game::DrawDynamicCube()
 		camera->updateCamera();
 		updateShaders(true, false);
 		DCube->setViewPort(gfx);
-		//PEM
-		for (int i = 0; i < 4; i++) {
-			bills[i]->UpdateShader(gfx, camera->getPos());
-		}
 		
 		//DEFFERED RENDERING
 		DCube->firstPass();//needed
@@ -294,16 +292,13 @@ void Game::DrawDynamicCube()
 	}
 
 	//draw the cube
-	gfx->sVP();
+	gfx->RsetViewPort();
 	gfx->Projection(0);
 	camera->setPosition(camLP);
 	camera->setRotation(camRT);
 	camera->updateCamera();
 	updateShaders(true, false);
 	//PEM
-	for (int i = 0; i < 4; i++) {
-		bills[i]->UpdateShader(gfx, camera->getPos());
-	}
 	
 }
 
@@ -325,10 +320,6 @@ void Game::ForwardDraw()
 	gfx->get_IC()->HSSetShader(nullptr, nullptr, 0);
 	gfx->get_IC()->DSSetShader(nullptr, nullptr, 0);
 	bill->draw(gfx);
-	//PEM
-	for (int i = 0; i < 4; i++) {
-		bills[i]->draw(gfx);
-	}
 	billManager->draw(gfx);
 }
 
@@ -342,10 +333,6 @@ void Game::ForwardDrawCube()
 	gfx->get_IC()->HSSetShader(nullptr, nullptr, 0);
 	gfx->get_IC()->DSSetShader(nullptr, nullptr, 0);
 	bill->draw(gfx);
-	//PEM
-	for (int i = 0; i < 4; i++) {
-		bills[i]->draw(gfx);
-	}
 	billManager->draw(gfx);
 }
 

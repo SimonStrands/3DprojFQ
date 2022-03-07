@@ -20,8 +20,19 @@ ShadowMap::~ShadowMap()
 	if (dsTexture != nullptr) {
 		dsTexture->Release();
 	}
+	for (int i = 0; i < dsViews.size(); i++) {
+		if (dsViews[i] != nullptr) {
+			dsViews[i]->Release();
+		}
+	}
+	if (vertexShadow != nullptr) {
+		vertexShadow->Release();
+	}
 	if (pixelShadow != nullptr) {
 		pixelShadow->Release();
+	}
+	if (shadowRes != nullptr) {
+		shadowRes->Release();
 	}
 	if (shadowResV != nullptr) {
 		shadowResV->Release();

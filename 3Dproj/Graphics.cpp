@@ -79,12 +79,14 @@ Graphics::Graphics(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	nrOfObject = 0;
 	Pg_pConstantBuffer = nullptr;
 	normalMapping = true;//?
+
 	inputLayout = new ID3D11InputLayout * [2]{nullptr, nullptr};
-	vShader = new ID3D11VertexShader * [4]{ nullptr, nullptr, nullptr };
-	gShader = new ID3D11GeometryShader * [2]{ nullptr, nullptr };
-	pShader = new ID3D11PixelShader * [4] { nullptr, nullptr,nullptr, nullptr };
-	hShader = new ID3D11HullShader * [2] { nullptr,nullptr };
-	dShader = new ID3D11DomainShader * [2] { nullptr,nullptr };
+
+	vShader = new ID3D11VertexShader * [4]{ nullptr, nullptr, nullptr };//3 is used
+	gShader = new ID3D11GeometryShader * [4]{ nullptr, nullptr };//2 is used
+	pShader = new ID3D11PixelShader * [4] { nullptr, nullptr,nullptr, nullptr };//4 is used
+	hShader = new ID3D11HullShader * [4] { nullptr,nullptr };//2 is used
+	dShader = new ID3D11DomainShader * [4] { nullptr,nullptr };//2 is used
 
 	//setting normal value for pcbd
 	this->LCBG.lightColor = { 1,1,1,0 };
@@ -123,7 +125,6 @@ Graphics::Graphics(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	
 	//set settings up
 	immediateContext->PSSetSamplers(0, 1, &sampler);
-	//immediateContext->CSSetSamplers(0, 1, &sampler);
 	immediateContext->DSSetSamplers(0, 1, &sampler);
 
 	immediateContext->PSSetShader(getPS()[0], nullptr, 0);
@@ -140,64 +141,70 @@ Graphics::~Graphics()
 	ImGui_ImplDX11_Shutdown();
 	shutDownWindow();
 	
-	if (gShader[0] != nullptr) {
-		gShader[0]->Release();
-	}
-	for (int i = 0; i < 2; i++) {
+	inputLayout[0]->Release();
+	inputLayout[1]->Release();
+	delete[] inputLayout;
+	
+	for (int i = 0; i < 4; i++) {
 		if (vShader[i] != nullptr) {
 			vShader[i]->Release();
 		}
 		if (pShader[i] != nullptr) {
 			pShader[i]->Release();
 		}
-		if (inputLayout[i] != nullptr) {
-			inputLayout[i]->Release();
+		if (gShader[i] != nullptr) {
+			gShader[i]->Release();
+		}
+		if (hShader[i] != nullptr) {
+			hShader[i]->Release();
+		}
+		if (dShader[i] != nullptr) {
+			dShader[i]->Release();
 		}
 	}
-	if (pShader != nullptr) {
-		delete pShader;
-	}
-	if (gShader != nullptr) {
-		delete gShader;
-	}
-	if (vShader != nullptr) {
-		delete vShader;
-	}
-	if (inputLayout != nullptr) {
-		delete inputLayout;
-	}
-	if (dsView != nullptr) {
-		dsView->Release();
-	}
-	if (dsTexture != nullptr) {
-		dsTexture->Release();
-	}
-	if (renderTarget != nullptr) {
-		renderTarget->Release();
-	}
-	if (swapChain != nullptr) {
-		swapChain->Release();
+	delete[] vShader;
+	delete[] pShader;
+	delete[] gShader;
+	delete[] hShader;
+	delete[] dShader;
+
+	if (device != nullptr) {
+		device->Release();
 	}
 	if (immediateContext != nullptr) {
 		immediateContext->Release();
 	}
-	if (device != nullptr) {
-		device->Release();
+	if (swapChain != nullptr) {
+		swapChain->Release();
+	}
+	if (renderTarget != nullptr) {
+		renderTarget->Release();
+	}
+	if (dsTexture != nullptr) {
+		dsTexture->Release();
+	}
+	if (dsView != nullptr) {
+		dsView->Release();
 	}
 	if (Pg_pConstantBuffer != nullptr) {
 		Pg_pConstantBuffer->Release();
 	}
+	if (camConstBuffer != nullptr) {
+		camConstBuffer->Release();
+	}
 	if (pRS != nullptr) {
 		pRS->Release();
 	}
+	bs[0]->Release();
+	bs[1]->Release();
+	delete[] bs;
+
 	if (sampler != nullptr) {
 		sampler->Release();
 	}
-	bs[0]->Release();
-	bs[1]->Release();
 }
 
-void Graphics::sVP()
+void Graphics::RsetViewPort()
 {
 	immediateContext->RSSetViewports(1, &viewPort);
 }
@@ -336,7 +343,6 @@ vec2 Graphics::getWH()
 {
 	return vec2((float)WIDTH, (float)HEIGHT);
 }
-
 
 void Graphics::setTransparant(bool transparance)
 {

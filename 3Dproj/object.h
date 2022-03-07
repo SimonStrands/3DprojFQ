@@ -49,6 +49,5 @@ private:
 	vec3 rPoint;
 	ModelObj* model;
 	ID3D11Buffer* Vg_pConstantBuffer;
-	//ID3D11Buffer* Pg_pConstantBuffer;
 };
 

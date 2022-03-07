@@ -15,7 +15,13 @@ void MeshObj::begone()
 	if (this->vertexBuffer != nullptr) {
 		this->vertexBuffer->Release();
 	}
+	if (this->Pg_pConstantBuffer != nullptr) {
+		this->Pg_pConstantBuffer->Release();
+	}
 	matrial.begone();
+	for (int i = 0; i < SubMeshes.size(); i++) {
+		SubMeshes[i].begone();
+	}
 }
 
 MeshObj::~MeshObj()

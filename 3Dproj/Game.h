@@ -47,12 +47,10 @@ private:
 	//game objects
 	Light **light;
 	GameObject** LightVisualizers;
-
-	DynamicCube* DCube;
 	GameObject** obj;
-	BillBoardManager *billManager;
+	BillBoardManager* billManager;
+	DynamicCube* DCube;
 	BillBoard *bill;
-	BillBoard **bills;
 
 	//var
 	int nrOfLight;

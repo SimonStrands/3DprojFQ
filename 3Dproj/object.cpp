@@ -5,7 +5,7 @@
 
 object::object()
 {
-    //Pg_pConstantBuffer = nullptr;
+    model = nullptr;
     Vg_pConstantBuffer = nullptr;
 }
 
@@ -15,7 +15,6 @@ object::object(vec3 pos):
     rPoint(0,0,0)
 {
     this->pos = pos;
-    //Pg_pConstantBuffer = nullptr;
     Vg_pConstantBuffer = nullptr;
 }
 
@@ -24,9 +23,6 @@ object::~object()
     if (Vg_pConstantBuffer != nullptr) {
         Vg_pConstantBuffer->Release();
     };
-    //if (Pg_pConstantBuffer != nullptr) {
-    //    Pg_pConstantBuffer->Release();
-    //};
 }
 
 vec3 object::getPos()

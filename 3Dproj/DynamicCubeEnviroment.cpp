@@ -15,6 +15,29 @@ DynamicCube::DynamicCube(ModelObj* model, Graphics*& gfx, vec3 pos, vec3 rot, ve
 	initCubeMapping(gfx);
 }
 
+DynamicCube::~DynamicCube()
+{
+	if (CubeResV != nullptr) {
+		CubeResV->Release();
+	}
+	if (CubeTex != nullptr) {
+		CubeTex->Release();
+	}
+	
+	if (CSShader != nullptr) {
+		CSShader->Release();
+	}
+	if (dsview != nullptr) {
+		dsview->Release();
+	}
+	if (dsTexture != nullptr) {
+		dsTexture->Release();
+	}
+	//for (int i = 0; i < 6; i++) {
+	//	if ()
+	//}
+}
+
 void DynamicCube::draw(ID3D11DeviceContext*& immediateContext)
 {	
 	immediateContext->VSSetConstantBuffers(0, 1, &this->getVertexConstBuffer());

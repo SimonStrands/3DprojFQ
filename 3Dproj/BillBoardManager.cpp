@@ -61,7 +61,30 @@ void BillBoardManager::setAnimation(int noaw, int noah, float tb)
 
 BillBoardManager::~BillBoardManager()
 {
-	this->cUpdate->Release();
+	//if (SRV != nullptr) {
+	//	SRV->Release();
+	//}
+	if (cUpdate != nullptr) {
+		cUpdate->Release();
+	}
+	if (billUAV != nullptr) {
+		billUAV->Release();
+	}
+	if (buff != nullptr) {
+		buff->Release();
+	}
+	if (Gg_pConstantBuffer != nullptr) {
+		Gg_pConstantBuffer->Release();
+	}
+	if (Pg_pConstantBuffer != nullptr) {
+		Pg_pConstantBuffer->Release();
+	}
+	if (Vg_pConstantBuffer != nullptr) {
+		Vg_pConstantBuffer->Release();
+	}
+	if (Cg_pConstantBuffer != nullptr) {
+		Cg_pConstantBuffer->Release();
+	}
 }
 
 

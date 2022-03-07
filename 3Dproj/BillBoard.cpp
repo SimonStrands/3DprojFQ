@@ -8,9 +8,6 @@ BillBoard::BillBoard(Graphics*& gfx, vec3 pos, ID3D11ShaderResourceView* texSRV,
 {
 	this->texSRV = texSRV;
 	this->NDef = NDef;
-	for (int i = 0; i < 4; i++) {
-		
-	}
 	CreateVertexConstBuffer(gfx, this->getVertexConstBuffer());
 	CreateGeometryConstBuffer(gfx, Gg_pConstantBuffer);
 	CreatePixelConstBuffer(gfx, Pg_pConstantBuffer);
@@ -41,6 +38,9 @@ BillBoard::~BillBoard()
 	}
 	if (Gg_pConstantBuffer != nullptr) {
 		Gg_pConstantBuffer->Release();
+	}
+	if (Pg_pConstantBuffer != nullptr) {
+		Pg_pConstantBuffer->Release();
 	}
 }
 

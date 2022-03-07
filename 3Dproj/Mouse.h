@@ -6,6 +6,7 @@
 class Mouse {
 public:
 	Mouse(vec2 WH);
+	virtual ~Mouse();
 	void changeSense(float newSence);
 	void UpdateMouse();
 	vec2 getDeltaPos();

@@ -90,13 +90,11 @@ private:
 	//window
 	const UINT WIDTH = 1920;
 	const UINT HEIGHT = 1080;
-	//const UINT WIDTH = 320;
-	//const UINT HEIGHT = 320;
 	HWND wnd;
 public:
 	Graphics(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine, _In_ int nCmdShow);
 	virtual ~Graphics();
-	void sVP();
+	void RsetViewPort();
 private:
 	//D3D11
 	ID3D11Device* device;
@@ -122,25 +120,15 @@ private:
 	ID3D11DomainShader**	dShader;
 	////////////////////////
 
-	//VertexConstantBuffer
-	Vcb vcbd = {
-		//transform
-		//view
-		//projection
-		//lightView
-	};
-	LCBGS LCBG = {};
-	//PixelConstantBuffer
-	Pcb pcbd = {
-	};
-	//GeometryConstantBuffer
-	Gcb gcbd = {
+	Vcb vcbd = {};//vertexConstBuffer
+	LCBGS LCBG = {};//computeShaderConstBuffer
+	Pcb pcbd = {};//pixelConstBuffer
+	Gcb gcbd = {//GeometryConstBuffer
 		{0,0,0,0},
 		{0,0,0,0},
 	};
-	CamPosCB CPCB = {};
+	CamPosCB CPCB = {};//camPosDCube
 
-	//gonna clean up here later
 	ID3D11Texture2D* tex;
 	ID3D11SamplerState* sampler;
 

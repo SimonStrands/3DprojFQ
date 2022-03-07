@@ -29,6 +29,10 @@ struct Material {
 			texSRVDS[i] = nullptr;//do I need to do this?
 		}
 	}
+	~Material() {
+		//delete[] texSRVDS;
+		//delete[] texSRVPS;
+	}
 	void loadTexture(std::string filename, Graphics*& gfx, int WhatRSV, ID3D11ShaderResourceView** def)
 	{
 		ID3D11Texture2D* tex;
@@ -52,12 +56,14 @@ struct Material {
 	}
 	void begone() {
 		for (int i = 0; i < 4; i++) {
-			if (texSRVPS[i] == nullptr) {
-				texSRVPS[i]->Release();
+			if (flags.Maps[i]) {
+				if (texSRVPS[i] != nullptr) {
+					texSRVPS[i]->Release();
+				}
 			}
 		}
 		for (int i = 0; i < 1; i++) {
-			if (texSRVDS[i] == nullptr) {
+			if (texSRVDS[i] != nullptr) {
 				texSRVDS[i]->Release();
 			}
 		}

@@ -93,7 +93,8 @@ bool getMatrialFromFile(std::string fileName, std::vector<Material> &matrial, Gr
 		while (std::getline(infile, readWord)) {
 			if (readWord.substr(0, 6) == "newmtl") {
 				CTR++;
-				matrial.resize(CTR + 1,Material(def));
+				matrial.resize(CTR + 1);
+				matrial[matrial.size() - 1] = Material(def);
 				std::istringstream a;
 				std::string b;
 				a.str(readWord);

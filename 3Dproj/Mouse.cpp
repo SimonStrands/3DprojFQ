@@ -11,6 +11,10 @@ Mouse::Mouse(vec2 WH):
 	x = y = 0;
 }
 
+Mouse::~Mouse()
+{
+}
+
 void Mouse::changeSense(float newSence)
 {
 	this->mouseSense = newSence;
