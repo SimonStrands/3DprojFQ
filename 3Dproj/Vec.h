@@ -40,7 +40,8 @@ struct vec3 {
 	float operator*(vec3& other);//dot
 	vec3 operator*(float& other);
 	vec3 mul(float other);
-	vec3 operator+(vec3& other);
+	vec3 mul(vec3 other);
+	vec3 operator+(vec3 other);
 	vec3 operator-(vec3& other);
 	bool operator==(vec3& other);
 	void operator=(vec3 other);

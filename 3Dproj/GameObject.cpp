@@ -54,6 +54,15 @@ void GameObject::setTesselation(bool tess, Graphics*& gfx)
 	}
 }
 
+vec3* GameObject::getBox()
+{
+	vec3 theReturn[2];
+	
+	theReturn[0] = (model->getBox()[0] + this->getPos()).mul(this->getScale());
+	theReturn[1] = (model->getBox()[1] + this->getPos()).mul(this->getScale());
+	return theReturn;
+}
+
 void GameObject::Updateshaders(Graphics*& gfx, bool vertex, bool pixel)
 {
 	if (vertex) {

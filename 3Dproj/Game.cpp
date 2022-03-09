@@ -1,4 +1,5 @@
 #include "Game.h"
+#include "TrashCollector.h"
 //git
 Game::Game(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine, _In_ int nCmdShow)
 {
@@ -24,50 +25,47 @@ Game::Game(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWS
 	camera = new Camera(gfx, mus, vec3(0,0,0));
 	//
 	////////OBJECTS///////////
-	nrOfObj = 1;
+	nrOfObj = 10;
 	obj = new GameObject * [nrOfObj];
 	//OBJECTS
 	obj[0] = new GameObject(rm->get_Ball(), gfx, vec3(0.f, 0.f, 10.f), vec3(0.f, 0.f, 0.f), vec3(2.f, 2.0f, 2.0f));
-	//obj[1] = new GameObject(rm->get_Stol(), gfx, vec3(10.f, 5.f, 10.f), vec3(-1.56f, 1.56f, 3.2f), vec3(1.f, 1.f, 1.f));
+	obj[1] = new GameObject(rm->get_Stol(), gfx, vec3(10.f, 5.f, 10.f), vec3(-1.56f, 1.56f, 3.2f), vec3(1.f, 1.f, 1.f));
 	//walls
-	//obj[2] = new GameObject(rm->get_IDK(), gfx, vec3(0.f, 5.f, 20.f), vec3(-1.6f, -1.6f, 3.2f), vec3(20.f, 20.f, 20.f));
-	//obj[3] = new GameObject(rm->get_IDK(), gfx, vec3(20.f, 5.f, 0.f), vec3(-1.6f, 0.f, 3.2f), vec3(20.f, 20.f, 20.f));
-	//obj[4] = new GameObject(rm->get_IDK(), gfx, vec3(0.f, 5.f, -20.f), vec3(-1.6f, 1.6f, 3.2f), vec3(20.f, 20.f, 20.f));
-	//obj[5] = new GameObject(rm->get_IDK(), gfx, vec3(-20.f, 5.f, 0.f), vec3(-1.6f, 3.f, 3.2f), vec3(20.f, 20.f, 20.f));
-	//
-	//obj[6] = new GameObject(rm->get_Models("stormtrooper.obj"), gfx, vec3(5.f, 0.f, 0.f), vec3(0.f, 1.56f, 0.f), vec3(1.f, 1.f, 1.f));
-	//obj[7] = new GameObject(rm->get_Models("stormtrooper.obj"), gfx, vec3(0.f, 0.f, 5.f), vec3(1.6f, 1.56f, 0.f), vec3(1.f, 1.f, 1.f));
-	//obj[8] = new GameObject(rm->get_Models("stormtrooper.obj"), gfx, vec3(-5.f, 0.f, 0.f), vec3(3.2f, 1.56f, 0.f), vec3(1.f, 1.f, 1.f));
-	//obj[9] = new GameObject(rm->get_Models("stormtrooper.obj"), gfx, vec3(0.f, 0.f, -5.f), vec3(-1.6f, 1.56f, 0.f), vec3(1.f, 1.f, 1.f));
-	//obj[0]->setTesselation(true, gfx);
+	obj[2] = new GameObject(rm->get_IDK(), gfx, vec3(0.f, 5.f, 20.f), vec3(-1.6f, -1.6f, 3.2f), vec3(20.f, 20.f, 20.f));
+	obj[3] = new GameObject(rm->get_IDK(), gfx, vec3(20.f, 5.f, 0.f), vec3(-1.6f, 0.f, 3.2f), vec3(20.f, 20.f, 20.f));
+	obj[4] = new GameObject(rm->get_IDK(), gfx, vec3(0.f, 5.f, -20.f), vec3(-1.6f, 1.6f, 3.2f), vec3(20.f, 20.f, 20.f));
+	obj[5] = new GameObject(rm->get_IDK(), gfx, vec3(-20.f, 5.f, 0.f), vec3(-1.6f, 3.f, 3.2f), vec3(20.f, 20.f, 20.f));
+	
+	obj[6] = new GameObject(rm->get_Models("stormtrooper.obj"), gfx, vec3(5.f, 0.f, 0.f), vec3(0.f, 1.56f, 0.f), vec3(1.f, 1.f, 1.f));
+	obj[7] = new GameObject(rm->get_Models("stormtrooper.obj"), gfx, vec3(0.f, 0.f, 5.f), vec3(1.6f, 1.56f, 0.f), vec3(1.f, 1.f, 1.f));
+	obj[8] = new GameObject(rm->get_Models("stormtrooper.obj"), gfx, vec3(-5.f, 0.f, 0.f), vec3(3.2f, 1.56f, 0.f), vec3(1.f, 1.f, 1.f));
+	obj[9] = new GameObject(rm->get_Models("stormtrooper.obj"), gfx, vec3(0.f, 0.f, -5.f), vec3(-1.6f, 1.56f, 0.f), vec3(1.f, 1.f, 1.f));
+	obj[0]->setTesselation(true, gfx);
 	
  	bill = new BillBoard(gfx, vec3(0.f, 0.f, 9.f), rm->getFire(), rm->getDef()[1], 6);
 	billManager = new BillBoardManager(gfx, rm->getFire(), 10, vec3(0,0,0),vec3(5,5,1));
 	billManager->setAnimation(6, 1, 0.16);
-	//std::cout << "penis" << std::endl;
-	//
-	////DCube cannot use standard obj:s without fucking others shaders
-	//DCube = new DynamicCube(rm->get_Models("roundsol.obj"), gfx, vec3(5.f, 0.f, 0.f), vec3(0.f, 0.f, 0.f), vec3(2.f, 2.0f, 2.0f));
-	////DCube = new DynamicCube(rm->get_Models("DCube.obj"), gfx, vec3(0.f, 0.f, 0.f), vec3(0.f, 0.f, 0.f), vec3(2.f, 2.0f, 2.0f));
-	/////////LIGHT////////
-	//LightVisualizers = new GameObject * [nrOfLight];
-	//for (int i = 0; i < nrOfLight; i++) {
-	//	LightVisualizers[i] = new GameObject(rm->get_Models("roundsol.obj"), gfx, light[i]->getPos(), vec3(0.f, 0.f, 0.f), vec3(0.1f, 0.1f, 0.1f));
-	//}
-	//
-	////UI
-	//for (int i = 0; i < nrOfLight; i++) {
-	//	UIManager.takeLight(light[i]);
-	//}
-	////UIManager.takeObject(DCube);
-	//UIManager.takeObject(obj[0]);
+	//DCube cannot use standard obj:s without fucking others shaders
+	DCube = new DynamicCube(rm->get_Models("roundsol.obj"), gfx, vec3(5.f, 0.f, 0.f), vec3(0.f, 0.f, 0.f), vec3(2.f, 2.0f, 2.0f));
+	///LIGHT////////
+	LightVisualizers = new GameObject * [nrOfLight];
+	for (int i = 0; i < nrOfLight; i++) {
+		LightVisualizers[i] = new GameObject(rm->get_Models("roundsol.obj"), gfx, light[i]->getPos(), vec3(0.f, 0.f, 0.f), vec3(0.1f, 0.1f, 0.1f));
+	}
+	
+	//UI
+	for (int i = 0; i < nrOfLight; i++) {
+		UIManager.takeLight(light[i]);
+	}
 	//UIManager.takeObject(DCube);
-	//
-	//
-	//gfx->takeLight((SpotLight**)light, nrOfLight);
-	//
-	//currentTime = 0;
-	//lightNr = 0;
+	UIManager.takeObject(obj[0]);
+	//UIManager.takeObject(DCube);
+	
+	
+	gfx->takeLight((SpotLight**)light, nrOfLight);
+	
+	currentTime = 0;
+	lightNr = 0;
 }
 
 Game::~Game() 
@@ -87,18 +85,18 @@ Game::~Game()
 	//objects
 	for (int i = 0; i < nrOfLight; i++) {
 		delete light[i];
-		//delete LightVisualizers[i];
+		delete LightVisualizers[i];
 	}
 	delete[] light;
-	//delete[] LightVisualizers;
+	delete[] LightVisualizers;
 	for (int i = 0; i < nrOfObj; i++) {
 		delete obj[i];
 	}
 	delete[] obj;
-	//delete DCube;
+	delete DCube;
 	delete bill; 
 	delete billManager;
-	
+	//TC::GetInst().empty();
 }
 
 
@@ -146,7 +144,7 @@ void Game::run()
 		gfx->present(this->lightNr);
 		
 
-		once = false;
+		//once = false;
 	}
 	printf("quit");
 }

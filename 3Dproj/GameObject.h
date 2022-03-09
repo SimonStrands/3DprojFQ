@@ -17,6 +17,8 @@ public:
 	void drawDebug(Graphics*& gfx, bool sm = false);
 	void drawDefTest(ID3D11DeviceContext*& immediateContext);
 	void setTesselation(bool tess, Graphics*& gfx);
+	//0 = lowest 1 = highest
+	vec3* getBox();
 protected:
 	ModelObj* model;
 private:

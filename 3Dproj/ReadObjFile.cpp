@@ -236,7 +236,29 @@ void readFace(std::string readWord, std::vector<vertex> &vertecies, std::vector<
 		}
 }
 
-bool readObjFile(std::vector<MeshObj>& Meshes, std::string fileName, std::vector<Material> matrial, Graphics*& gfx)
+void getLowest(vec3 box[2], std::array<float, 3> vPos)
+{
+	if (box[0].x < vPos[0]) {
+		box[0].x = vPos[0];
+	}
+	if (box[0].y < vPos[1]) {
+		box[0].y = vPos[1];
+	}
+	if (box[0].z < vPos[2]) {
+		box[0].z = vPos[2];
+	}
+	if (box[1].x > vPos[0]) {
+		box[0].x = vPos[0];
+	}
+	if (box[1].y > vPos[1]) {
+		box[0].y = vPos[1];
+	}
+	if (box[1].z > vPos[2]) {
+		box[0].z = vPos[2];
+	}
+}
+
+bool readObjFile(std::vector<MeshObj>& Meshes, std::string fileName, std::vector<Material> matrial, Graphics*& gfx, vec3 box[2])
 {
 
 	std::vector<vertex> vertecies;
@@ -267,6 +289,7 @@ bool readObjFile(std::vector<MeshObj>& Meshes, std::string fileName, std::vector
 			vPos.resize(vPos.size() + 1);
 			a.str(readWord);
 			a >> trash >> vPos[vPos.size() - 1][0] >> vPos[vPos.size() - 1][1] >> vPos[vPos.size() - 1][2];
+			getLowest(box, vPos[vPos.size() - 1]);
 		}
 		else if (readWord.substr(0, 3) == "vt ") {
 			std::istringstream a;

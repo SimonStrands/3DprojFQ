@@ -1,6 +1,7 @@
 #pragma once
 #include <d3d11.h>
 #include "Graphics.h"
+#include "TrashCollector.h"
  
 
 struct textureFlags {
@@ -38,6 +39,7 @@ struct Material {
 		ID3D11Texture2D* tex;
 		if (WhatRSV == 4) {//its a disp_map
 			if (CreateTexture(filename, gfx->getDevice(), tex, this->texSRVDS[0])) {
+				TC::GetInst().add(this->texSRVDS[0]);
 				flags.Maps[WhatRSV] = true;
 			}
 			else {
@@ -46,6 +48,7 @@ struct Material {
 		}
 		else {
 			if (CreateTexture(filename, gfx->getDevice(), tex, this->texSRVPS[WhatRSV])) {
+				TC::GetInst().add(this->texSRVPS[WhatRSV]);
 				flags.Maps[WhatRSV] = true;
 			}
 			else {
@@ -67,6 +70,8 @@ struct Material {
 				texSRVDS[i]->Release();
 			}
 		}
+		delete[] texSRVDS;
+		delete[] texSRVPS;
 	}
 	textureFlags flags;
 	float Ns = 0;

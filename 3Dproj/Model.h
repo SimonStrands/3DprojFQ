@@ -10,10 +10,12 @@ public:
 	void draw(Graphics*& gfx, bool sm = false);
 	void drawDefTest(ID3D11DeviceContext*& immediateContext);
 	std::vector<MeshObj> &getMehses();
+	vec3* getBox();
 private:
 	bool loadModel(const std::string& ModelFile);
 	std::vector<MeshObj> mMeshes;
 	std::vector<Material> matrial;
+	vec3 boxSize[2];
 };
 
 /*
