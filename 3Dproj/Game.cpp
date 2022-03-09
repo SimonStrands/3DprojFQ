@@ -25,21 +25,19 @@ Game::Game(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWS
 	camera = new Camera(gfx, mus, vec3(0,0,0));
 	//
 	////////OBJECTS///////////
-	nrOfObj = 10;
-	obj = new GameObject * [nrOfObj];
 	//OBJECTS
-	obj[0] = new GameObject(rm->get_Ball(), gfx, vec3(0.f, 0.f, 10.f), vec3(0.f, 0.f, 0.f), vec3(2.f, 2.0f, 2.0f));
-	obj[1] = new GameObject(rm->get_Stol(), gfx, vec3(10.f, 5.f, 10.f), vec3(-1.56f, 1.56f, 3.2f), vec3(1.f, 1.f, 1.f));
+	obj.push_back(new GameObject(rm->get_Ball(), gfx, vec3(0.f, 0.f, 10.f), vec3(0.f, 0.f, 0.f), vec3(2.f, 2.0f, 2.0f)));
+	obj.push_back(new GameObject(rm->get_Stol(), gfx, vec3(10.f, 5.f, 10.f), vec3(-1.56f, 1.56f, 3.2f), vec3(1.f, 1.f, 1.f)));
 	//walls
-	obj[2] = new GameObject(rm->get_IDK(), gfx, vec3(0.f, 5.f, 20.f), vec3(-1.6f, -1.6f, 3.2f), vec3(20.f, 20.f, 20.f));
-	obj[3] = new GameObject(rm->get_IDK(), gfx, vec3(20.f, 5.f, 0.f), vec3(-1.6f, 0.f, 3.2f), vec3(20.f, 20.f, 20.f));
-	obj[4] = new GameObject(rm->get_IDK(), gfx, vec3(0.f, 5.f, -20.f), vec3(-1.6f, 1.6f, 3.2f), vec3(20.f, 20.f, 20.f));
-	obj[5] = new GameObject(rm->get_IDK(), gfx, vec3(-20.f, 5.f, 0.f), vec3(-1.6f, 3.f, 3.2f), vec3(20.f, 20.f, 20.f));
+	obj.push_back(new GameObject(rm->get_IDK(), gfx, vec3(0.f, 5.f, 20.f), vec3(-1.6f, -1.6f, 3.2f), vec3(20.f, 20.f, 20.f)));
+	obj.push_back(new GameObject(rm->get_IDK(), gfx, vec3(20.f, 5.f, 0.f), vec3(-1.6f, 0.f, 3.2f), vec3(20.f, 20.f, 20.f)));
+	obj.push_back(new GameObject(rm->get_IDK(), gfx, vec3(0.f, 5.f, -20.f), vec3(-1.6f, 1.6f, 3.2f), vec3(20.f, 20.f, 20.f)));
+	obj.push_back(new GameObject(rm->get_IDK(), gfx, vec3(-20.f, 5.f, 0.f), vec3(-1.6f, 3.f, 3.2f), vec3(20.f, 20.f, 20.f)));
 	
-	obj[6] = new GameObject(rm->get_Models("stormtrooper.obj"), gfx, vec3(5.f, 0.f, 0.f), vec3(0.f, 1.56f, 0.f), vec3(1.f, 1.f, 1.f));
-	obj[7] = new GameObject(rm->get_Models("stormtrooper.obj"), gfx, vec3(0.f, 0.f, 5.f), vec3(1.6f, 1.56f, 0.f), vec3(1.f, 1.f, 1.f));
-	obj[8] = new GameObject(rm->get_Models("stormtrooper.obj"), gfx, vec3(-5.f, 0.f, 0.f), vec3(3.2f, 1.56f, 0.f), vec3(1.f, 1.f, 1.f));
-	obj[9] = new GameObject(rm->get_Models("stormtrooper.obj"), gfx, vec3(0.f, 0.f, -5.f), vec3(-1.6f, 1.56f, 0.f), vec3(1.f, 1.f, 1.f));
+	obj.push_back(new GameObject(rm->get_Models("stormtrooper.obj"), gfx, vec3(5.f, 0.f, 0.f), vec3(0.f, 1.56f, 0.f), vec3(1.f, 1.f, 1.f)));
+	obj.push_back(new GameObject(rm->get_Models("stormtrooper.obj"), gfx, vec3(0.f, 0.f, 5.f), vec3(1.6f, 1.56f, 0.f), vec3(1.f, 1.f, 1.f)));
+	obj.push_back(new GameObject(rm->get_Models("stormtrooper.obj"), gfx, vec3(-5.f, 0.f, 0.f), vec3(3.2f, 1.56f, 0.f), vec3(1.f, 1.f, 1.f)));
+	obj.push_back(new GameObject(rm->get_Models("stormtrooper.obj"), gfx, vec3(0.f, 0.f, -5.f), vec3(-1.6f, 1.56f, 0.f), vec3(1.f, 1.f, 1.f)));
 	obj[0]->setTesselation(true, gfx);
 	
  	bill = new BillBoard(gfx, vec3(0.f, 0.f, 9.f), rm->getFire(), rm->getDef()[1], 6);
@@ -48,9 +46,9 @@ Game::Game(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWS
 	//DCube cannot use standard obj:s without fucking others shaders
 	DCube = new DynamicCube(rm->get_Models("roundsol.obj"), gfx, vec3(5.f, 0.f, 0.f), vec3(0.f, 0.f, 0.f), vec3(2.f, 2.0f, 2.0f));
 	///LIGHT////////
-	LightVisualizers = new GameObject * [nrOfLight];
+	//LightVisualizers = new GameObject * [nrOfLight];
 	for (int i = 0; i < nrOfLight; i++) {
-		LightVisualizers[i] = new GameObject(rm->get_Models("roundsol.obj"), gfx, light[i]->getPos(), vec3(0.f, 0.f, 0.f), vec3(0.1f, 0.1f, 0.1f));
+		LightVisualizers.push_back( new GameObject(rm->get_Models("roundsol.obj"), gfx, light[i]->getPos(), vec3(0.f, 0.f, 0.f), vec3(0.1f, 0.1f, 0.1f)));
 	}
 	
 	//UI
@@ -83,16 +81,14 @@ Game::~Game()
 	}
 
 	//objects
-	for (int i = 0; i < nrOfLight; i++) {
+	for (int i = 0; i < LightVisualizers.size(); i++) {
 		delete light[i];
 		delete LightVisualizers[i];
 	}
 	delete[] light;
-	delete[] LightVisualizers;
-	for (int i = 0; i < nrOfObj; i++) {
+	for (int i = 0; i < obj.size(); i++) {
 		delete obj[i];
 	}
-	delete[] obj;
 	delete DCube;
 	delete bill; 
 	delete billManager;
@@ -158,7 +154,7 @@ void Game::Update()
 	bill->update((float)dt.dt());
 	billManager->update(dt.dt(), gfx);
 	mus->UpdateMouse();
-	for (int i = 0; i < nrOfLight; i++) {
+	for (int i = 0; i < LightVisualizers.size(); i++) {
 		LightVisualizers[i]->changePos(light[i]->getPos());
 	}
 	
@@ -212,7 +208,7 @@ void Game::DrawToBuffer()
 	gfx->get_IC()->VSSetShader(gfx->getVS()[0], nullptr, 0);
 	gfx->get_IC()->HSSetShader(nullptr, nullptr, 0);
 	gfx->get_IC()->DSSetShader(nullptr, nullptr, 0);
-	for (int i = 0; i < nrOfObj; i++) {
+	for (int i = 0; i < obj.size(); i++) {
 		obj[i]->draw(gfx);
 	}
 
@@ -222,7 +218,7 @@ void Game::DrawToBuffer()
 	gfx->get_IC()->DSSetShader(nullptr, nullptr, 0);
 	gfx->get_IC()->PSSetShader(gfx->getPS()[0], nullptr, 0);
 	gfx->get_IC()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	for (int i = 0; i < nrOfLight; i++) {
+	for (int i = 0; i < LightVisualizers.size(); i++) {
 		LightVisualizers[i]->drawDefTest(gfx->get_IC());
 	}
 }
@@ -236,7 +232,7 @@ void Game::DrawToBufferDebug()
 	gfx->get_IC()->VSSetShader(gfx->getVS()[0], nullptr, 0);
 	gfx->get_IC()->HSSetShader(nullptr, nullptr, 0);
 	gfx->get_IC()->DSSetShader(nullptr, nullptr, 0);
-	for (int i = 0; i < nrOfObj; i++) {
+	for (int i = 0; i < obj.size(); i++) {
 		obj[i]->drawDebug(gfx);
 	}
 }
@@ -339,7 +335,7 @@ void Game::DrawAllShadowObject()
 	gfx->get_IC()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	gfx->get_IC()->IASetInputLayout(gfx->getInputL()[1]);
 	gfx->get_IC()->GSSetShader(nullptr, nullptr, 0);
-	for (int i = 0; i < nrOfObj; i++) {
+	for (int i = 0; i < obj.size(); i++) {
 		
 		obj[i]->draw(gfx, true);
 	}
@@ -351,19 +347,19 @@ void Game::updateShaders(bool vs, bool ps)
 	if (vs)
 	{
 		DCube->updateVertexShader(gfx);
-		for (int i = 0; i < nrOfObj; i++) {
+		for (int i = 0; i < obj.size(); i++) {
 			obj[i]->updateVertexShader(gfx);
 		}
-		for (int i = 0; i < nrOfLight; i++) {
+		for (int i = 0; i < LightVisualizers.size(); i++) {
 			LightVisualizers[i]->updateVertexShader(gfx);
 		}
 	}
 	if (ps) {
 		DCube->updatePixelShader(gfx);
-		for (int i = 0; i < nrOfObj; i++) {
+		for (int i = 0; i < obj.size(); i++) {
 			obj[i]->updatePixelShader(gfx);
 		}
-		for (int i = 0; i < nrOfLight; i++) {
+		for (int i = 0; i < LightVisualizers.size(); i++) {
 			LightVisualizers[i]->updatePixelShader(gfx);
 		}
 	}

@@ -46,15 +46,17 @@ private:
 
 	//game objects
 	Light **light;
-	GameObject** LightVisualizers;
-	GameObject** obj;
+	std::vector<GameObject*> LightVisualizers;
+	std::vector<GameObject*> obj;
+	std::vector<GameObject*> stataicObj;
+	//GameObject** LightVisualizers;
+	//GameObject** obj;
 	BillBoardManager* billManager;
 	DynamicCube* DCube;
 	BillBoard *bill;
 
 	//var
-	int nrOfLight;
-	int nrOfObj;
+	int nrOfLight;//must still exist
 	float currentTime;
 
 	//debug var
