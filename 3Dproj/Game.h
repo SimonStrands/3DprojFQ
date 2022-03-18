@@ -15,6 +15,7 @@
 #include "ShadowMap.h"
 #include "Graphics.h"
 #include "DynamicCubeEnviroment.h"
+#include "QuadTree.h"
 
 //git
 class Game {
@@ -29,6 +30,7 @@ public:
 	void ForwardDrawCube();
 	void DrawAllShadowObject();//without any otherShaders
 	void updateShaders(bool vs = true, bool ps = true);
+	void setUpObject();
 private:
 	//width and height of window
 	MSG msg = {};
@@ -43,6 +45,7 @@ private:
 	Mouse* mus;
 	Camera* camera;
 	ShadowMap* shadowMap;
+	QuadTree* Qtree;
 
 	//game objects
 	Light **light;

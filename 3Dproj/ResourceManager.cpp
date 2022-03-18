@@ -61,7 +61,11 @@ void ResourceManager::loadThings(Graphics*& gfx)
 	std::string names[] = {
 		"roundsol.obj",
 		"stormtrooper.obj",
-		"DCube.obj"
+		"DCube.obj",
+		"stol.obj",
+		"Sting-Sword-lowpoly.obj",
+		"indoor_plant_02.obj",
+		"Camera.obj"
 	};
 	for (int i = 0; i < _countof(names); i++) {
 		ModelObj* model = new ModelObj("obj/" + names[i], gfx, def);

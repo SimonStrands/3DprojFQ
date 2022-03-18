@@ -35,7 +35,7 @@ const vec3 object::getRot()
     return this->rot;
 }
 
-const vec3 object::getScale()
+vec3 object::getScale()
 {
     return this->scale;
 }

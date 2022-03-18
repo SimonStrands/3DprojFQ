@@ -18,9 +18,12 @@ public:
 	void drawDefTest(ID3D11DeviceContext*& immediateContext);
 	void setTesselation(bool tess, Graphics*& gfx);
 	//0 = lowest 1 = highest
-	vec3* getBox();
+	void getBox(DirectX::XMVECTOR theReturn[]);
+	const bool isDrawed();
+	void clearDrawed();
 protected:
 	ModelObj* model;
 private:
 	bool tess;
+	bool drawed;
 };

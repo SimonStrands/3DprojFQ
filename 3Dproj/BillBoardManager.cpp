@@ -5,6 +5,10 @@
 BillBoardManager::BillBoardManager(Graphics*& gfx, ID3D11ShaderResourceView* SRV, int maxSize, vec3 orgin, vec3 sizeofArea):
 	anim()
 {
+	//if its not a multiple of 8 add so it is
+	if (maxSize % 8 != 0) {
+		maxSize += (8 - (maxSize % 8));
+	}
 	srand(time(NULL));
 	//load a Computeshader
 	loadCShader("BillBoardUpdate.cso", gfx->getDevice(), cUpdate);
@@ -101,7 +105,7 @@ void BillBoardManager::update(float dt, Graphics*& gfx)
 
 	gfx->get_IC()->CSSetUnorderedAccessViews(0, 1, &billUAV, nullptr);
 
-	gfx->get_IC()->Dispatch(this->billboards.size(), 1, 1);//calc how many groups we need
+	gfx->get_IC()->Dispatch(this->billboards.size()/8, 1, 1);//calc how many groups we need
 
 	//nulla unorderedaccesview
 	ID3D11UnorderedAccessView* nullUAV = nullptr;
@@ -163,8 +167,10 @@ void BillBoardManager::updateShader(Graphics*& gfx, vec3 camPos)
 	ZeroMemory(&resource, sizeof(D3D11_MAPPED_SUBRESOURCE));
 }
 
-void BillBoardManager::changeBehavior()
+void BillBoardManager::changeBehavior(ID3D11ComputeShader* cUpdate)
 {
+	this->cUpdate->Release();
+	this->cUpdate = cUpdate;
 }
 
 void BillBoardManager::changeNumberOfParticles(int nrOf)

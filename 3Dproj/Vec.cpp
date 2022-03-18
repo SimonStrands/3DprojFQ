@@ -26,7 +26,7 @@ void arrayToVec(std::array<float, 2> arr[3], vec2 vec[3])
 	}
 }
 //git
-void vec3::Normalize()
+vec3 vec3::Normalize()
 {
 	double i = sqrt(
 		(double)x * (double)x +
@@ -36,6 +36,7 @@ void vec3::Normalize()
 	this->x = (float)(x / i);
 	this->y = (float)(y / i);
 	this->z = (float)(z / i);
+	return vec3(x, y, z);
 }
 
 vec3 vec3::X(const vec3& other)
@@ -76,6 +77,11 @@ vec3 vec3::operator-(vec3& other)
 	return vec3(this->x - other.x, this->y - other.y, this->z - other.z);
 }
 
+vec3 vec3::mirror()
+{
+	return vec3(-this->x,-this->y,-this->z);
+}
+
 bool vec3::operator==(vec3& other)
 {
 	return (this->x == other.x && this->y == other.y && this->z == other.z);
@@ -93,6 +99,12 @@ void vec3::operator=(std::array<float, 3> other)
 	this->x = other[0];
 	this->y = other[1];
 	this->z = other[2];
+}
+
+const DirectX::XMVECTOR vec3::toXMvector()
+{
+	DirectX::XMVECTOR a = { x,y,z,1 };
+	return a;
 }
 
 float vec3::length()
@@ -145,4 +157,29 @@ void vec4::operator=(vec4 other)
 float vec4::length()
 {
 	return (float)sqrt((double)(xyz.x * xyz.x + xyz.y * xyz.y + xyz.z * xyz.z + w * w));
+}
+
+vec2 vec2::operator*(float other)
+{
+	return vec2(this->x * other, this->y * other);
+}
+
+vec2 vec2::operator+(vec2 other)
+{
+	return vec2(this->x + other.x, this->y + other.y);
+}
+
+vec2 vec2::operator-(vec2 other)
+{
+	return vec2(this->x - other.x, this->y - other.y);
+}
+
+vec2 vec2::operator/(vec2 other)
+{
+	return vec2(this->x / other.x, this->y / other.y);
+}
+
+float vec2::dot(vec2 a)
+{
+	return a.x*this->x + a.y*this->y;
 }

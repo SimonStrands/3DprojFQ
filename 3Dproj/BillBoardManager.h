@@ -24,7 +24,7 @@ public://later maybe change between them
 
 	void update(float dt, Graphics*& gfx);
 	void updateShader(Graphics*& gfx, vec3 camPos);
-	void changeBehavior();//whon't do anything in this project
+	void changeBehavior(ID3D11ComputeShader* cUpdate);
 	void changeNumberOfParticles(int nrOf);
 	void draw(Graphics*& gfx);
 private:

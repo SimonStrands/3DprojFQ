@@ -13,7 +13,7 @@ public:
 
 	vec3 getPos();
 	const vec3 getRot();
-	const vec3 getScale();
+	vec3 getScale();
 	const vec3 getPoint();
 
 	void changePos(vec3 pos);

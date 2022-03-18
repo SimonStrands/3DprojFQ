@@ -238,6 +238,7 @@ void readFace(std::string readWord, std::vector<vertex> &vertecies, std::vector<
 
 void getLowest(vec3 box[2], std::array<float, 3> vPos)
 {
+	//get the lowest
 	if (box[0].x < vPos[0]) {
 		box[0].x = vPos[0];
 	}
@@ -247,14 +248,15 @@ void getLowest(vec3 box[2], std::array<float, 3> vPos)
 	if (box[0].z < vPos[2]) {
 		box[0].z = vPos[2];
 	}
+	//get highest
 	if (box[1].x > vPos[0]) {
-		box[0].x = vPos[0];
+		box[1].x = vPos[0];
 	}
 	if (box[1].y > vPos[1]) {
-		box[0].y = vPos[1];
+		box[1].y = vPos[1];
 	}
 	if (box[1].z > vPos[2]) {
-		box[0].z = vPos[2];
+		box[1].z = vPos[2];
 	}
 }
 
@@ -267,7 +269,7 @@ bool readObjFile(std::vector<MeshObj>& Meshes, std::string fileName, std::vector
 	std::vector<std::array<float, 4>>vNorm;
 	bool ff = false;
 	int nrOfMeshesOffset = 0;
-	int currentMatrial = -1;
+	int currentMatrial = 0;
 
 	std::ifstream infile(fileName);
 	std::string readWord;
@@ -284,7 +286,7 @@ bool readObjFile(std::vector<MeshObj>& Meshes, std::string fileName, std::vector
 			createMesh(gfx, Meshes, vertecies, matrial[currentMatrial]);
 			nrOfMeshesOffset--;
 		}//read vertexes
-		else if (readWord.substr(0, 2) == "v ") {
+		if (readWord.substr(0, 2) == "v ") {
 			std::istringstream a;
 			vPos.resize(vPos.size() + 1);
 			a.str(readWord);
@@ -306,13 +308,13 @@ bool readObjFile(std::vector<MeshObj>& Meshes, std::string fileName, std::vector
 		}//read face
 		else if (readWord.substr(0, 1) == "f") {
 			readFace(readWord, vertecies, vPos, vUv, vNorm);
+			if (!ff) { nrOfMeshesOffset++; };
 			ff = true;
 		}
 		else if (readWord.substr(0, 6) == "usemtl") {
 			std::istringstream a;
 			a.str(readWord);
 			std::string mName;
-			nrOfMeshesOffset++;
 			a >> trash >> mName;
 			for (int i = 0; i < matrial.size(); i++) {
 				if (matrial[i].name == mName) {

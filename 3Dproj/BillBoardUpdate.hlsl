@@ -7,7 +7,7 @@ cbuffer Time
     float2 padding;
 };
 RWBuffer<float> particlePos;
-[numthreads(1, 1, 1)]//change this later
+[numthreads(8, 1, 1)]//change this later
 void main(uint3 DTid : SV_DispatchThreadID)
 {
     

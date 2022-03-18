@@ -51,7 +51,7 @@ struct Vcb : public CB{
 	struct {
 		DirectX::XMMATRIX element;
 	}projection;
-};
+}; 
 
 struct Pcb: CB {
 	struct {
@@ -157,6 +157,7 @@ public:
 	LCBGS* getLCB();
 	void setVView(DirectX::XMMATRIX &mat);
 	void setVProj(DirectX::XMMATRIX &mat);
+	void getViewFrustomPlanes(DirectX::XMFLOAT3 res[]);
 
 	ID3D11Device* getDevice();
 	ID3D11DeviceContext*& get_IC();

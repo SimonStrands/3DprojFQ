@@ -74,7 +74,8 @@ Graphics::Graphics(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 {
 	fov = 90.f;
 	ratio = 16.f / 9.f;
-	farPlane = 2000.f;
+	//farPlane = 2000.f;
+	farPlane = 200.f;
 	nearPlane = 0.1f;
 	nrOfObject = 0;
 	Pg_pConstantBuffer = nullptr;
@@ -317,6 +318,12 @@ ID3D11DomainShader** Graphics::getDS()
 IDXGISwapChain*& Graphics::getSwapChain()
 {
 	return this->swapChain;
+}
+void Graphics::getViewFrustomPlanes(DirectX::XMFLOAT3 res[])
+{
+	
+	//vec3 camPos = vec3(gcbd.cameraPos.element[0], gcbd.cameraPos.element[1], gcbd.cameraPos.element[2]);
+	//vec3 nearCenter = 
 }
 ID3D11InputLayout** Graphics::getInputL()
 {

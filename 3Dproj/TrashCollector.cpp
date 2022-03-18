@@ -7,12 +7,14 @@ TC& TC::GetInst()
 
 void TC::empty()
 {
-    for (int i = 0; i < shaderRSV.size(); i++) {
-        if (shaderRSV[i] != nullptr) {
-            shaderRSV[i]->Release();
-        }
-    }
+    //for (int i = 0; i < Matrial.size(); i++) {
+    //}
 }
+
+//void TC::add(Material& matrial)
+//{
+//    Matrial.push_back(matrial);
+//}
 
 void TC::add(ID3D11ShaderResourceView* SRV)
 {

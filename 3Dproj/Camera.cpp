@@ -2,7 +2,7 @@
 #include <iostream>
 //git
 
-Camera::Camera(Graphics *&gfx, Mouse* mus, vec3 pos)
+Camera::Camera(Graphics *&gfx, Mouse* mus, vec3 pos, vec3 rot)
 {
 	this->Lcbd = gfx->getLCB();
 	this->Vcbd = gfx->getVcb();
@@ -11,8 +11,10 @@ Camera::Camera(Graphics *&gfx, Mouse* mus, vec3 pos)
 	this->xCamPos = pos.x;
 	this->yCamPos = pos.y;
 	this->zCamPos = pos.z;
-	this->xCamRot = 0;
-	this->yCamRot = 0;
+
+	this->xCamRot = rot.x;
+	this->yCamRot = rot.y;
+	this->zCamRot = rot.z;
 }
 
 Camera::~Camera()
@@ -61,6 +63,39 @@ vec3 Camera::getRot()
 	return vec3(xCamRot, yCamRot, 0);
 }
 
+void Camera::calcFUL()
+{
+	DirectX::XMMATRIX viewMatrix = DirectX::XMMATRIX(
+		1.0f, 0.0f, 0.0f, 0.0f,
+		0.0f, 1.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 1.0f, 0.0f,
+		-xCamPos, -yCamPos, -zCamPos, 1.0f
+	);
+	rotaiton(viewMatrix);
+
+
+	//just add it to the pixel shader
+	movement();
+	FUL[0] = vec3(viewMatrix.r->m128_f32[2], viewMatrix.r->m128_f32[6], viewMatrix.r->m128_f32[10]);
+	FUL[1] = vec3(viewMatrix.r->m128_f32[1], viewMatrix.r->m128_f32[5], viewMatrix.r->m128_f32[9]);
+	FUL[2] = vec3(viewMatrix.r->m128_f32[0], viewMatrix.r->m128_f32[4], viewMatrix.r->m128_f32[8]);
+}
+
+vec3 Camera::getForwardVec()
+{
+	return FUL[0];
+}
+
+vec3 Camera::getUpVector()
+{
+	return FUL[1];
+}
+
+vec3 Camera::getLeftVector()
+{
+	return FUL[2];
+}
+
 void Camera::setRotation(vec3 newRot)
 {
 	this->xCamRot = newRot.x;
@@ -78,6 +113,7 @@ void Camera::rotaiton(DirectX::XMMATRIX &matrix)
 {
 	XRotation(matrix, xCamRot);
 	YRotation(matrix, yCamRot);
+	//ZRotation(matrix, zCamRot);
 }
 
 void Camera::movement()
@@ -139,7 +175,7 @@ void Camera::Translate(float dt)
 {
 	DirectX::XMStoreFloat3(&translation, DirectX::XMVector3Transform(
 		DirectX::XMLoadFloat3(&translation),
-		DirectX::XMMatrixRotationRollPitchYaw(yCamRot, xCamRot, 0.0) *
+		DirectX::XMMatrixRotationRollPitchYaw(yCamRot, xCamRot, 0) *
 		DirectX::XMMatrixScaling(1, 1, 1)//this line is not neccessary but I am afraid to break things
 	));
 	vec2 trans(translation.x, translation.z);

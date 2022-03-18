@@ -1,6 +1,7 @@
 #pragma once
 #include <math.h>
 #include <array>
+#include <DirectXMath.h>
 //git
 
 
@@ -16,12 +17,18 @@ struct vec2 {
 	float legth() {
 		return (float)sqrt(x * x + y * y);
 	}
-	void Normalize() {
+	vec2 Normalize() {
 		float le = this->legth();
 		this->x /= le;
 		this->y /= le;
+		return vec2(x,y);
 	}
 	float x, y;
+	vec2 operator*(float other);
+	vec2 operator+(vec2 other);
+	vec2 operator-(vec2 other);
+	vec2 operator/(vec2 other);
+	float dot(vec2 a);
 };
 struct vec3 {
 	vec3(float a, float b, float c) {
@@ -35,7 +42,7 @@ struct vec3 {
 		this->z = 0;
 	}
 
-	void Normalize();
+	vec3 Normalize();
 	vec3 X(const vec3& other);
 	float operator*(vec3& other);//dot
 	vec3 operator*(float& other);
@@ -43,9 +50,11 @@ struct vec3 {
 	vec3 mul(vec3 other);
 	vec3 operator+(vec3 other);
 	vec3 operator-(vec3& other);
+	vec3 mirror();
 	bool operator==(vec3& other);
 	void operator=(vec3 other);
 	void operator=(std::array<float, 3> other);
+	const DirectX::XMVECTOR toXMvector();
 	float length();
 
 	float x;

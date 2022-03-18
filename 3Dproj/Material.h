@@ -58,20 +58,22 @@ struct Material {
 		
 	}
 	void begone() {
-		for (int i = 0; i < 4; i++) {
-			if (flags.Maps[i]) {
-				if (texSRVPS[i] != nullptr) {
-					texSRVPS[i]->Release();
-				}
-			}
-		}
-		for (int i = 0; i < 1; i++) {
-			if (texSRVDS[i] != nullptr) {
-				texSRVDS[i]->Release();
-			}
-		}
-		delete[] texSRVDS;
-		delete[] texSRVPS;
+		//for (int i = 0; i < 4; i++) {
+		//	if (flags.Maps[i]) {
+		//		if (texSRVPS[i] != nullptr) {
+		//			texSRVPS[i]->Release();
+		//			texSRVPS[i] = nullptr;
+		//		}
+		//	}
+		//}
+		//for (int i = 0; i < 1; i++) {
+		//	if (texSRVDS[i] != nullptr) {
+		//		texSRVDS[i]->Release();
+		//		texSRVDS[i] = nullptr;
+		//	}
+		//}
+		//delete[] texSRVDS;
+		//delete[] texSRVPS;
 	}
 	textureFlags flags;
 	float Ns = 0;
