@@ -41,9 +41,9 @@ void ImguiManager::updateRender(int lightNr)
 	}
 	std::string name = "light" + std::to_string(lightNr);
 	if (ImGui::Begin(name.c_str())) {
-		ImGui::SliderFloat("Xpos", &light[lightNr]->getPos().x, 40.0f, -40.0f);
-		ImGui::SliderFloat("Ypos", &light[lightNr]->getPos().y, 40.0f, -40.0f);
-		ImGui::SliderFloat("Zpos", &light[lightNr]->getPos().z, 40.0f, -40.0f);
+		ImGui::SliderFloat("Xpos", &light[lightNr]->getPos().x, 60.0f, -60.0f);
+		ImGui::SliderFloat("Ypos", &light[lightNr]->getPos().y, 60.0f, -60.0f);
+		ImGui::SliderFloat("Zpos", &light[lightNr]->getPos().z, 60.0f, -60.0f);
 		ImGui::SliderFloat("XRot", &light[lightNr]->getRotation().x, 6.3f, -6.3f);
 		ImGui::SliderFloat("YRot", &light[lightNr]->getRotation().y, 6.3f, -6.3f);
 		ImGui::SliderFloat("ZRot", &light[lightNr]->getRotation().z, 6.3f, -6.3f);

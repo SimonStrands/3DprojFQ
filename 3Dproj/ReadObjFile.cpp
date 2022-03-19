@@ -1,6 +1,6 @@
 #include "ReadObjFile.h"
 #include <DirectXMath.h>
-
+#include "TrashCollector.h"
 
 std::vector<vec3> calcTangent(vertex* vex1, vertex* vex2, vertex* vex3)
 {
@@ -64,14 +64,14 @@ void fixtangent(std::vector<vertex> &vertecies)
 	}
 }
 
-bool getMatrialFromFile(std::string fileName, std::vector<Material> &matrial, Graphics*& gfx, ID3D11ShaderResourceView** def)
+bool getMatrialFromFile(std::string fileName, std::vector<Material*> &matrial, Graphics*& gfx, ID3D11ShaderResourceView** def)
 {
 	std::ifstream infile(fileName);
 	std::string readWord;
 	std::string trash;
 	std::string mtlname;
 	std::string mapName;
-	int CTR = 0;
+	int CTR = -1;
 	
 	if (!infile.is_open()) {
 		printf("cannot open textures");
@@ -89,70 +89,67 @@ bool getMatrialFromFile(std::string fileName, std::vector<Material> &matrial, Gr
 	infile.close();
 	infile.open("obj/" + mtlname);
 	if (done && infile.is_open()) {
-		matrial.resize(1);
 		while (std::getline(infile, readWord)) {
 			if (readWord.substr(0, 6) == "newmtl") {
 				CTR++;
-				matrial.resize(CTR + 1);
-				matrial[matrial.size() - 1] = Material(def);
+				matrial.resize(CTR + 1, new Material(def));
 				std::istringstream a;
 				std::string b;
 				a.str(readWord);
-				a >> trash >> matrial[CTR].name;
+				a >> trash >> matrial[CTR]->name;
 			}
 			else if (readWord.substr(0, 2) == "Ns") {
 				//do something
 				std::istringstream a;
 				std::string b;
 				a.str(readWord);
-				a >> trash >> matrial[CTR].Ns;
+				a >> trash >> matrial[CTR]->Ns;
 			}
 			else if (readWord.substr(0, 2) == "Ka") {
 				//ambient
 				std::istringstream a;
 				a.str(readWord);
-				a >> trash >> matrial[CTR].Ka[0] >> matrial[CTR].Ka[1] >> matrial[CTR].Ka[2];
+				a >> trash >> matrial[CTR]->Ka[0] >> matrial[CTR]->Ka[1] >> matrial[CTR]->Ka[2];
 			}
 			else if (readWord.substr(0, 2) == "Kd") {
 				//deffuse
 				std::istringstream a;
 				a.str(readWord);
-				a >> trash >> matrial[CTR].Kd[0] >> matrial[CTR].Kd[1] >> matrial[CTR].Kd[2];
+				a >> trash >> matrial[CTR]->Kd[0] >> matrial[CTR]->Kd[1] >> matrial[CTR]->Kd[2];
 			}
 			else if (readWord.substr(0, 2) == "Ks") {
 				//deffuse
 				std::istringstream a;
 				a.str(readWord);
-				a >> trash >> matrial[CTR].Ks[0] >> matrial[CTR].Ks[1] >> matrial[CTR].Ks[2];
+				a >> trash >>  matrial[CTR]->Ks[0] >> matrial[CTR]->Ks[1] >> matrial[CTR]->Ks[2];
 			}
 			else if (readWord.substr(0, 6) == "map_Ka") {
 				//map_ambient
 				std::istringstream a;
 				a.str(readWord);
-				//a >> trash >> theReturn[CTR].Map_Ka;
 				a >> trash >> mapName;
-				matrial[CTR].loadTexture(mapName, gfx, 1, def);
+				matrial[CTR]->loadTexture(mapName, gfx, 1, def);
 			}
 			else if (readWord.substr(0, 6) == "map_Kd") {
 				//map_diffuse
 				std::istringstream a;
 				a.str(readWord);
 				a >> trash >> mapName;
-				matrial[CTR].loadTexture(mapName, gfx, 0, def);
+				matrial[CTR]->loadTexture(mapName, gfx, 0, def);
 			}
 			else if (readWord.substr(0, 6) == "map_Ks") {
 				//map_Specular
 				std::istringstream a;
 				a.str(readWord);
 				a >> trash >> mapName;
-				matrial[CTR].loadTexture(mapName, gfx, 2, def);
+				matrial[CTR]->loadTexture(mapName, gfx, 2, def);
 			}
 			else if (readWord.substr(0, 4) == "disp") {
 				//map_Specular
 				std::istringstream a;
 				a.str(readWord);
 				a >> trash >> mapName;
-				matrial[CTR].loadTexture(mapName, gfx, 4, def);
+				matrial[CTR]->loadTexture(mapName, gfx, 4, def);
 			}
 			else if (readWord.substr(0, 8) == "map_Bump") {
 				//map_normal
@@ -163,7 +160,7 @@ bool getMatrialFromFile(std::string fileName, std::vector<Material> &matrial, Gr
 				while (a >> b && !done) {
 					if (!(b.substr(0, 2) == "-bm" || b.substr(0, 8) == "map_Bump" || int(b[0]) < 58)) {
 						done = true;
-						matrial[CTR].loadTexture(b, gfx, 3, def);
+						matrial[CTR]->loadTexture(b, gfx, 3, def);
 					}
 				}
 			}
@@ -173,29 +170,26 @@ bool getMatrialFromFile(std::string fileName, std::vector<Material> &matrial, Gr
 		//we didnt get what we wanted
 		return false;
 	}
+	if (matrial.size() == 0) {
+		matrial.push_back(new Material(def));
+	}
+	for (int i = 0; i < matrial.size(); i++) {
+		TC::GetInst().add(matrial[i]);
+	}
 	return true;
 }
 
-struct objData {
-	std::vector<std::array<float, 3>>vPos;
-	std::vector<std::array<float, 2>>vUv;
-	std::vector<std::array<float, 4>>vNorm;
-	std::vector<vertex> vertecies;
-	MeshObj createMesh() {
 
-	}
-};
-
-void createMesh(Graphics*& gfx, std::vector<MeshObj> &Meshes, std::vector<vertex> &vertecies, Material& matrial) {
+void createMesh(Graphics*& gfx, std::vector<MeshObj> &Meshes, std::vector<vertex> &vertecies, Material* matrial) {
 	fixtangent(vertecies);
 	Meshes.push_back(MeshObj(gfx, vertecies, matrial));
-	if (matrial.flags.Maps[3]) {
+	if (matrial->flags.Maps[3]) {
 		Meshes[Meshes.size() - 1].SetShaders(gfx->getVS()[0], gfx->getPS()[0]);
 	}
 	else {
 		Meshes[Meshes.size() - 1].SetShaders(gfx->getVS()[0], gfx->getPS()[2]);
 	}
-	if (matrial.flags.Maps[4]) {
+	if (matrial->flags.Maps[4]) {
 		Meshes[Meshes.size() - 1].SetShaders(gfx->getVS()[2]);
 		Meshes[Meshes.size() - 1].SetShaders(gfx->getHS()[0], gfx->getDS()[0]);
 	}
@@ -260,7 +254,7 @@ void getLowest(vec3 box[2], std::array<float, 3> vPos)
 	}
 }
 
-bool readObjFile(std::vector<MeshObj>& Meshes, std::string fileName, std::vector<Material> matrial, Graphics*& gfx, vec3 box[2])
+bool readObjFile(std::vector<MeshObj>& Meshes, std::string fileName, std::vector<Material*> &matrial, Graphics*& gfx, vec3 box[2])
 {
 
 	std::vector<vertex> vertecies;
@@ -317,7 +311,7 @@ bool readObjFile(std::vector<MeshObj>& Meshes, std::string fileName, std::vector
 			std::string mName;
 			a >> trash >> mName;
 			for (int i = 0; i < matrial.size(); i++) {
-				if (matrial[i].name == mName) {
+				if (matrial[i]->name == mName) {
 					currentMatrial = i;
 				}
 			}
@@ -332,7 +326,7 @@ bool readObjFile(std::vector<MeshObj>& Meshes, std::string fileName, std::vector
 	}
 	return true;
 }
-
+/*
 bool readObjFile2(std::vector<MeshObj>& Meshes, std::string fileName, std::vector<Material> matrial, Graphics *& gfx)
 {
 	std::string* sTemp;
@@ -461,4 +455,4 @@ bool readObjFile2(std::vector<MeshObj>& Meshes, std::string fileName, std::vecto
 	
 	return true;
 }
-
+*/

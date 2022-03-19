@@ -16,6 +16,7 @@
 #include "Graphics.h"
 #include "DynamicCubeEnviroment.h"
 #include "QuadTree.h"
+#include "TrashCollector.h"
 
 //git
 class Game {

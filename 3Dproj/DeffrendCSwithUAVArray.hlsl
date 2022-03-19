@@ -39,6 +39,7 @@ void main(uint3 DTid : SV_DispatchThreadID)
             const float4 shadowHomo = mul(shadowCamera, lightViewProj[i]);
             float4 shadowMapCoords = shadowHomo * float4(0.5, -0.5, 1.0f, 1.0f) + (float4(0.5f, 0.5f, 0.0f, 0.0f) * shadowHomo.w);
             shadowMapCoords.xyz = shadowMapCoords.xyz / shadowMapCoords.w;
+            //float4 SM = shadowMapping.Load(int4(shadowMapCoords.x * SMWIDTH, shadowMapCoords.y * SMHEIGHT, i, 0));
             float4 SM = shadowMapping.Load(int4(shadowMapCoords.x * SMWIDTH, shadowMapCoords.y * SMHEIGHT, i, 0));
             //ambient
             float3 ambient_light = gAmbient.xyz * lightColor;

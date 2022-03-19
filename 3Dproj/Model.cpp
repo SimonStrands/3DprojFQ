@@ -116,7 +116,7 @@ void ModelObj::draw(Graphics*& gfx, bool sm)
 	for (int i = 0; i < mMeshes.size(); i++) {
 		if (!sm) {
 			this->mMeshes[i].SetShader(gfx->get_IC());
-			if (this->mMeshes[i].getMatrial().flags.Maps[4]) {
+			if (this->mMeshes[i].getMatrial()->flags.Maps[4]) {
 				gfx->get_IC()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST);
 			}
 			else {
@@ -124,7 +124,7 @@ void ModelObj::draw(Graphics*& gfx, bool sm)
 			}
 		}
 		else{
-			if (this->mMeshes[i].getMatrial().flags.Maps[4]) {
+			if (this->mMeshes[i].getMatrial()->flags.Maps[4]) {
 				this->mMeshes[i].SetShader(gfx->get_IC(), 1);
 				//have no idea why this work but if it aint broke don't fix it
 				gfx->get_IC()->IASetInputLayout(gfx->getInputL()[0]);

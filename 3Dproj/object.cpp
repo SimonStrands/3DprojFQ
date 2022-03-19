@@ -143,7 +143,7 @@ void object::updateVertexShader(Graphics*& gfx)
 {
     DirectX::XMMATRIX rot(DirectX::XMMatrixRotationRollPitchYaw(this->getRot().x, this->getRot().y, this->getRot().z));
 
-    DirectX::XMMATRIX scal(
+    DirectX::XMMATRIX scale(
         this->getScale().x, 0.0f, 0.0f, 0.0f,
         0.0f, this->getScale().y, 0.0f, 0.0f,
         0.0f, 0.0f, this->getScale().z, 0.0f,
@@ -162,7 +162,8 @@ void object::updateVertexShader(Graphics*& gfx)
         0.0f, 0.0f, 1.0f, 0.0f,
         this->getPoint().x, this->getPoint().y, this->getPoint().z, 1.0f
     );
-    DirectX::XMMATRIX rts = point * (scal * (rot * trans));
+    //DirectX::XMMATRIX rts = point * (scale * (rot * trans));
+    DirectX::XMMATRIX rts = point * (scale * rot * trans);
 
     gfx->getVcb()->transform.element = rts;
 

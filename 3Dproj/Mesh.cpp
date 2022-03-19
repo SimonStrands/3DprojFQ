@@ -1,12 +1,12 @@
 #include "Mesh.h"
 
-MeshObj::MeshObj(Graphics*& gfx, std::vector<vertex> vertecies, Material &material)
+MeshObj::MeshObj(Graphics*& gfx, std::vector<vertex> vertecies, Material *material)
 {
 	this->HS = nullptr;
 	this->DS = nullptr;
 	this->nrOfVertexes = (int)vertecies.size();
-	CreateVertexBuffer(gfx->getDevice(), vertecies, this->vertexBuffer);
 	this->matrial = material;
+	CreateVertexBuffer(gfx->getDevice(), vertecies, this->vertexBuffer);
 	CreateVertexConstBuffer(gfx, this->Pg_pConstantBuffer);
 }
 
@@ -18,7 +18,6 @@ void MeshObj::begone()
 	if (this->Pg_pConstantBuffer != nullptr) {
 		this->Pg_pConstantBuffer->Release();
 	}
-	matrial.begone();
 	for (int i = 0; i < SubMeshes.size(); i++) {
 		SubMeshes[i].begone();
 	}
@@ -35,7 +34,7 @@ ID3D11Buffer*& MeshObj::getVertexBuffer()
 
 ID3D11ShaderResourceView** MeshObj::getTextures()
 {
-	return this->matrial.texSRVPS;
+	return this->matrial->texSRVPS;
 }
 
 int& MeshObj::getNrOfVertex()
@@ -48,11 +47,11 @@ int& MeshObj::getNrOfVertex()
 void MeshObj::getKdKaKsNs(float(&kd)[4], float(&ka)[4], float(&ks)[4])
 {
 	for (int i = 0; i < 3; i++) {
-		kd[i] = this->matrial.Kd[i];
-		ka[i] = this->matrial.Ka[i];
-		ks[i] = this->matrial.Ks[i];
+		kd[i] = this->matrial->Kd[i];
+		ka[i] = this->matrial->Ka[i];
+		ks[i] = this->matrial->Ks[i];
 	}
-	ks[3] = matrial.Ns;
+	ks[3] = matrial->Ns;
 	kd[3] = 1.f;
 	ka[3] = 1.f;
 }
@@ -62,8 +61,8 @@ void MeshObj::draw(ID3D11DeviceContext*& immediateContext, bool sm)
 	UINT offset = 0;
 	static UINT strid = sizeof(vertex);
 
-	immediateContext->DSSetShaderResources(0, 1, this->matrial.texSRVDS);
-	immediateContext->PSSetShaderResources(0, 4, this->matrial.texSRVPS);
+	immediateContext->DSSetShaderResources(0, 1, this->matrial->texSRVDS);
+	immediateContext->PSSetShaderResources(0, 4, this->matrial->texSRVPS);
 	immediateContext->PSSetConstantBuffers(0, 1, &this->Pg_pConstantBuffer);
 	immediateContext->IASetVertexBuffers(0, 1, &this->vertexBuffer, &strid, &offset);
 	immediateContext->Draw(this->nrOfVertexes, 0);
@@ -124,9 +123,9 @@ void MeshObj::updatePS(Graphics*& gfx)
 	ZeroMemory(&resource, sizeof(D3D11_MAPPED_SUBRESOURCE));
 }
 
-Material& MeshObj::getMatrial()
+Material* MeshObj::getMatrial()
 {
-	return this->matrial;
+	return matrial;
 }
 
 

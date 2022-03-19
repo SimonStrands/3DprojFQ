@@ -11,7 +11,7 @@
 //for obj only
 class MeshObj {
 public:
-	MeshObj(Graphics*& gfx, std::vector<vertex> vertecies, Material &material);
+	MeshObj(Graphics*& gfx, std::vector<vertex> vertecies, Material *material);
 	void begone();
 	virtual ~MeshObj();
 	ID3D11Buffer*& getVertexBuffer();
@@ -25,7 +25,7 @@ public:
 	void SetShaders(ID3D11HullShader* HS, ID3D11DomainShader* DS);
 	void SetShader(ID3D11DeviceContext*& immediateContext, int flag = 0);
 	void updatePS(Graphics*& gfx);
-	Material &getMatrial();
+	Material *getMatrial();
 	//DEBUG
 	ID3D11PixelShader* PS;
 	ID3D11VertexShader* VS;
@@ -34,7 +34,7 @@ public:
 private:
 	int nrOfVertexes;
 	bool defTexture[4] = { false, false, false, false };
-	Material matrial;
+	Material* matrial;
 	ID3D11Buffer* vertexBuffer;
 	ID3D11Buffer* Pg_pConstantBuffer;
 

@@ -24,6 +24,7 @@ public:
 
 private:
 	bool initCubeMapping(Graphics*& gfx);
+
 	ID3D11ShaderResourceView* CubeResV;
 	ID3D11Texture2D* CubeTex;
 	ID3D11ComputeShader* CSShader;
@@ -32,6 +33,7 @@ private:
 
 	ID3D11UnorderedAccessView** UAVs;
 	ID3D11RenderTargetView** RTV;
+
 	D3D11_VIEWPORT DviewPort;
 	DeferredRendering dCubeDeff;
 };

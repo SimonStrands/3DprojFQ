@@ -38,7 +38,6 @@ DirectX::XMMATRIX SpotLight::getLightViewProj()
 	XRotation(temp, rot.x);
 	YRotation(temp, rot.y);
 	temp = -temp * Projection;
-	//temp = FlipDiagonal(temp);
 	return temp;
 }
 

@@ -33,9 +33,12 @@ DynamicCube::~DynamicCube()
 	if (dsTexture != nullptr) {
 		dsTexture->Release();
 	}
-	//for (int i = 0; i < 6; i++) {
-	//	if ()
-	//}
+	for (int i = 0; i < 6; i++) {
+		UAVs[i]->Release();
+		RTV[i]->Release();
+	}
+	delete[] UAVs;
+	delete[] RTV;
 }
 
 void DynamicCube::draw(ID3D11DeviceContext*& immediateContext)

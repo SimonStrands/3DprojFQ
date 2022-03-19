@@ -43,7 +43,7 @@ void GameObject::setTesselation(bool tess, Graphics*& gfx)
 {
 	for (int i = 0; i < model->getMehses().size(); i++) {
 	
-		model->getMehses()[i].getMatrial().flags.Maps[4] = tess;
+		model->getMehses()[i].getMatrial()->flags.Maps[4] = tess;
 		if (tess) {
 			model->getMehses()[i].SetShaders(gfx->getVS()[2]);
 			model->getMehses()[i].SetShaders(gfx->getHS()[1], gfx->getDS()[1]);

@@ -224,6 +224,7 @@ void Graphics::Update(float dt, vec3 camPos)
 	}
 	LCBG.projection.element = vcbd.projection.element;
 	for (int i = 0; i < nrOfLights; i++) {
+		//LCBG.lightView.element[i] = this->light[i]->getLightViewProj();
 		LCBG.lightView.element[i] = this->light[i]->getLightViewProj();
 		LCBG.lightPos.element[i][0] = light[i]->getPos().x;
 		LCBG.lightPos.element[i][1] = light[i]->getPos().y;
