@@ -9,11 +9,11 @@ Game::Game(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWS
 	//Resource manager
 	rm = new ResourceManager(gfx);
 	//we need mor light
-	nrOfLight = 2;
+	nrOfLight = 1;
 	gfx->getLCB()->nrOfLights.element = nrOfLight;
 	light = new Light * [nrOfLight];
-	light[0] = new SpotLight(vec3(1,0.2,0), vec3(0.1,0,-1));
-	light[1] = new DirLight(vec3(0,0,0), vec3(0, 0, -1));
+	light[0] = new SpotLight(vec3(1,0.2,0), vec3(0,-1,0));
+	//light[1] = new DirLight(vec3(0,0,0), vec3(0, -1, 0));
 	//light[2] = new SpotLight(vec3(10,0,0), vec3(0.f,0.f,-1.f));
 	//light[3] = new SpotLight(vec3(-10,0,0), vec3(0,0,-1));
 
@@ -25,16 +25,12 @@ Game::Game(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWS
 	camera = new Camera(gfx, mus, vec3(0,0,0));
 
 	//////OBJECTS///////////
-	nrOfObj = 7;
+	nrOfObj = 2;
 	obj = new GameObject * [nrOfObj];
 	//OBJECTS
-	obj[0] = new GameObject(rm->get_Ball(), gfx, vec3(0.f, 0.f, 10.f), vec3(0.f, 0.f, 0.f), vec3(2.f, 2.0f, 2.0f));
-	obj[1] = new GameObject(rm->get_Stol(), gfx, vec3(10.f, 5.f, 10.f), vec3(-1.56f, 1.56f, 3.2f), vec3(1.f, 1.f, 1.f));
-	obj[2] = new GameObject(rm->get_IDK(), gfx, vec3(0.f, 5.f, 20.f), vec3(-1.6f, -1.6f, 3.2f), vec3(20.f, 20.f, 20.f));
-	obj[3] = new GameObject(rm->get_IDK(), gfx, vec3(20.f, 5.f, 0.f), vec3(-1.6f, 0.f, 3.2f), vec3(20.f, 20.f, 20.f));
-	obj[4] = new GameObject(rm->get_IDK(), gfx, vec3(0.f, 5.f, -20.f), vec3(-1.6f, 1.6f, 3.2f), vec3(20.f, 20.f, 20.f));
-	obj[5] = new GameObject(rm->get_IDK(), gfx, vec3(-20.f, 5.f, 0.f), vec3(-1.6f, 3.f, 3.2f), vec3(20.f, 20.f, 20.f));
-	obj[6] = new GameObject(rm->get_Models("stormtrooper.obj"), gfx, vec3(0.f, 0.f, -5.f), vec3(0.f, 1.56f, 0.f), vec3(1.f, 1.f, 1.f));
+	obj[0] = new GameObject(rm->get_IDK(), gfx, vec3(0.f, -2.f, 0.f), vec3(0.f, 0.f, 1.58), vec3(2.f, 2.0f, 2.0f));
+	obj[1] = new GameObject(rm->get_IDK(), gfx, vec3(0.f, -5.f, 0.f), vec3(0.f, 0.f, 1.58f), vec3(2.f, 2.0f, 2.0f));
+
 	obj[0]->setTesselation(false, gfx);
 
 
@@ -52,7 +48,8 @@ Game::Game(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWS
 	for (int i = 0; i < nrOfLight; i++) {
 		UIManager.takeLight(light[i]);
 	}
-	UIManager.takeObject(DCube);
+	UIManager.takeObject(obj[0]);
+	UIManager.takeObject(obj[1]);
 	
 	
 	gfx->takeLight((SpotLight**)light, nrOfLight);

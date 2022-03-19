@@ -38,7 +38,7 @@ void main( uint3 DTid : SV_DispatchThreadID )
             float4 SM = shadowMapping.Load(int4(shadowMapCoords.x * SMWIDTH, shadowMapCoords.y * SMHEIGHT, i, 0));
             //ambient
             float3 ambient_light = gAmbient.xyz * lightColor;
-            if (SM.r > shadowMapCoords.z - 0.0001 &&
+            if (SM.r > shadowMapCoords.z - 0.000 &&
 				shadowMapCoords.x < 1 && shadowMapCoords.x > 0 &&
 				shadowMapCoords.y < 1 && shadowMapCoords.y > 0 &&
                 dot(normal.xyz, lightDir.xyz) > -0.1
