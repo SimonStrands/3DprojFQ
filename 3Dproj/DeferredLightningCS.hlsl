@@ -38,7 +38,7 @@ void main( uint3 DTid : SV_DispatchThreadID )
             
             //ambient
             float3 ambient_light = gAmbient.xyz * lightColor;
-            float bias = 0.f;
+            float bias = 0.00001f;
             if (SM.r > shadowMapCoords.z - bias &&
                 shadowMapCoords.z <= 1.0f &&//E
 				shadowMapCoords.x < 1 && shadowMapCoords.x > 0 &&

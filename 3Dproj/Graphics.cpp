@@ -74,8 +74,7 @@ Graphics::Graphics(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 {
 	fov = 90.f;
 	ratio = 16.f / 9.f;
-	//farPlane = 2000.f;
-	farPlane = 200.f;
+	farPlane = 2000.f;
 	nearPlane = 0.1f;
 	nrOfObject = 0;
 	Pg_pConstantBuffer = nullptr;

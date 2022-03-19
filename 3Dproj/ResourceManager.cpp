@@ -53,18 +53,18 @@ void ResourceManager::loadThings(Graphics*& gfx)
 	def[3] = nullptr;
 	//mesh
 	
-	//ball = new ModelObj("obj/GroundLowPloy.obj", gfx, def);
-	//
-	//stol = new ModelObj("obj/DoubleMesh.obj" , gfx, def);
+	ball = new ModelObj("obj/GroundLowPloy.obj", gfx, def);
+	
+	stol = new ModelObj("obj/DoubleMesh.obj" , gfx, def);
 	
 	IDK = new  ModelObj("obj/quad2.obj"     , gfx, def);
 	std::string names[] = {
 		"roundsol.obj",
-		//"stormtrooper.obj",
-		//"DCube.obj",
-		//"stol.obj",
-		//"Sting-Sword-lowpoly.obj",
-		//"indoor_plant_02.obj",
+		"stormtrooper.obj",
+		"DCube.obj",
+		"stol.obj",
+		"Sting-Sword-lowpoly.obj",
+		"indoor_plant_02.obj",
 		"Camera.obj"
 	};
 	for (int i = 0; i < _countof(names); i++) {
