@@ -163,13 +163,13 @@
     <ClCompile Include="AnimationModel.cpp" />
     <ClCompile Include="BillBoard.cpp" />
     <ClCompile Include="BillBoardManager.cpp" />
-    <ClCompile Include="Bone.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Collision.cpp" />
     <ClCompile Include="Convertions.cpp" />
     <ClCompile Include="CreateBuffer.cpp" />
     <ClCompile Include="D311Helper.cpp" />
     <ClCompile Include="debug.cpp" />
+    <ClCompile Include="DebugCamera.cpp" />
     <ClCompile Include="DeferredRendering.cpp" />
     <ClCompile Include="deltaTime.cpp" />
     <ClCompile Include="DepthStencil.cpp" />
@@ -201,7 +201,6 @@
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="rotation.cpp" />
     <ClCompile Include="ShadowMap.cpp" />
-    <ClCompile Include="Textures.cpp" />
     <ClCompile Include="TileAnimation.cpp" />
     <ClCompile Include="TrashCollector.cpp" />
     <ClCompile Include="Vec.cpp" />
@@ -218,6 +217,7 @@
     <ClInclude Include="Convertions.h" />
     <ClInclude Include="D311Helper.h" />
     <ClInclude Include="debug.h" />
+    <ClInclude Include="DebugCamera.h" />
     <ClInclude Include="DeferredRendering.h" />
     <ClInclude Include="deltaTime.h" />
     <ClInclude Include="DepthStencil.h" />

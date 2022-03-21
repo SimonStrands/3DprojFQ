@@ -18,6 +18,8 @@
 #include "QuadTree.h"
 #include "TrashCollector.h"
 
+#include "DebugCamera.h"
+
 //git
 class Game {
 public:
@@ -47,6 +49,8 @@ private:
 	Camera* camera;
 	ShadowMap* shadowMap;
 	QuadTree* Qtree;
+
+	DebugCamera* DCam;
 
 	//game objects
 	Light **light;

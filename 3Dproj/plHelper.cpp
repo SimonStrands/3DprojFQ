@@ -313,10 +313,6 @@ bool SetupPipeline(ID3D11Device* device, ID3D11VertexShader**& vShader,
 		std::cerr << "cant load inputlayout2" << std::endl;
 		return false;
 	}
-	/*if (!CreateInputLayoutOwn(device, inputLayout[2], vShaderByteCode[2], inputDesc, 7)) {
-		std::cerr << "cant load inputlayout 3" << std::endl;
-		return false;
-	}*/
 	if (!CreateSamplerState(device, sampler))
 	{
 		std::cerr << "cant load sampler" << std::endl;

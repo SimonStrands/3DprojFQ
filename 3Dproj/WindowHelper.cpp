@@ -29,7 +29,7 @@ bool setUpWindow(HINSTANCE hInstance, UINT WIDTH, UINT HEIGHT, int nCmdShow, HWN
 
 	RegisterClass(&wc);
 																	//CW_USEDEFAULT
-	wnd = CreateWindowEx(0, CLASS_NAME, L"hej", WS_OVERLAPPEDWINDOW, 1850, 100, WIDTH, HEIGHT, nullptr, nullptr, hInstance, nullptr);
+	wnd = CreateWindowEx(0, CLASS_NAME, L"hej", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, 0, WIDTH, HEIGHT, nullptr, nullptr, hInstance, nullptr);
 
 	if (wnd == nullptr) {
 		std::cout << "cant create window" << std::endl;
@@ -38,7 +38,6 @@ bool setUpWindow(HINSTANCE hInstance, UINT WIDTH, UINT HEIGHT, int nCmdShow, HWN
 
 	ShowWindow(wnd, nCmdShow);
 
-	ImGui_ImplWin32_Init(wnd);
 
 	return true;
 }

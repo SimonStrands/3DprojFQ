@@ -26,13 +26,13 @@ bool CreateInsterface(UINT width, UINT height, HWND wnd, ID3D11Device*& device, 
     swapChainDesc.Flags = 0;
 
     UINT flags = 0;
-    //if (_DEBUG) {
-    //    flags = D3D11_CREATE_DEVICE_DEBUG;
-    //}
+    if (_DEBUG) {
+        flags = D3D11_CREATE_DEVICE_DEBUG;
+    }
     D3D_FEATURE_LEVEL featureLvl[] = { D3D_FEATURE_LEVEL_11_0 };
 
     HRESULT hr = D3D11CreateDeviceAndSwapChain(nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr, flags, featureLvl, 1, D3D11_SDK_VERSION, &swapChainDesc, &swapChain, &device, nullptr, &immediateContext);
-
+    
     return !FAILED(hr);
 }
 
@@ -78,7 +78,7 @@ bool CreateDepthStencil(ID3D11Device* device, UINT width, UINT height, ID3D11Tex
 bool CreateRasterizerState(ID3D11Device* device , ID3D11RasterizerState*& pRS) {
     D3D11_RASTERIZER_DESC rasterState;
     rasterState.FillMode = D3D11_FILL_SOLID;
-    //rasterState.FillMode = D3D11_FILL_WIREFRAME;
+    rasterState.FillMode = D3D11_FILL_WIREFRAME;
     //rasterState.CullMode = D3D11_CULL_NONE;
     rasterState.CullMode = D3D11_CULL_BACK;
     rasterState.FrontCounterClockwise = false;
@@ -89,7 +89,6 @@ bool CreateRasterizerState(ID3D11Device* device , ID3D11RasterizerState*& pRS) {
     rasterState.ScissorEnable = false;
     rasterState.MultisampleEnable = false;
     rasterState.AntialiasedLineEnable = false;
-    //rasterState.AntialiasedLineEnable = true;
 
    HRESULT hr = device->CreateRasterizerState(&rasterState, &pRS);
    if (FAILED(hr)) {

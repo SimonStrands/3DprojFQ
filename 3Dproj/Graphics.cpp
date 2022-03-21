@@ -107,6 +107,7 @@ Graphics::Graphics(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	if (!setUpWindow(hInstance, WIDTH, HEIGHT, nCmdShow, wnd)) {
 		std::cerr << "failed" << std::endl;
 	}
+	ImGui_ImplWin32_Init(wnd);
 	if (!SetupD3D11(WIDTH, HEIGHT, wnd, device, immediateContext, swapChain, renderTarget, dsTexture, dsView, viewPort, pRS))
 	{
 		std::cerr << "cant set up" << std::endl;

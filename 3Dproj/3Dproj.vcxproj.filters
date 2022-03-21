@@ -91,6 +91,12 @@
     <Filter Include="Resource Files\Shaders\CubeMap">
       <UniqueIdentifier>{45a2d36b-60a3-4518-a4aa-eef17a05710c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\DebugCamera">
+      <UniqueIdentifier>{a594683d-43fe-47cb-9f91-8538b453b754}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\DebugCamera">
+      <UniqueIdentifier>{79004e57-7b63-4022-83bc-39481ac38433}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -165,14 +171,8 @@
     <ClCompile Include="imguiManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Bone.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="BillBoard.cpp">
       <Filter>Source Files\Graphic\Animation &amp; other\Paricle</Filter>
-    </ClCompile>
-    <ClCompile Include="Textures.cpp">
-      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ResourceManager.cpp">
       <Filter>Source Files</Filter>
@@ -204,9 +204,6 @@
     <ClCompile Include="AnimationModel.cpp">
       <Filter>Source Files\Graphic\Animation &amp; other</Filter>
     </ClCompile>
-    <ClCompile Include="DeferredRendering.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="DynamicCubeEnviroment.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -230,6 +227,12 @@
     </ClCompile>
     <ClCompile Include="Material.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DebugCamera.cpp">
+      <Filter>Source Files\DebugCamera</Filter>
+    </ClCompile>
+    <ClCompile Include="DeferredRendering.cpp">
+      <Filter>Source Files\Graphic</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -385,6 +388,9 @@
     </ClInclude>
     <ClInclude Include="Collision.h">
       <Filter>Header Files\Other</Filter>
+    </ClInclude>
+    <ClInclude Include="DebugCamera.h">
+      <Filter>Header Files\DebugCamera</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
