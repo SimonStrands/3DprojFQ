@@ -383,16 +383,13 @@ void Game::setUpObject()
 	//OBJECTS
 	obj.push_back(new GameObject(rm->get_Models("Camera.obj"), gfx, vec3(0.f, 0.f, 10.f), vec3(0.f, 0.f, 0.f), vec3(2.f, 2.0f, 2.0f)));
 	obj.push_back(new GameObject(rm->get_Stol(), gfx, vec3(10.f, 5.f, 10.f), vec3(-1.56f, 1.56f, 3.2f), vec3(1.f, 1.f, 1.f)));
-	//obj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj"), gfx, vec3(0.f, 0.f, -50.f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
-	////walls
-	//obj.push_back(new GameObject(rm->get_IDK(), gfx, vec3(0.f, 5.f, 20.f),  vec3(-1.6f, -1.6f, 3.2f), vec3(20.f, 20.f, 20.f)));
-	//obj.push_back(new GameObject(rm->get_IDK(), gfx, vec3(20.f, 5.f, 0.f),  vec3(-1.6f, 0.f, 3.2f),   vec3(20.f, 20.f, 20.f)));
-	//obj.push_back(new GameObject(rm->get_IDK(), gfx, vec3(0.f, 5.f, -20.f), vec3(-1.6f, 1.6f, 3.2f),  vec3(20.f, 20.f, 20.f)));
-	//obj.push_back(new GameObject(rm->get_IDK(), gfx, vec3(-20.f, 5.f, 0.f), vec3(-1.6f, 3.f, 3.2f),   vec3(20.f, 20.f, 20.f)));
-	//
-	//obj.push_back(new GameObject(rm->get_IDK(), gfx, vec3(0.f, 0.f, 0.f), vec3(0.f, 0.f, 1.58f),   vec3(20.f, 20.f, 20.f)));
-	//obj.push_back(new GameObject(rm->get_IDK(), gfx, vec3(0.f, -5.f, 0.f), vec3(0.f, 0.f, 1.58f),   vec3(20.f, 20.f, 20.f)));
-	//obj.push_back(new GameObject(rm->get_IDK(), gfx, vec3(0.f, -3.f, 0.f), vec3(0.f, 0.f, 1.58f),   vec3(20.f, 20.f, 20.f)));
+	obj.push_back(new GameObject(rm->get_Ball(), gfx, vec3(-5.f, 0.f, 0.f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
+	obj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj"), gfx, vec3(0.f, 0.f, -50.f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
+	//walls
+	obj.push_back(new GameObject(rm->get_IDK(), gfx, vec3(0.f, 5.f, 20.f),  vec3(-1.6f, -1.6f, 3.2f), vec3(20.f, 20.f, 20.f)));
+	obj.push_back(new GameObject(rm->get_IDK(), gfx, vec3(20.f, 5.f, 0.f),  vec3(-1.6f, 0.f, 3.2f),   vec3(20.f, 20.f, 20.f)));
+	obj.push_back(new GameObject(rm->get_IDK(), gfx, vec3(0.f, 5.f, -20.f), vec3(-1.6f, 1.6f, 3.2f),  vec3(20.f, 20.f, 20.f)));
+	obj.push_back(new GameObject(rm->get_IDK(), gfx, vec3(-20.f, 5.f, 0.f), vec3(-1.6f, 3.f, 3.2f),   vec3(20.f, 20.f, 20.f)));
 
 	//static
 	//stataicObj.push_back(new GameObject(rm->get_Models("stormtrooper.obj"),        gfx, vec3(25.f, 0.f, 0.f), vec3(0.f, 0.f, -1.57f), vec3(1.f, 1.f, 1.f)));
@@ -433,5 +430,5 @@ void Game::setUpObject()
 	//}
 
 
-	obj[1]->setTesselation(true, gfx);
+	obj[2]->setTesselation(true, gfx);
 }

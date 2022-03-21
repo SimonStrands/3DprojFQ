@@ -123,6 +123,22 @@ void MeshObj::updatePS(Graphics*& gfx)
 	ZeroMemory(&resource, sizeof(D3D11_MAPPED_SUBRESOURCE));
 }
 
+void MeshObj::setTesselation(bool tess, Graphics*& gfx)
+{
+	this->matrial->flags.Maps[4] = tess;
+	if (tess) {
+		SetShaders(gfx->getVS()[2]);
+		SetShaders(gfx->getHS()[1], gfx->getDS()[1]);
+	}
+	else {
+		SetShaders(gfx->getVS()[0]);
+		SetShaders((ID3D11HullShader*)nullptr, nullptr);
+	}
+	for (int i = 0; i < SubMeshes.size(); i++) {
+		SubMeshes[i].setTesselation(tess, gfx);
+	}
+}
+
 Material* MeshObj::getMatrial()
 {
 	return matrial;

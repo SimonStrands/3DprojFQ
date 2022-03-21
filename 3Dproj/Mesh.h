@@ -25,6 +25,7 @@ public:
 	void SetShaders(ID3D11HullShader* HS, ID3D11DomainShader* DS);
 	void SetShader(ID3D11DeviceContext*& immediateContext, int flag = 0);
 	void updatePS(Graphics*& gfx);
+	void setTesselation(bool tess, Graphics*& gfx);
 	Material *getMatrial();
 	//DEBUG
 	ID3D11PixelShader* PS;
