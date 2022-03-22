@@ -96,6 +96,31 @@ vec3 Camera::getLeftVector()
 	return FUL[2];
 }
 
+void Camera::getViewFrustoms(vec3 frustoms[], float angle)
+{
+	//vec3 nearCenter = getPos() - getForwardVec() * nearDist;
+	vec3 nearCenter = getForwardVec();
+	vec3 farCenter = getPos() - getForwardVec() * farDist;
+
+
+	//float nearHeight = 2 * tan(fov / 2) * nearDist;
+	float nearHeight = 2 * tan(fov / 2) * 1;
+	float farHeight = 2 * tan(fov / 2) * farDist;
+	float nearWidth = nearHeight * ratio;
+	float farWidth = farHeight * ratio;
+
+	//left, right, up, down
+	//frustoms[0] = vec3(nearCenter + vec3(0,yCamPos * (nearHeight * 0.5),0) - vec3(xCamPos * (nearWidth * 0.5),0,0));
+	//frustoms[0] = vec3(nearCenter - yCamPos * (nearHeight * 0.5) + xCamPos * (nearWidth * 0.5));
+	//frustoms[0] = vec3(nearCenter + yCamPos * (nearHeight * 0.5) + xCamPos * (nearWidth * 0.5));
+	//frustoms[0] = vec3(nearCenter - yCamPos * (nearHeight * 0.5) - xCamPos * (nearWidth * 0.5));
+	//up left, up right, down right, down left 
+	frustoms[0] = vec3(nearCenter - getLeftVector() * (nearWidth * 0.5)).Normalize();
+	frustoms[1] = vec3(nearCenter + getLeftVector() * (nearWidth * 0.5)).Normalize();
+	frustoms[2] = vec3(nearCenter + getUpVector() * (nearHeight * 0.5)).Normalize();
+	frustoms[3] = vec3(nearCenter - getUpVector() * (nearHeight * 0.5)).Normalize();
+}
+
 void Camera::setRotation(vec3 newRot)
 {
 	this->xCamRot = newRot.x;
@@ -107,6 +132,19 @@ void Camera::setPosition(vec3 newpos)
 	this->xCamPos = newpos.x;
 	this->yCamPos = newpos.y;
 	this->zCamPos = newpos.z;
+}
+
+void Camera::setData(float FOVRadians, float viewRatio, float nearDist, float farDist)
+{
+	this->ratio = viewRatio;
+	this->fov = FOVRadians;
+	this->nearDist = nearDist;
+	this->farDist = farDist;
+}
+
+void Camera::rotaiton(DirectX::XMMATRIX& matrix, float xRot, float yRot) {
+	XRotation(matrix, xRot);
+	YRotation(matrix, yRot);
 }
 
 void Camera::rotaiton(DirectX::XMMATRIX &matrix)

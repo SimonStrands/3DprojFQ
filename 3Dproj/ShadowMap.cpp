@@ -93,7 +93,6 @@ void ShadowMap::inUpdateShadow(int i)
 	gfx->Projection((int)this->light[i]->whatOfLight());
 	
 	gfx->getVcb()->view.element = this->light[i]->getLightView();
-	//gfx->getGcb()->lightView.element = this->light[i]->getLightView();
 }
 
 bool ShadowMap::CreateDepthStencil(ID3D11Device* device, UINT width, UINT height)

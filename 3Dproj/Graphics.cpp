@@ -210,6 +210,20 @@ void Graphics::RsetViewPort()
 	immediateContext->RSSetViewports(1, &viewPort);
 }
 
+DEBUG_CAMERAN* Graphics::SwitchNewGraphics(DEBUG_CAMERAN newCamera)
+{
+	DEBUG_CAMERAN* theReturn = new DEBUG_CAMERAN({wnd, viewPort, renderTarget, swapChain, device, immediateContext});
+
+	this->wnd = newCamera.wnd;
+	this->viewPort = newCamera.viewPort;
+	this->renderTarget = newCamera.RTV;
+	this->swapChain = newCamera.swapChain;
+	this->device = newCamera.device;
+	this->immediateContext = newCamera.immediateContext;
+
+	return theReturn;
+}
+
 float nextFpsUpdate = 0;
 void Graphics::Update(float dt, vec3 camPos)
 {
@@ -249,6 +263,8 @@ void Graphics::Update(float dt, vec3 camPos)
 	immediateContext->Unmap(camConstBuffer, 0);
 	ZeroMemory(&resource, sizeof(D3D11_MAPPED_SUBRESOURCE));
 	immediateContext->PSSetConstantBuffers(5, 1, &camConstBuffer);
+
+	immediateContext->HSSetConstantBuffers(5, 1, &camConstBuffer);
 
 	//fps
 	nextFpsUpdate += (float)dt;

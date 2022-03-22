@@ -35,7 +35,6 @@ QuadTree::QuadTree(std::vector<GameObject*>& objectList, vec2 position, int dept
 				break;
 			}
 			nodes[i] = new QuadTree(objectList, offset, depth - 1, size / 2, false);
-			nodes[i]->sendQTCamData(this->qtCD);
 		}
 	}
 	else {
@@ -63,6 +62,7 @@ void QuadTree::setUpCamProp(float angle, float distanceFarPlane)
 	this->farPlane = distanceFarPlane;
 	if (depth != 0) {
 		for (int i = 0; i < 4; i++) {
+			nodes[i]->sendQTCamData(this->qtCD);
 			nodes[i]->setUpCamProp(angle, distanceFarPlane);
 		}
 	}
@@ -83,19 +83,28 @@ void QuadTree::draw(Graphics*& gfx, Camera* cam, bool sm)
 	//get all camera propeties
 	vec3 fVector = cam->getForwardVec().Normalize();
 	vec3 uVector = cam->getUpVector().Normalize();
-	vec3 lVector = cam->getLeftVector().Normalize();
+	vec3 RVector = cam->getLeftVector().Normalize();
 	vec3 CamOrgin(cam->getPos());
 
-	//check the view frustom normal side to side
-	vec3 leftFrustom(rotateY(-angle, fVector));
-	vec3 rightFrustom(rotateY(angle, fVector));
-	vec3 upperFrustom(rotateX(-angle, fVector));
-	vec3 downFrustom(rotateX(angle, fVector));
+	//this is wrong (rotate globaly not localy)
+	vec3 frustoms[4];//left, right, up, down
+	cam->getViewFrustoms(frustoms, angle);
 
-	vec3 leftNorm = leftFrustom.X(uVector).Normalize();
-	vec3 rightNorm = rightFrustom.X(uVector.mirror()).Normalize();
-	vec3 UpNorm = upperFrustom.X(lVector.mirror()).Normalize();
-	vec3 DownNorm = downFrustom.X(lVector).Normalize();
+	vec3 leftNorm = frustoms[0].X(uVector).Normalize();//right normal
+	vec3 rightNorm = frustoms[1].X(uVector.mirror()).Normalize();
+
+	vec3 UpNorm = frustoms[2].X(RVector.mirror()).Normalize();
+	vec3 DownNorm = frustoms[3].X(RVector).Normalize();
+	//std::cout << cam->getRot().x << std::endl;
+	//std::cout 
+	//	<< "fVector:  "<<fVector.to_string() << "\n"
+	//	<< "uvector:  "<<uVector.to_string() << "\n"
+	//	<< "Rvecotr:  "<<RVector.to_string() << "\n"
+	//	<< "camPos:   "<<CamOrgin.to_string() << "\n"
+	//	<< "leftFrust:"<< frustoms[0].to_string() << "\n"
+	//	<< "Rigtfrust:"<< frustoms[1].to_string() << "\n"
+	//	<< "upfrust  :"<< frustoms[2].to_string() << "\n"
+	//	<< "downfrust:"<< frustoms[3].to_string() << "\n";
 
 	qtCD->CamPos = CamOrgin;
 	qtCD->forwardVector = fVector;
@@ -106,6 +115,29 @@ void QuadTree::draw(Graphics*& gfx, Camera* cam, bool sm)
 
 	Sdraw(gfx, cam, sm);
 }
+
+/*
+line 1 = (pos(nodes[i]->position.x,0,nodes[i]->position.z) dir = (0,1,0);
+line 2 = (pos(campos) dir = fVector;
+
+P (node.pos.x, T, node.pos.z)
+Q (cam.x + fvec.x * s, cam.y + fvec.y * s, cam.z + fvec.z * s)
+
+PQ-> =	(cam.x + fvec.x * S - node.pos.x )
+		(cam.y + fvec.y * S - T			 )
+		(cam.z + fvec.z * S - node.pos.z )
+
+		a : 0(cam.x + fvec.x * S - node.pos.x) + (cam.y + fvec.y * S - T) + 0(cam.z + fvec.z * S - node.pos.z)
+		= cam.y + fvec.y * S - T = 0 => 
+		(fvec.y * S - T = -cam.y)
+
+		b : fVector.x(cam.x + fvec.x * S - node.pos.x) + fVector.y(cam.y + fvec.y * S - T) + fVector.z(cam.z + fvec.z * S - node.pos.z) 
+		= 
+		fVector.x * cam.x + fVector.x * fvec.x * S + fVector.x * - node.pos.x 
+		+ fVector.y(cam.y) + fVector.y(fvec.y * S) + fVector.y(- T)
+		+ fVector.z(cam.z) + fVector.z(fvec.z * S) + fVector.z(node.pos.z)
+
+*/
 
 void QuadTree::Sdraw(Graphics*& gfx, Camera* cam, bool sm)
 {
@@ -123,38 +155,39 @@ void QuadTree::Sdraw(Graphics*& gfx, Camera* cam, bool sm)
 		//for each node
 		for (int i = 0; i < 4; i++) {
 			//check if it is to far away with far plane
-			nodes[i]->position.y = this->qtCD->CamPos.y + this->qtCD->forwardVector.y * 50;
+			nodes[i]->position.y = this->qtCD->CamPos.y;
 			if ((this->qtCD->CamPos - nodes[i]->position).length() < farPlane + size) {
 				//check if we are inside the node or if the nodes mid is inside
-				if (isInsideQuad(*nodes[i], this->qtCD->CamPos)) {
-					nodes[i]->draw(gfx, cam);
+				if (isInsideQuad(nodes[i], this->qtCD->CamPos)) {
+					nodes[i]->Sdraw(gfx, cam, sm);
 				}
 				else {
 					//check so point is not behind us
-					if (pointInFront(nodes[i]->position - this->qtCD->CamPos, this->qtCD->forwardVector)) {
-						nodes[i]->position.y = this->qtCD->CamPos.y + this->qtCD->forwardVector.y * 1;
+					nodes[i]->position.y = 0;
+					nodes[i]->position.y = this->qtCD->CamPos.y + (this->qtCD->forwardVector.y * (this->qtCD->CamPos - nodes[i]->position).length());
+					//if (pointInFront(nodes[i]->position - this->qtCD->CamPos, this->qtCD->forwardVector)) {
 						float ld = (nodes[i]->position - this->qtCD->CamPos) * (this->qtCD->LeftNorm);
 						float rd = (nodes[i]->position - this->qtCD->CamPos) * (this->qtCD->RightNorm);
-						float ud = (nodes[i]->position - this->qtCD->CamPos) * (this->qtCD->UpNorm);
-						float dd = (nodes[i]->position - this->qtCD->CamPos) * (this->qtCD->DownNorm);
+						float ud = -((nodes[i]->position - this->qtCD->CamPos) * (this->qtCD->UpNorm));
+						float dd = -((nodes[i]->position - this->qtCD->CamPos) * (this->qtCD->DownNorm));
 						//see if that point is inside frustom
 						float Lsize = sqrt(size * size * 2);//make so we don't miss anything
 						if (ld < 0 && rd < 0) {
 							nodes[i]->Sdraw(gfx, cam, sm);
 						}
-						else if (size > abs(ld)) {
+						else if (Lsize > abs(ld)) {
 							nodes[i]->Sdraw(gfx, cam, sm);
 						}
-						else if (size > abs(rd)) {
+						else if (Lsize > abs(rd)) {
 							nodes[i]->Sdraw(gfx, cam, sm);
 						}
-						else if (size > abs(ud)) {
+						else if (Lsize > abs(ud)) {
 							nodes[i]->Sdraw(gfx, cam, sm);
 						}
-						else if (size > abs(dd)) {
+						else if (Lsize > abs(dd)) {
 							nodes[i]->Sdraw(gfx, cam, sm);
 						}
-					}
+					//}
 				}
 			}
 		}
@@ -190,12 +223,12 @@ vec3 QuadTree::rotateY(float angle, vec3 vec)
 	return tr;
 }
 
-bool QuadTree::isInsideQuad(QuadTree node, vec3 camPos)
+bool QuadTree::isInsideQuad(QuadTree *node, vec3 camPos)
 {
-	if (node.position.x + node.size > camPos.x &&
-		node.position.x - node.size < camPos.x &&
-		node.position.z + node.size > camPos.z &&
-		node.position.z - node.size < camPos.z) {
+	if (node->position.x + node->size > camPos.x &&
+		node->position.x - node->size < camPos.x &&
+		node->position.z + node->size > camPos.z &&
+		node->position.z - node->size < camPos.z) {
 		return true;
 	}
 	return false;

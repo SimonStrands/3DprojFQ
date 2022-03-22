@@ -2,6 +2,7 @@
 #include <math.h>
 #include <array>
 #include <DirectXMath.h>
+#include <string>
 //git
 
 
@@ -45,18 +46,21 @@ struct vec3 {
 	vec3 Normalize();
 	vec3 X(const vec3& other);
 	float operator*(vec3& other);//dot
-	vec3 operator*(float& other);
+	vec3 operator*(float other);
 	vec3 mul(float other);
 	vec3 mul(vec3 other);
 	vec3 operator+(vec3 other);
-	vec3 operator-(vec3& other);
+	vec3 operator-(vec3 other);
 	vec3 mirror();
 	bool operator==(vec3& other);
 	void operator=(vec3 other);
 	void operator=(std::array<float, 3> other);
 	const DirectX::XMVECTOR toXMvector();
 	float length();
-
+	std::string to_string() {
+		//return "x: " + std::to_string(x) + " y: " + std::to_string(y) + " z: " + std::to_string(z);
+		return  std::to_string(x) + ", " + std::to_string(y) + ", " + std::to_string(z);
+	}
 	float x;
 	float y;
 	float z;

@@ -50,8 +50,6 @@ private:
 	ShadowMap* shadowMap;
 	QuadTree* Qtree;
 
-	DebugCamera* DCam;
-
 	//game objects
 	Light **light;
 	std::vector<GameObject*> LightVisualizers;

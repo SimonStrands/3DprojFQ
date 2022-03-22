@@ -10,6 +10,33 @@
 #include "rotation.h"
 #include "Keyboard.h"
 
+struct DEBUG_CAMERAN {
+	DEBUG_CAMERAN(HWND& wnd, D3D11_VIEWPORT& viewPort, ID3D11RenderTargetView* RTV, IDXGISwapChain* swapChain, ID3D11Device* device, ID3D11DeviceContext* immediateContext):
+	wnd(wnd), viewPort(viewPort){
+		this->RTV = RTV;
+		this->swapChain = swapChain;
+		this->device = device;
+		this->immediateContext = immediateContext;
+	}
+	~DEBUG_CAMERAN() {
+
+	};
+	DEBUG_CAMERAN operator=(DEBUG_CAMERAN other) {
+		this->wnd = other.wnd;
+		this->viewPort = other.viewPort;
+		this->RTV = other.RTV;
+		this->swapChain = other.swapChain;
+		this->device = other.device;
+		this->immediateContext = other.immediateContext;
+	}
+	HWND &wnd;
+	D3D11_VIEWPORT &viewPort;
+	ID3D11RenderTargetView* RTV;
+	IDXGISwapChain* swapChain;
+	ID3D11Device* device;
+	ID3D11DeviceContext* immediateContext;
+};
+
 class ImguiManager;
 
 struct CB {
@@ -95,6 +122,7 @@ public:
 	Graphics(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine, _In_ int nCmdShow);
 	virtual ~Graphics();
 	void RsetViewPort();
+	DEBUG_CAMERAN* SwitchNewGraphics(DEBUG_CAMERAN newCamera);
 private:
 	//D3D11
 	ID3D11Device* device;

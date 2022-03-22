@@ -41,10 +41,10 @@ vec3 vec3::Normalize()
 
 vec3 vec3::X(const vec3& other)
 {
-	float x = (this->y * other.z) - (this->z * other.y);
-	float y = (this->z * other.x) - (this->x * other.z);
-	float z = (this->x * other.y) - (this->y * other.x);
-	return vec3(x, y, z);
+	float a = (this->y * other.z) - (this->z * other.y);
+	float b = (this->z * other.x) - (this->x * other.z);
+	float c = (this->x * other.y) - (this->y * other.x);
+	return vec3(a, b, c);
 }
 
 float vec3::operator*(vec3& other)
@@ -52,7 +52,7 @@ float vec3::operator*(vec3& other)
 	return(this->x * other.x + this->y * other.y + this->z * other.z);
 }
 
-vec3 vec3::operator*(float& other)
+vec3 vec3::operator*(float other)
 {
 	return vec3(other * this->x, other * this->y, other* this->z);
 }
@@ -72,7 +72,7 @@ vec3 vec3::operator+(vec3 other)
 	return vec3(this->x + other.x, this->y + other.y, this->z + other.z);
 }
 
-vec3 vec3::operator-(vec3& other)
+vec3 vec3::operator-(vec3 other)
 {
 	return vec3(this->x - other.x, this->y - other.y, this->z - other.z);
 }
@@ -106,6 +106,8 @@ const DirectX::XMVECTOR vec3::toXMvector()
 	DirectX::XMVECTOR a = { x,y,z,1 };
 	return a;
 }
+
+
 
 float vec3::length()
 {

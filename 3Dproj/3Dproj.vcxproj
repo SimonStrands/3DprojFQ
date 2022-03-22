@@ -169,7 +169,6 @@
     <ClCompile Include="CreateBuffer.cpp" />
     <ClCompile Include="D311Helper.cpp" />
     <ClCompile Include="debug.cpp" />
-    <ClCompile Include="DebugCamera.cpp" />
     <ClCompile Include="DeferredRendering.cpp" />
     <ClCompile Include="deltaTime.cpp" />
     <ClCompile Include="DepthStencil.cpp" />
@@ -217,7 +216,6 @@
     <ClInclude Include="Convertions.h" />
     <ClInclude Include="D311Helper.h" />
     <ClInclude Include="debug.h" />
-    <ClInclude Include="DebugCamera.h" />
     <ClInclude Include="DeferredRendering.h" />
     <ClInclude Include="deltaTime.h" />
     <ClInclude Include="DepthStencil.h" />
