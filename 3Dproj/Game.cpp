@@ -30,10 +30,11 @@ Game::Game(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWS
 	camera->setData();
 	
 	setUpObject();
-	Qtree = new QuadTree(stataicObj, vec2(0, 0), 2, 200);
+	//Qtree = new QuadTree(stataicObj, vec2(0, 0), 4, 200);
+	Qtree = new QuadTree(stataicObj, vec2(0, 0), 4, 100);
 	//(pi,3.14) = 180 degrees
-	Qtree->setUpCamProp(3.14/4, 50);
-	//Qtree->setUpCamProp(0.4, 2000);
+	//Qtree->setUpCamProp(3.14/4, 50);
+	Qtree->setUpCamProp(0.4, 2000);
 	
 	
  	bill = new BillBoard(gfx, vec3(0.f, 0.f, 9.f), rm->getFire(), rm->getDef()[1], 6);
@@ -448,23 +449,23 @@ void Game::setUpObject()
 	//stataicObj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj"), gfx, vec3(-12.5f, 0.f, 12.5f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
 	//stataicObj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj"), gfx, vec3(12.5f, 0.f, -12.5f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
 	stataicObj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj"), gfx, vec3(12.5f, 0.f, -12.5f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
-	//int nrOfPlantsXY = 5;
-	//float sizeOfTree = 50;
-	//for (int x = 0; x < nrOfPlantsXY; x++) {
-	//	for (int y = 0; y < nrOfPlantsXY; y++) {
-	//		stataicObj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj"), 
-	//			gfx, vec3(((sizeOfTree/ nrOfPlantsXY) * x) - sizeOfTree/2, 0.f, ((sizeOfTree / nrOfPlantsXY) * y) - sizeOfTree / 2),
-	//			vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
-	//	}
-	//}
-	//
-	float gw = 10;
-	float gn = 25;
-	for (int x = 0; x < gn; x++) {
-		for (int y = 0; y < gn; y++) {
-			stataicObj.push_back(new GameObject(rm->get_IDK(), gfx, vec3(x*(gw*2) - ((gn)*gw), -4, y*(gw * 2) - ((gn)*gw)), vec3(0, 0, 1.57f), vec3(gw, gw, gw)));
+	int nrOfPlantsXY = 16;
+	float sizeOfTree = 100 * 2;
+	for (int x = 0; x < nrOfPlantsXY; x++) {
+		for (int y = 0; y < nrOfPlantsXY; y++) {
+			stataicObj.push_back(new GameObject(rm->get_IDK(),
+				gfx, vec3(((sizeOfTree/ nrOfPlantsXY) * x) - sizeOfTree/2, 0.f, ((sizeOfTree / nrOfPlantsXY) * y) - sizeOfTree / 2),
+				vec3(0.f, 0.f, 1.58f), vec3(5.f, 5.f, 5.f)));
 		}
 	}
+	
+	//float gw = 10;
+	//float gn = 25;
+	//for (int x = 0; x < gn; x++) {
+	//	for (int y = 0; y < gn; y++) {
+	//		stataicObj.push_back(new GameObject(rm->get_IDK(), gfx, vec3(x*(gw*2) - ((gn)*gw), -4, y*(gw * 2) - ((gn)*gw)), vec3(0, 0, 1.57f), vec3(gw, gw, gw)));
+	//	}
+	//}
 
 
 	//obj[2]->setTesselation(false, gfx);

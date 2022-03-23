@@ -192,14 +192,14 @@ void QuadTree::Sdraw(Graphics*& gfx, Camera* cam, bool sm)
 							offset = vec3(-nodes[i]->size, 0, nodes[i]->size);
 							break;
 						}
-						if (pointInFront(nodes[i]->position + offset, this->qtCD->forwardVector)) {
+						if (pointInFront(nodes[i]->position + offset - this->qtCD->CamPos, this->qtCD->forwardVector)) {
 							float ld = (nodes[i]->position + offset - this->qtCD->CamPos) * (this->qtCD->LeftNorm);
 							float rd = (nodes[i]->position + offset - this->qtCD->CamPos) * (this->qtCD->RightNorm);
-							float ud = (nodes[i]->position + offset - this->qtCD->CamPos) * (this->qtCD->UpNorm);
-							float dd = (nodes[i]->position + offset - this->qtCD->CamPos) * (this->qtCD->DownNorm);
+							float ud = -((nodes[i]->position + offset - this->qtCD->CamPos) * (this->qtCD->UpNorm));
+							float dd = -((nodes[i]->position + offset - this->qtCD->CamPos) * (this->qtCD->DownNorm));
 							//see if that point is inside frustom
-							float Lsize = sqrt(size * size * 2);//make so we don't miss anything
-							if (ld < 0 && rd < 0 ) {
+							//float Lsize = sqrt(size * size * 2);//make so we don't miss anything
+							if (ld < 0 && rd < 0 && ud < 0 && dd < 0) {
 								done = true;
 								nodes[i]->Sdraw(gfx, cam, sm);
 							}
