@@ -28,6 +28,11 @@ ResourceManager::~ResourceManager()
 	delete IDK;
 }
 
+void loadWithThread(threadInfo thredData)
+{
+	thredData.model->init(thredData.name, thredData.gfx, thredData.def);
+}
+
 void ResourceManager::loadThings(Graphics*& gfx)
 {
 	//default tex
@@ -53,6 +58,8 @@ void ResourceManager::loadThings(Graphics*& gfx)
 	def[3] = nullptr;
 	//mesh
 	
+	std::vector<std::thread> thrs;
+
 	ball = new ModelObj("obj/GroundLowPloy.obj", gfx, def);
 	
 	stol = new ModelObj("obj/DoubleMesh.obj" , gfx, def);
@@ -68,10 +75,24 @@ void ResourceManager::loadThings(Graphics*& gfx)
 		"Camera.obj"
 	};
 	for (int i = 0; i < _countof(names); i++) {
-		ModelObj* model = new ModelObj("obj/" + names[i], gfx, def);
+		ModelObj* model = new ModelObj();
+		threadInfo threadParam({model, "obj/" + names[i], def, gfx});
+		//thrs.push_back(std::thread(loadWithThread, std::ref(model), "obj/" + names[i], std::ref(def), std::ref(gfx)));
+		thrs.push_back(std::thread(loadWithThread, std::ref(threadParam)));
+		//model = new ModelObj("obj/" + names[i], gfx, def);
 		Models.insert(std::make_pair(names[i], model));
 	}
-	std::cout << "clear the resource manager" << std::endl;
+	for (int i = 0; i < _countof(names); i++) {
+		thrs[i].join();
+	}
+	for (int i = 0; i < _countof(names); i++) {
+		int sizeOfMatrials = Models.find(names[i])->second->getMatrial().size();
+		ModelObj* model = Models.find(names[i])->second;
+		for (int p = 0; p < sizeOfMatrials; p++) {
+			TC::GetInst().add(model->getMatrial()[p]);
+		}
+	}
+	std::cout << "resource manager is done loading" << std::endl;
 }
 
 ModelObj* ResourceManager::get_Models(std::string key)
@@ -108,6 +129,8 @@ ID3D11ShaderResourceView* ResourceManager::getFire()
 {
 	return this->Fire;
 }
+
+
 
 void ResourceManager::cantLoad(LPCWSTR theerror)
 {

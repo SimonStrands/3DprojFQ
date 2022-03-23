@@ -1,4 +1,9 @@
 #include "Mesh.h"
+#include <mutex>
+#include <thread>
+
+std::mutex createVertexBufferMutex;
+std::mutex createConstVertexBufferMutex;
 
 MeshObj::MeshObj(Graphics*& gfx, std::vector<vertex> vertecies, Material *material)
 {
@@ -6,8 +11,14 @@ MeshObj::MeshObj(Graphics*& gfx, std::vector<vertex> vertecies, Material *materi
 	this->DS = nullptr;
 	this->nrOfVertexes = (int)vertecies.size();
 	this->matrial = material;
+	//kanske?
+	createVertexBufferMutex.lock();
 	CreateVertexBuffer(gfx->getDevice(), vertecies, this->vertexBuffer);
+	createVertexBufferMutex.unlock();
+
+	createConstVertexBufferMutex.lock();
 	CreateVertexConstBuffer(gfx, this->Pg_pConstantBuffer);
+	createConstVertexBufferMutex.unlock();
 }
 
 void MeshObj::begone()

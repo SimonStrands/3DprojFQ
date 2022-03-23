@@ -2,6 +2,9 @@
 #include <d3d11.h>
 #include <vector>
 #include "Material.h"
+#include <thread>
+#include <mutex>
+
 //trash collector
 class TC {
 public:

@@ -173,16 +173,15 @@ bool getMatrialFromFile(std::string fileName, std::vector<Material*> &matrial, G
 	if (matrial.size() == 0) {
 		matrial.push_back(new Material(def));
 	}
-	for (int i = 0; i < matrial.size(); i++) {
-		TC::GetInst().add(matrial[i]);
-	}
 	return true;
 }
 
 
 void createMesh(Graphics*& gfx, std::vector<MeshObj> &Meshes, std::vector<vertex> &vertecies, Material* matrial) {
 	fixtangent(vertecies);
-	Meshes.push_back(MeshObj(gfx, vertecies, matrial));
+	MeshObj a(gfx, vertecies, matrial);
+	Meshes.push_back(a);
+	//Meshes.push_back(MeshObj(gfx, vertecies, matrial));
 	if (matrial->flags.Maps[3]) {
 		Meshes[Meshes.size() - 1].SetShaders(gfx->getVS()[0], gfx->getPS()[0]);
 	}

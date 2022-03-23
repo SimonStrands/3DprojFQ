@@ -2,6 +2,15 @@
 #include "Model.h"
 #include "plHelper.h"
 #include <map>
+#include <thread>
+#include "TrashCollector.h"
+
+struct threadInfo {
+	ModelObj* model;
+	std::string name;
+	ID3D11ShaderResourceView** def;
+	Graphics*& gfx;
+};
 
 class ResourceManager {
 public:
@@ -37,5 +46,7 @@ private:
 	//Mesh* starwars;
 #pragma endregion
 
+	//void loadWithThread(threadInfo thredData);
+	//void loadWithThread(ModelObj* model, std::string name);
 	void cantLoad(LPCWSTR theerror);
 };

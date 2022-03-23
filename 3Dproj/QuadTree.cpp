@@ -165,29 +165,38 @@ void QuadTree::Sdraw(Graphics*& gfx, Camera* cam, bool sm)
 					//check so point is not behind us
 					nodes[i]->position.y = 0;
 					nodes[i]->position.y = this->qtCD->CamPos.y + (this->qtCD->forwardVector.y * (this->qtCD->CamPos - nodes[i]->position).length());
-					//if (pointInFront(nodes[i]->position - this->qtCD->CamPos, this->qtCD->forwardVector)) {
-						float ld = (nodes[i]->position - this->qtCD->CamPos) * (this->qtCD->LeftNorm);
-						float rd = (nodes[i]->position - this->qtCD->CamPos) * (this->qtCD->RightNorm);
-						float ud = -((nodes[i]->position - this->qtCD->CamPos) * (this->qtCD->UpNorm));
-						float dd = -((nodes[i]->position - this->qtCD->CamPos) * (this->qtCD->DownNorm));
-						//see if that point is inside frustom
-						float Lsize = sqrt(size * size * 2);//make so we don't miss anything
-						if (ld < 0 && rd < 0) {
-							nodes[i]->Sdraw(gfx, cam, sm);
+					bool done = false;
+					for (int qp = 0; qp < 4 && !done; qp++) {
+						//watch all four corners
+						if (pointInFront(nodes[i]->position - this->qtCD->CamPos, this->qtCD->forwardVector)) {
+							vec3 offset;
+							switch (qp) {
+							case 0:
+								offset = vec3(nodes[i]->size, 0, nodes[i]->size);
+								break;
+							case 1:
+								offset = vec3(nodes[i]->size, 0, -nodes[i]->size);
+								break;
+							case 2:
+								offset = vec3(-nodes[i]->size, 0, -nodes[i]->size);
+								break;
+							case 3:
+								offset = vec3(-nodes[i]->size, 0, nodes[i]->size);
+								break;
+							}
+							float ld = (nodes[i]->position + offset - this->qtCD->CamPos) * (this->qtCD->LeftNorm);
+							float rd = (nodes[i]->position + offset - this->qtCD->CamPos) * (this->qtCD->RightNorm);
+							float ud = (nodes[i]->position + offset - this->qtCD->CamPos) * (this->qtCD->UpNorm);
+							float dd = (nodes[i]->position + offset - this->qtCD->CamPos) * (this->qtCD->DownNorm);
+							//see if that point is inside frustom
+							float Lsize = sqrt(size * size * 2);//make so we don't miss anything
+							if (ld < 0 && rd < 0 ) {
+								done = true;
+								nodes[i]->Sdraw(gfx, cam, sm);
+							}
 						}
-						else if (Lsize > abs(ld)) {
-							nodes[i]->Sdraw(gfx, cam, sm);
-						}
-						else if (Lsize > abs(rd)) {
-							nodes[i]->Sdraw(gfx, cam, sm);
-						}
-						else if (Lsize > abs(ud)) {
-							nodes[i]->Sdraw(gfx, cam, sm);
-						}
-						else if (Lsize > abs(dd)) {
-							nodes[i]->Sdraw(gfx, cam, sm);
-						}
-					//}
+						//else no
+					}
 				}
 			}
 		}

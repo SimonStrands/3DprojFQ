@@ -104,6 +104,16 @@ ModelObj::ModelObj(const std::string& ModelFile, Graphics*& gfx, ID3D11ShaderRes
 	readObjFile(mMeshes, ModelFile, matrial, gfx, boxSize);
 }
 
+ModelObj::ModelObj()
+{
+}
+
+void ModelObj::init(const std::string& ModelFile, Graphics*& gfx, ID3D11ShaderResourceView** def)
+{
+	getMatrialFromFile(ModelFile, matrial, gfx, def);
+	readObjFile(mMeshes, ModelFile, matrial, gfx, boxSize);
+}
+
 ModelObj::~ModelObj()
 {
 	for (int i = 0; i < mMeshes.size(); i++) {
@@ -145,6 +155,11 @@ void ModelObj::drawDefTest(ID3D11DeviceContext*& immediateContext)
 std::vector<MeshObj> &ModelObj::getMehses()
 {
 	return this->mMeshes;
+}
+
+std::vector<Material*>& ModelObj::getMatrial()
+{
+	return this->matrial;
 }
 
 vec3* ModelObj::getBox()
