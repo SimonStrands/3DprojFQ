@@ -98,7 +98,8 @@ vec3 Camera::getLeftVector()
 
 void Camera::getViewFrustoms(vec3 frustoms[], float angle)
 {
-	vec3 nearCenter = getPos() - getForwardVec() * nearDist;
+	//vec3 nearCenter = getPos() - getForwardVec() * nearDist;
+	vec3 nearCenter = getForwardVec() * nearDist;
 	vec3 farCenter = getPos() - getForwardVec() * farDist;
 
 
@@ -109,10 +110,10 @@ void Camera::getViewFrustoms(vec3 frustoms[], float angle)
 
 	//up left, up right, down right, down left 
 
-	frustoms[0] = vec3(nearCenter - getLeftVector() * (nearWidth * 0.5)).Normalize();
-	frustoms[1] = vec3(nearCenter + getLeftVector() * (nearWidth * 0.5)).Normalize();
-	frustoms[2] = vec3(nearCenter + getUpVector() * (nearHeight * 0.5)).Normalize();
-	frustoms[3] = vec3(nearCenter - getUpVector() * (nearHeight * 0.5)).Normalize();
+	frustoms[0] = vec3(nearCenter - getLeftVector() * ((float)nearWidth * 0.5f)).Normalize();
+	frustoms[1] = vec3(nearCenter + getLeftVector() * ((float)nearWidth * 0.5f)).Normalize();
+	frustoms[2] = vec3(nearCenter + getUpVector() * ((float)nearHeight * 0.5f)).Normalize();
+	frustoms[3] = vec3(nearCenter - getUpVector() * ((float)nearHeight * 0.5f)).Normalize();
 	//frustoms[0] = vec3(nearCenter - getLeftVector() * (nearWidth * 0.5) + getUpVector() * (nearHeight * 0.5));
 	//frustoms[1] = vec3(nearCenter + getLeftVector() * (nearWidth * 0.5) + getUpVector() * (nearHeight * 0.5));
 	//frustoms[2] = vec3(nearCenter + getLeftVector() * (nearWidth * 0.5) - getUpVector() * (nearHeight * 0.5));

@@ -55,15 +55,15 @@ HS_CONSTANT_OUTPUT CalcHSPatchConstants(
 {
     HS_CONSTANT_OUTPUT Output;
     float4x4 tv = mul(transform, view);
-    float3 frag1 = mul(ip[0].position, transform);
-    float3 frag2 = mul(ip[1].position, transform);
-    float3 frag3 = mul(ip[2].position, transform);
-    //float DistToVertex0 = mul(ip[0].position, tv).z;
-    //float DistToVertex1 = mul(ip[1].position, tv).z;
-    //float DistToVertex2 = mul(ip[2].position, tv).z;
-    float DistToVertex0 = distance(frag1.xyz, camPos.xyz);
-    float DistToVertex1 = distance(frag2.xyz, camPos.xyz);
-    float DistToVertex2 = distance(frag3.xyz, camPos.xyz);
+    //float3 frag1 = mul(ip[0].position, transform);
+    //float3 frag2 = mul(ip[1].position, transform);
+    //float3 frag3 = mul(ip[2].position, transform);
+    float DistToVertex0 = mul(ip[0].position, tv).z;
+    float DistToVertex1 = mul(ip[1].position, tv).z;
+    float DistToVertex2 = mul(ip[2].position, tv).z;
+    //float DistToVertex0 = distance(frag1.xyz, camPos.xyz);
+    //float DistToVertex1 = distance(frag2.xyz, camPos.xyz);
+    //float DistToVertex2 = distance(frag3.xyz, camPos.xyz);
 	
     Output.EdgeTessFactor[0] = GetTessLevel(DistToVertex1, DistToVertex2);
     Output.EdgeTessFactor[1] = GetTessLevel(DistToVertex2, DistToVertex0);

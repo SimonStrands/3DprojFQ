@@ -30,9 +30,9 @@ Game::Game(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWS
 	camera->setData();
 	
 	setUpObject();
-	Qtree = new QuadTree(stataicObj, vec2(0, 0), 5, 200);
+	Qtree = new QuadTree(stataicObj, vec2(0, 0), 2, 200);
 	//(pi,3.14) = 180 degrees
-	Qtree->setUpCamProp(3.14/4, 200);
+	Qtree->setUpCamProp(3.14/4, 50);
 	//Qtree->setUpCamProp(0.4, 2000);
 	
 	
