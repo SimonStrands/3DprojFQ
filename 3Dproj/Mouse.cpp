@@ -5,7 +5,7 @@
 Mouse::Mouse(vec2 WH):
 	wndWH(WH.x, WH.y)
 {
-	mouseSense = 2;
+	mouseSense = 0.6;
 	mouse_active = false;
 	once = false;
 	x = y = 0;
@@ -26,8 +26,8 @@ void Mouse::UpdateMouse()
 	activateMouse();
 	if (mouse_active) {
 		::ShowCursor(FALSE);
-		x = mouse.getPosition().x - this->wndWH.x/2;
-		y = mouse.getPosition().y - this->wndWH.y/2;
+		x = (mouse.getPosition().x - this->wndWH.x/2) * mouseSense;
+		y = (mouse.getPosition().y - this->wndWH.y/2) * mouseSense;
 		mouse.setPosition(sf::Vector2i((int)this->wndWH.x/2, (int)this->wndWH.y/2));
 	}
 	else {

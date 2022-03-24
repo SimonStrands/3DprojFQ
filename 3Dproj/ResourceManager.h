@@ -22,14 +22,8 @@ public:
 	ID3D11ShaderResourceView** getDef();
 	ID3D11ShaderResourceView* getFire();
 #pragma endregion
-
-#pragma region Meshes
+	Material* getdefMatrial;
 	ModelObj* get_Models(std::string key);
-	ModelObj* get_Ball();
-	ModelObj* get_Stol();
-	ModelObj* get_IDK();
-	//Mesh* get_starwars();
-#pragma endregion
 	
 private:
 #pragma region Textures
@@ -37,14 +31,8 @@ private:
 	ID3D11ShaderResourceView* Fire;
 #pragma endregion
 
-#pragma region Meshes
-	//meshes
 	std::map<std::string, ModelObj*> Models;
-	ModelObj *ball;
-	ModelObj *stol;
-	ModelObj *IDK;
-	//Mesh* starwars;
-#pragma endregion
+	Material* defMatrial;
 
 	void addMaterialToTrashCollector(ModelObj* model);
 	void cantLoad(LPCWSTR theerror);

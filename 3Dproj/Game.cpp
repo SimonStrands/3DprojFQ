@@ -14,7 +14,7 @@ Game::Game(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWS
 	nrOfLight = 4;
 	gfx->getLCB()->nrOfLights.element = nrOfLight;
 	light = new Light * [nrOfLight];
-	light[0] = new DirLight(vec3(0,60,8), vec3(0.1, -PI/2, 1));
+	light[0] = new DirLight(vec3(0,60,8), vec3(0.1f, -PI/2, 1.f));
 	light[1] = new SpotLight(vec3(18, 46, 45), vec3(-2.4f, -0.5, 1));
 	light[2] = new SpotLight(vec3(8, 47.f, 0), vec3(0, -1, 1));
 	light[3] = new SpotLight(vec3(30, 50, 0), vec3(-1, -1, 1));
@@ -32,12 +32,12 @@ Game::Game(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWS
 	Qtree = new QuadTree(stataicObj, vec2(0, 0), 4, 100);
 	//(pi,3.14) = 180 degrees
 	//Qtree->setUpCamProp(3.14/4, 50);
-	Qtree->setUpCamProp(0.4, 2000);
+	Qtree->setUpCamProp(0.4f, 2000);
 	
 	
  	bill = new BillBoard(gfx, vec3(0.f, 0.f, 9.f), rm->getFire(), rm->getDef()[1], 6);
 	billManager = new BillBoardManager(gfx, rm->getFire(), 10, vec3(0,0,0),vec3(5,5,5));
-	billManager->setAnimation(6, 1, 0.16);
+	billManager->setAnimation(6, 1, 0.16f);
 	////DCube cannot use standard obj:s without fucking others shaders
 	DCube = new DynamicCube(rm->get_Models("roundsol.obj"), gfx, vec3(5.f, 0.f, 0.f), vec3(0.f, 0.f, 0.f), vec3(2.f, 2.0f, 2.0f));
 	//DCube = new DynamicCube(rm->get_Models("DCube.obj"), gfx, vec3(5.f, 0.f, 0.f), vec3(0.f, 0.f, 0.f), vec3(2.f, 2.0f, 2.0f));
@@ -56,7 +56,6 @@ Game::Game(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWS
 	
 	gfx->takeLight((SpotLight**)light, nrOfLight);
 	
-	currentTime = 0;
 	lightNr = 0;
 }
 
@@ -107,9 +106,9 @@ void Game::run()
 		gfx->clearScreen();
 		gfx->setTransparant(false);
 		//for shadow
-		shadowMap->setUpdateShadow();
 		//måste uppdatera detta så inte hela object uppdateras när bara skugga ska
 		for (int i = 0; i < nrOfLight; i++) {
+			shadowMap->setUpdateShadow();
 			shadowMap->inUpdateShadow(i);
 			updateShaders(true, false);
 			
@@ -122,7 +121,7 @@ void Game::run()
 		updateShaders();
 
 		bill->UpdateShader(gfx, camera->getPos());
-		DrawDynamicCube();//cant be before bindfirstPass();
+		DrawDynamicCube();
 		//
 		defRend->BindFirstPass();
 
@@ -159,8 +158,10 @@ void Game::Update()
 		gfx->getVcb()->view.element = viewMatrix;
 	}
 	
+	obj[1]->changePos(vec3(obj[0]->getPos().x, obj[1]->getPos().y, obj[0]->getPos().z));
+
 	obj[0]->changePos(camera->getPos());
-	obj[0]->changeRot(vec3(camera->getRot().z, camera->getRot().x, -camera->getRot().y) + vec3(0, 1.57, 0));
+	obj[0]->changeRot(vec3(camera->getRot().z, camera->getRot().x, -camera->getRot().y) + vec3(0, 1.57f, 0));
 	bill->update((float)dt.dt());
 	billManager->update(dt.dt(), gfx);
 	mus->UpdateMouse();
@@ -187,26 +188,6 @@ void Game::Update()
 	}
 	if (getkey('4')) {
 		lightNr = 3;
-	}
-	if (getkey('V')) {
-		camera->setPosition(vec3(0, 0, 15));
-		camera->setRotation(vec3(3.2f, 0, 0));
-		light[0]->getPos().x = 0;
-		light[0]->getPos().y = 0;
-		light[0]->getPos().z = 15;
-		light[0]->getRotation().x = 3.2f;
-		light[0]->getRotation().y = 0;
-		light[0]->getRotation().z = 0;
-	}
-	if (getkey('B')) {
-		camera->setPosition(vec3(0, 0, 0));
-		camera->setRotation(vec3(0, 0, 0));
-		light[0]->getPos().x = 0;
-		light[0]->getPos().y = 0;
-		light[0]->getPos().z = 0;
-		light[0]->getRotation().x = 0;
-		light[0]->getRotation().y = 0;
-		light[0]->getRotation().z = 0;
 	}
 #pragma endregion camera_settings
 }
@@ -235,7 +216,7 @@ void Game::DrawToBuffer()
 	gfx->get_IC()->DSSetShader(nullptr, nullptr, 0);
 	gfx->get_IC()->PSSetShader(gfx->getPS()[0], nullptr, 0);
 	for (int i = 0; i < LightVisualizers.size(); i++) {
-		LightVisualizers[i]->drawDefTest(gfx->get_IC());
+		LightVisualizers[i]->draw(gfx, false);
 	}
 }
 
@@ -285,14 +266,17 @@ void Game::DrawDynamicCube()
 		DCube->setRenderTarget(gfx, i);
 		this->ForwardDrawCube();
 		
+	
 	}
 
-	//draw the cube
+	//turn things back to how they where
 	gfx->RsetViewPort();
 	gfx->Projection(0);
 	camera->setPosition(camLP);
 	camera->setRotation(camRT);
 	camera->updateCamera();
+
+	//for DEBUG CAMERA
 	if (getkey('N')) {
 		DirectX::XMMATRIX viewMatrix = DirectX::XMMATRIX(
 			1.0f, 0.0f, 0.0f, 0.0f,
@@ -346,8 +330,8 @@ void Game::ForwardDrawCube()
 void Game::DrawAllShadowObject()
 {
 	gfx->get_IC()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	gfx->get_IC()->IASetInputLayout(gfx->getInputL()[1]);
 	gfx->get_IC()->GSSetShader(nullptr, nullptr, 0);
+	gfx->get_IC()->PSSetShader(nullptr, nullptr, 0);
 	for (int i = 0; i < obj.size(); i++) {
 
 		obj[i]->draw(gfx, true);

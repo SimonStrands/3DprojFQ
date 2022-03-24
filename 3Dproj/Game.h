@@ -32,7 +32,6 @@ public:
 	void ForwardDrawCube();
 	void DrawAllShadowObject();//without any otherShaders
 	void updateShaders(bool vs = true, bool ps = true);
-	void setUpObject();
 private:
 	//width and height of window
 	MSG msg = {};
@@ -49,6 +48,7 @@ private:
 	Camera* camera;
 	ShadowMap* shadowMap;
 	QuadTree* Qtree;
+	void setUpObject();
 
 	//game objects
 	Light **light;
@@ -61,7 +61,6 @@ private:
 
 	//var
 	int nrOfLight;//must still exist
-	float currentTime;
 
 	//debug var
 	int lightNr;

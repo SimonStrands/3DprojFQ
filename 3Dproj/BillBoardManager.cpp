@@ -95,7 +95,7 @@ BillBoardManager::~BillBoardManager()
 void BillBoardManager::update(float dt, Graphics*& gfx)
 {
 	this->CompConstBuff.time.element = dt;
-	this->CompConstBuff.rand.element = RandomNumber(-1, 1);
+	this->CompConstBuff.rand.element = RandomNumber(-1.f, 1.f);
 	anim.update(dt);
 
 	//dispathc shit

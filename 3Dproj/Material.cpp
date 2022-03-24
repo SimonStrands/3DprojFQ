@@ -23,6 +23,13 @@ Material::Material(ID3D11ShaderResourceView** def)
 	for (int i = 0; i < 1; i++) {
 		texSRVDS[i] = nullptr;//do I need to do this?
 	}
+	for (int i = 0; i < 3; i++) {
+		this->Ka[i] = 0.1f;
+		this->Kd[i] = 0.1f;
+		this->Ks[i] = 0.1f;
+	}
+	this->Ns = 0;
+	this->name = "def";
 }
 
 Material::Material(const Material& other)

@@ -95,25 +95,15 @@ void QuadTree::draw(Graphics*& gfx, Camera* cam, bool sm)
 
 	vec3 UpNorm = frustoms[2].X(RVector.mirror()).Normalize();
 	vec3 DownNorm = frustoms[3].X(RVector).Normalize();
-	//std::cout << cam->getRot().x << std::endl;
-	std::cout 
-		<< "fVector:  "<<fVector.to_string() << "\n"
-		<< "uvector:  "<<uVector.to_string() << "\n"
-		<< "Rvecotr:  "<<RVector.to_string() << "\n"
-		<< "camPos:   "<<CamOrgin.to_string() << "\n"
-		<< "leftFrust:"<< frustoms[0].to_string() << "\n"
-		<< "Rigtfrust:"<< frustoms[1].to_string() << "\n"
-		<< "upfrust  :"<< frustoms[2].to_string() << "\n"
-		<< "downfrust:"<< frustoms[3].to_string() << "\n";
 
-	float a = (float)(frustoms[0] * fVector) - (float)(frustoms[1] * fVector);
-	if (a != 0) {
-		if (a > 0.001 || a < -0.001) {
-			std::cout << "error with frustom with margin: " << a << "\n" << std::endl;
-			std::cout << (frustoms[0] * fVector) << std::endl;
-			std::cout << (frustoms[1] * fVector) << std::endl;
-		}
-	}
+	//float a = (float)(frustoms[0] * fVector) - (float)(frustoms[1] * fVector);
+	//if (a != 0) {
+	//	if (a > 0.001 || a < -0.001) {
+	//		std::cout << "error with frustom with margin: " << a << "\n" << std::endl;
+	//		std::cout << (frustoms[0] * fVector) << std::endl;
+	//		std::cout << (frustoms[1] * fVector) << std::endl;
+	//	}
+	//}
 
 	qtCD->CamPos = CamOrgin;
 	qtCD->forwardVector = fVector;

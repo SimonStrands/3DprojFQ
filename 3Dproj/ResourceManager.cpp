@@ -22,10 +22,7 @@ ResourceManager::~ResourceManager()
 	for (it = Models.begin(); it != Models.end(); it++) {
 		delete it->second;
 	}
-	
-	delete ball;
-	delete stol;
-	delete IDK;
+	delete defMatrial;
 }
 
 void loadWithThread(threadInfo thredData)
@@ -57,8 +54,6 @@ void ResourceManager::loadThings(Graphics*& gfx)
 	}
 	def[3] = nullptr;
 	//mesh
-	
-	std::vector<std::thread> thrs;
 
 	std::string names[] = {
 		"GroundLowPloy.obj",
@@ -74,14 +69,9 @@ void ResourceManager::loadThings(Graphics*& gfx)
 	};
 	for (int i = 0; i < _countof(names); i++) {
 		ModelObj* model = new ModelObj();
-		//threadInfo threadParam({model, "obj/" + names[i], def, gfx});
-		//thrs.push_back(std::thread(loadWithThread, std::ref(threadParam)));
 		model->init("obj/" + names[i], gfx, def);
 		Models.insert(std::make_pair(names[i], model));
 	}
-	//for (int i = 0; i < _countof(names); i++) {
-	//	thrs[i].join();
-	//}
 	for (int i = 0; i < _countof(names); i++) {
 		int sizeOfMatrials = Models.find(names[i])->second->getMatrial().size();
 		ModelObj* model = Models.find(names[i])->second;
@@ -98,26 +88,6 @@ ModelObj* ResourceManager::get_Models(std::string key)
 	return Models.find(key)->second;
 }
 
-ModelObj*ResourceManager::get_Ball()
-{
-	return ball;
-}
-
-ModelObj*ResourceManager::get_Stol()
-{
-	return stol;
-}
-
-ModelObj*ResourceManager::get_IDK()
-{
-	return IDK;
-}
-
-//Mesh* ResourceManager::get_starwars()
-//{
-//	return this->starwars;
-//}
-
 ID3D11ShaderResourceView** ResourceManager::getDef()
 {
 	return this->def;
@@ -127,8 +97,6 @@ ID3D11ShaderResourceView* ResourceManager::getFire()
 {
 	return this->Fire;
 }
-
-
 
 void ResourceManager::addMaterialToTrashCollector(ModelObj* model)
 {
