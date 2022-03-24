@@ -46,7 +46,6 @@ private:
 	//Mesh* starwars;
 #pragma endregion
 
-	//void loadWithThread(threadInfo thredData);
-	//void loadWithThread(ModelObj* model, std::string name);
+	void addMaterialToTrashCollector(ModelObj* model);
 	void cantLoad(LPCWSTR theerror);
 };

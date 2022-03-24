@@ -60,12 +60,10 @@ void ResourceManager::loadThings(Graphics*& gfx)
 	
 	std::vector<std::thread> thrs;
 
-	ball = new ModelObj("obj/GroundLowPloy.obj", gfx, def);
-	
-	stol = new ModelObj("obj/DoubleMesh.obj" , gfx, def);
-	
-	IDK = new  ModelObj("obj/quad2.obj"     , gfx, def);
 	std::string names[] = {
+		"GroundLowPloy.obj",
+		"DoubleMesh.obj",
+		"quad2.obj",
 		"roundsol.obj",
 		"stormtrooper.obj",
 		"DCube.obj",
@@ -77,7 +75,6 @@ void ResourceManager::loadThings(Graphics*& gfx)
 	for (int i = 0; i < _countof(names); i++) {
 		ModelObj* model = new ModelObj();
 		//threadInfo threadParam({model, "obj/" + names[i], def, gfx});
-		//thrs.push_back(std::thread(loadWithThread, std::ref(model), "obj/" + names[i], std::ref(def), std::ref(gfx)));
 		//thrs.push_back(std::thread(loadWithThread, std::ref(threadParam)));
 		model->init("obj/" + names[i], gfx, def);
 		Models.insert(std::make_pair(names[i], model));
@@ -92,6 +89,7 @@ void ResourceManager::loadThings(Graphics*& gfx)
 			TC::GetInst().add(model->getMatrial()[p]);
 		}
 	}
+	
 	std::cout << "resource manager is done loading" << std::endl;
 }
 
@@ -131,6 +129,13 @@ ID3D11ShaderResourceView* ResourceManager::getFire()
 }
 
 
+
+void ResourceManager::addMaterialToTrashCollector(ModelObj* model)
+{
+	for (int i = 0; i < model->getMatrial().size(); i++) {
+		TC::GetInst().add(model->getMatrial()[i]);
+	}
+}
 
 void ResourceManager::cantLoad(LPCWSTR theerror)
 {

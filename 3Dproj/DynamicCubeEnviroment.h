@@ -4,8 +4,10 @@
 #include "D311Helper.h"
 #include "DeferredRendering.h"
 
+//basicly a mirrror
 class DynamicCube : public GameObject {
 public:
+	//basicly a mirrror
 	DynamicCube(ModelObj* model, Graphics*& gfx, vec3 pos = vec3(0, 0, 0), vec3 rot = vec3(0, 0, 0), vec3 scale = vec3(1, 1, 1));
 	virtual ~DynamicCube();
 	void draw(ID3D11DeviceContext*& immediateContext);

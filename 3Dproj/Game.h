@@ -27,7 +27,6 @@ public:
 	virtual ~Game();
 	void run();
 	void DrawToBuffer();
-	void DrawToBufferDebug();
 	void DrawDynamicCube();
 	void ForwardDraw();
 	void ForwardDrawCube();
@@ -40,6 +39,7 @@ private:
 	Graphics *gfx;
 	ResourceManager* rm;
 	void Update();
+	const float PI = 3.14159265359f;
 private:
 	//logic and others
 	DeferredRendering *defRend;
@@ -55,8 +55,6 @@ private:
 	std::vector<GameObject*> LightVisualizers;
 	std::vector<GameObject*> obj;
 	std::vector<GameObject*> stataicObj;
-	//GameObject** LightVisualizers;
-	//GameObject** obj;
 	BillBoardManager* billManager;
 	DynamicCube* DCube;
 	BillBoard *bill;
