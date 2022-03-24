@@ -53,7 +53,7 @@ Game::Game(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWS
 		UIManager.takeLight(light[i]);
 	}
 	//camera
-	UIManager.takeObject(obj[1]);
+	//UIManager.takeObject(obj[1]);
 	
 	
 	gfx->takeLight((SpotLight**)light, nrOfLight);
@@ -235,7 +235,6 @@ void Game::DrawToBuffer()
 	gfx->get_IC()->HSSetShader(nullptr, nullptr, 0);
 	gfx->get_IC()->DSSetShader(nullptr, nullptr, 0);
 	gfx->get_IC()->PSSetShader(gfx->getPS()[0], nullptr, 0);
-	gfx->get_IC()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	for (int i = 0; i < LightVisualizers.size(); i++) {
 		LightVisualizers[i]->drawDefTest(gfx->get_IC());
 	}
@@ -295,7 +294,8 @@ void Game::DrawDynamicCube()
 		
 		//DEFFERED RENDERING
 		DCube->firstPass();//needed
-		this->DrawToBufferDebug();
+		//this->DrawToBufferDebug();
+		this->DrawToBuffer();
 		DCube->secondPass(shadowMap->GetshadowResV(), DCube->getUAVs()[i], 16, 40, DCube->getCSShader());
 		//FORWARD RENDERING
 		DCube->setRenderTarget(gfx, i);
@@ -410,16 +410,16 @@ void Game::setUpObject()
 	//cameras
 	obj.push_back(new GameObject(rm->get_Models("Camera.obj"), gfx, vec3(0.f, 0.f, 10.f), vec3(0.f, 0.f, 0.f), vec3(2.f, 2.0f, 2.0f)));//main
 	obj.push_back(new GameObject(rm->get_Models("Camera.obj"), gfx, vec3(0.f, 100.f, 0.f), vec3(0.f, -1.58f, 0.f), vec3(2.f, 2.0f, 2.0f)));//second
-
-	//OBJECTS
-	obj.push_back(new GameObject(rm->get_Stol(), gfx, vec3(10.f, 5.f, 10.f), vec3(-1.56f, 1.56f, 3.2f), vec3(1.f, 1.f, 1.f)));
-	obj.push_back(new GameObject(rm->get_Ball(), gfx, vec3(-5.f, 0.f, 0.f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
-	obj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj"), gfx, vec3(0.f, 0.f, -50.f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
-	//walls
-	obj.push_back(new GameObject(rm->get_IDK(), gfx, vec3(0.f, 5.f, 20.f),  vec3(-1.6f, -1.6f, 3.2f), vec3(20.f, 20.f, 20.f)));
-	obj.push_back(new GameObject(rm->get_IDK(), gfx, vec3(20.f, 5.f, 0.f),  vec3(-1.6f, 0.f, 3.2f),   vec3(20.f, 20.f, 20.f)));
-	obj.push_back(new GameObject(rm->get_IDK(), gfx, vec3(0.f, 5.f, -20.f), vec3(-1.6f, 1.6f, 3.2f),  vec3(20.f, 20.f, 20.f)));
-	obj.push_back(new GameObject(rm->get_IDK(), gfx, vec3(-20.f, 5.f, 0.f), vec3(-1.6f, 3.f, 3.2f),   vec3(20.f, 20.f, 20.f)));
+	//
+	////OBJECTS
+	//obj.push_back(new GameObject(rm->get_Stol(), gfx, vec3(10.f, 5.f, 10.f), vec3(-1.56f, 1.56f, 3.2f), vec3(1.f, 1.f, 1.f)));
+	//obj.push_back(new GameObject(rm->get_Ball(), gfx, vec3(-5.f, 0.f, 0.f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
+	//obj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj"), gfx, vec3(0.f, 0.f, -50.f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
+	////walls
+	//obj.push_back(new GameObject(rm->get_IDK(), gfx, vec3(0.f, 5.f, 20.f),  vec3(-1.6f, -1.6f, 3.2f), vec3(20.f, 20.f, 20.f)));
+	//obj.push_back(new GameObject(rm->get_IDK(), gfx, vec3(20.f, 5.f, 0.f),  vec3(-1.6f, 0.f, 3.2f),   vec3(20.f, 20.f, 20.f)));
+	//obj.push_back(new GameObject(rm->get_IDK(), gfx, vec3(0.f, 5.f, -20.f), vec3(-1.6f, 1.6f, 3.2f),  vec3(20.f, 20.f, 20.f)));
+	//obj.push_back(new GameObject(rm->get_IDK(), gfx, vec3(-20.f, 5.f, 0.f), vec3(-1.6f, 3.f, 3.2f),   vec3(20.f, 20.f, 20.f)));
 	
 	//static
 	//stataicObj.push_back(new GameObject(rm->get_Models("stormtrooper.obj"),        gfx, vec3(25.f, 0.f, 0.f), vec3(0.f, 0.f, -1.57f), vec3(1.f, 1.f, 1.f)));
@@ -449,15 +449,15 @@ void Game::setUpObject()
 	//stataicObj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj"), gfx, vec3(-12.5f, 0.f, 12.5f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
 	//stataicObj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj"), gfx, vec3(12.5f, 0.f, -12.5f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
 	//stataicObj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj"), gfx, vec3(12.5f, 0.f, -12.5f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
-	int nrOfPlantsXY = 16;
-	float sizeOfTree = 100 * 2;
-	for (int x = 0; x < nrOfPlantsXY; x++) {
-		for (int y = 0; y < nrOfPlantsXY; y++) {
-			stataicObj.push_back(new GameObject(rm->get_IDK(),
-				gfx, vec3(((sizeOfTree/ nrOfPlantsXY) * x) - sizeOfTree/2, 0.f, ((sizeOfTree / nrOfPlantsXY) * y) - sizeOfTree / 2),
-				vec3(0.f, 0.f, 1.58f), vec3(5.f, 5.f, 5.f)));
-		}
-	}
+	//int nrOfPlantsXY = 16;
+	//float sizeOfTree = 100 * 2;
+	//for (int x = 0; x < nrOfPlantsXY; x++) {
+	//	for (int y = 0; y < nrOfPlantsXY; y++) {
+	//		stataicObj.push_back(new GameObject(rm->get_IDK(),
+	//			gfx, vec3(((sizeOfTree/ nrOfPlantsXY) * x) - sizeOfTree/2, 0.f, ((sizeOfTree / nrOfPlantsXY) * y) - sizeOfTree / 2),
+	//			vec3(0.f, 0.f, 1.58f), vec3(5.f, 5.f, 5.f)));
+	//	}
+	//}
 	
 	float gw = 10;
 	float gn = 25;
@@ -468,5 +468,5 @@ void Game::setUpObject()
 	}
 
 
-	obj[3]->setTesselation(true, gfx);
+	//obj[3]->setTesselation(true, gfx);
 }

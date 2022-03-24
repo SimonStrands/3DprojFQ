@@ -27,6 +27,7 @@ void GameObject::draw(Graphics *&gfx, bool sm)
 
 void GameObject::drawDebug(Graphics*& gfx, bool sm)
 {
+	drawed = true;
 	gfx->get_IC()->VSSetConstantBuffers(0, 1, &this->getVertexConstBuffer());
 	gfx->get_IC()->DSSetConstantBuffers(0, 1, &this->getVertexConstBuffer());
 	gfx->get_IC()->HSSetConstantBuffers(0, 1, &this->getVertexConstBuffer());

@@ -76,15 +76,15 @@ void ResourceManager::loadThings(Graphics*& gfx)
 	};
 	for (int i = 0; i < _countof(names); i++) {
 		ModelObj* model = new ModelObj();
-		threadInfo threadParam({model, "obj/" + names[i], def, gfx});
+		//threadInfo threadParam({model, "obj/" + names[i], def, gfx});
 		//thrs.push_back(std::thread(loadWithThread, std::ref(model), "obj/" + names[i], std::ref(def), std::ref(gfx)));
-		thrs.push_back(std::thread(loadWithThread, std::ref(threadParam)));
-		//model = new ModelObj("obj/" + names[i], gfx, def);
+		//thrs.push_back(std::thread(loadWithThread, std::ref(threadParam)));
+		model->init("obj/" + names[i], gfx, def);
 		Models.insert(std::make_pair(names[i], model));
 	}
-	for (int i = 0; i < _countof(names); i++) {
-		thrs[i].join();
-	}
+	//for (int i = 0; i < _countof(names); i++) {
+	//	thrs[i].join();
+	//}
 	for (int i = 0; i < _countof(names); i++) {
 		int sizeOfMatrials = Models.find(names[i])->second->getMatrial().size();
 		ModelObj* model = Models.find(names[i])->second;
