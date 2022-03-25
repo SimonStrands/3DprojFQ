@@ -24,6 +24,8 @@ public:
 #pragma endregion
 	Material* getdefMatrial;
 	ModelObj* get_Models(std::string key);
+	/*can use this method even if the object is not already loded*/
+	ModelObj* get_Models(std::string key, Graphics*& gfx);
 	
 private:
 #pragma region Textures

@@ -121,19 +121,19 @@ bool DeferredRendering::InitDeferred(int w, int h)
 void DeferredRendering::BindFirstPass(ID3D11DepthStencilView* depth)
 {
 	if (depth == nullptr) {
-		gfx->get_IC()->OMSetRenderTargets(5, DeferredRTV, gfx->getDepthStencil());
-		gfx->get_IC()->ClearDepthStencilView(gfx->getDepthStencil(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+		gfx->get_IMctx()->OMSetRenderTargets(5, DeferredRTV, gfx->getDepthStencil());
+		gfx->get_IMctx()->ClearDepthStencilView(gfx->getDepthStencil(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 	}
 	else {
-		gfx->get_IC()->OMSetRenderTargets(5, DeferredRTV, depth);
-		gfx->get_IC()->ClearDepthStencilView(depth, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+		gfx->get_IMctx()->OMSetRenderTargets(5, DeferredRTV, depth);
+		gfx->get_IMctx()->ClearDepthStencilView(depth, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 	}
 	FLOAT color[4] = { 0.1f,0.1f,0.1f,1.f };
-	gfx->get_IC()->ClearRenderTargetView(DeferredRTV[0], color);
-	gfx->get_IC()->ClearRenderTargetView(DeferredRTV[1], color);
-	gfx->get_IC()->ClearRenderTargetView(DeferredRTV[2], color);
-	gfx->get_IC()->ClearRenderTargetView(DeferredRTV[3], color);
-	gfx->get_IC()->ClearRenderTargetView(DeferredRTV[4], color);
+	gfx->get_IMctx()->ClearRenderTargetView(DeferredRTV[0], color);
+	gfx->get_IMctx()->ClearRenderTargetView(DeferredRTV[1], color);
+	gfx->get_IMctx()->ClearRenderTargetView(DeferredRTV[2], color);
+	gfx->get_IMctx()->ClearRenderTargetView(DeferredRTV[3], color);
+	gfx->get_IMctx()->ClearRenderTargetView(DeferredRTV[4], color);
 }
 
 void DeferredRendering::BindSecondPass(ID3D11ShaderResourceView*& ShadowMapping)
@@ -142,21 +142,21 @@ void DeferredRendering::BindSecondPass(ID3D11ShaderResourceView*& ShadowMapping)
 	ID3D11UnorderedAccessView* nullUAV = nullptr;
 	ID3D11RenderTargetView* nullRTV[5] = { nullptr };
 	//set till null?
-	gfx->get_IC()->OMSetRenderTargets(5, nullRTV, nullptr);
+	gfx->get_IMctx()->OMSetRenderTargets(5, nullRTV, nullptr);
 
 	//is this for compute shading
-	gfx->get_IC()->CSSetShader(DeferredComputeS, nullptr, 0);
+	gfx->get_IMctx()->CSSetShader(DeferredComputeS, nullptr, 0);
 
-	gfx->get_IC()->CSSetShaderResources(0, 5, DeferredResV);
-	gfx->get_IC()->CSSetShaderResources(5, 1, &ShadowMapping);//add ShadowMapping
+	gfx->get_IMctx()->CSSetShaderResources(0, 5, DeferredResV);
+	gfx->get_IMctx()->CSSetShaderResources(5, 1, &ShadowMapping);//add ShadowMapping
 	
-	gfx->get_IC()->CSSetUnorderedAccessViews(0, 1, &this->UAV, nullptr);
+	gfx->get_IMctx()->CSSetUnorderedAccessViews(0, 1, &this->UAV, nullptr);
 	//köra computeShader
-	gfx->get_IC()->Dispatch(60, 135, 1);
+	gfx->get_IMctx()->Dispatch(60, 135, 1);
 	ID3D11ShaderResourceView* nullSRV[6] = { nullptr };
-	gfx->get_IC()->CSSetShaderResources(0, _countof(nullSRV), nullSRV);
+	gfx->get_IMctx()->CSSetShaderResources(0, _countof(nullSRV), nullSRV);
 	//nulla unorderedaccesview
-	gfx->get_IC()->CSSetUnorderedAccessViews(0, 1, &nullUAV, nullptr);
+	gfx->get_IMctx()->CSSetUnorderedAccessViews(0, 1, &nullUAV, nullptr);
 }
 
 //using these for dynamic cube mapping
@@ -172,28 +172,28 @@ void DeferredRendering::BindSecondPassFunc(
 	ID3D11UnorderedAccessView* nullUAV = nullptr;
 	ID3D11RenderTargetView* nullRTV[5] = { nullptr };
 	//set till null?
-	gfx->get_IC()->OMSetRenderTargets(5, nullRTV, nullptr);
+	gfx->get_IMctx()->OMSetRenderTargets(5, nullRTV, nullptr);
 
 	//is this for compute shading
 	if (CSShader == nullptr) {
-		gfx->get_IC()->CSSetShader(DeferredComputeS, nullptr, 0);
+		gfx->get_IMctx()->CSSetShader(DeferredComputeS, nullptr, 0);
 	}
 	else {
-		gfx->get_IC()->CSSetShader(CSShader, nullptr, 0);
+		gfx->get_IMctx()->CSSetShader(CSShader, nullptr, 0);
 	}
 	
 
-	gfx->get_IC()->CSSetShaderResources(0, 5, DeferredResV);
-	gfx->get_IC()->CSSetShaderResources(5, 1, &ShadowMapping);//add ShadowMapping
+	gfx->get_IMctx()->CSSetShaderResources(0, 5, DeferredResV);
+	gfx->get_IMctx()->CSSetShaderResources(5, 1, &ShadowMapping);//add ShadowMapping
 
 	UINT s = 6;
-	gfx->get_IC()->CSSetUnorderedAccessViews(0, 1, &UAV, 0);
+	gfx->get_IMctx()->CSSetUnorderedAccessViews(0, 1, &UAV, 0);
 	//köra computeShader
-	gfx->get_IC()->Dispatch(dx, dy, 1);
+	gfx->get_IMctx()->Dispatch(dx, dy, 1);
 	ID3D11ShaderResourceView* nullSRV[6] = { nullptr };
-	gfx->get_IC()->CSSetShaderResources(0, _countof(nullSRV), nullSRV);
+	gfx->get_IMctx()->CSSetShaderResources(0, _countof(nullSRV), nullSRV);
 	//nulla unorderedaccesview
-	gfx->get_IC()->CSSetUnorderedAccessViews(0, 1, &nullUAV, nullptr);
+	gfx->get_IMctx()->CSSetUnorderedAccessViews(0, 1, &nullUAV, nullptr);
 }
 
 ID3D11PixelShader* DeferredRendering::getPS()

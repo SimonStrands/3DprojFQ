@@ -211,7 +211,6 @@
     <ClInclude Include="Bone.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Collision.h" />
-    <ClInclude Include="ConstantBuffer.h" />
     <ClInclude Include="Convertions.h" />
     <ClInclude Include="D311Helper.h" />
     <ClInclude Include="debug.h" />

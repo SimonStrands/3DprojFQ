@@ -99,17 +99,17 @@ void BillBoardManager::update(float dt, Graphics*& gfx)
 	anim.update(dt);
 
 	//dispathc shit
-	gfx->get_IC()->CSSetShader(cUpdate, nullptr, 0);
+	gfx->get_IMctx()->CSSetShader(cUpdate, nullptr, 0);
 
-	gfx->get_IC()->CSSetConstantBuffers(0, 1, &Cg_pConstantBuffer);
+	gfx->get_IMctx()->CSSetConstantBuffers(0, 1, &Cg_pConstantBuffer);
 
-	gfx->get_IC()->CSSetUnorderedAccessViews(0, 1, &billUAV, nullptr);
+	gfx->get_IMctx()->CSSetUnorderedAccessViews(0, 1, &billUAV, nullptr);
 
-	gfx->get_IC()->Dispatch(this->billboards.size()/8, 1, 1);//calc how many groups we need
+	gfx->get_IMctx()->Dispatch(this->billboards.size()/8, 1, 1);//calc how many groups we need
 
 	//nulla unorderedaccesview
 	ID3D11UnorderedAccessView* nullUAV = nullptr;
-	gfx->get_IC()->CSSetUnorderedAccessViews(0, 1, &nullUAV, nullptr);
+	gfx->get_IMctx()->CSSetUnorderedAccessViews(0, 1, &nullUAV, nullptr);
 }
 
 void BillBoardManager::updateShader(Graphics*& gfx, vec3 camPos)
@@ -138,9 +138,9 @@ void BillBoardManager::updateShader(Graphics*& gfx, vec3 camPos)
 	//changing vertex Shader cBuffer
 	D3D11_MAPPED_SUBRESOURCE resource;
 
-	gfx->get_IC()->Map(Vg_pConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
+	gfx->get_IMctx()->Map(Vg_pConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
 	memcpy(resource.pData, gfx->getVertexconstbuffer(), sizeof(Vcb));
-	gfx->get_IC()->Unmap(Vg_pConstantBuffer, 0);
+	gfx->get_IMctx()->Unmap(Vg_pConstantBuffer, 0);
 	ZeroMemory(&resource, sizeof(D3D11_MAPPED_SUBRESOURCE));
 
 	//GCB
@@ -154,16 +154,16 @@ void BillBoardManager::updateShader(Graphics*& gfx, vec3 camPos)
 	gfx->getGeometryconstbuffer()->uvCords.element[2] = anim.uv().xyz.z;
 	gfx->getGeometryconstbuffer()->uvCords.element[3] = anim.uv().w;
 
-	gfx->get_IC()->Map(Gg_pConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
+	gfx->get_IMctx()->Map(Gg_pConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
 	memcpy(resource.pData, gfx->getGeometryconstbuffer(), sizeof(Gcb));
-	gfx->get_IC()->Unmap(Gg_pConstantBuffer, 0);
+	gfx->get_IMctx()->Unmap(Gg_pConstantBuffer, 0);
 	ZeroMemory(&resource, sizeof(D3D11_MAPPED_SUBRESOURCE));
 
 
 	//update computeshader const buffer
-	gfx->get_IC()->Map(Cg_pConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
+	gfx->get_IMctx()->Map(Cg_pConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
 	memcpy(resource.pData, &CompConstBuff, sizeof(CTCB));
-	gfx->get_IC()->Unmap(Cg_pConstantBuffer, 0);
+	gfx->get_IMctx()->Unmap(Cg_pConstantBuffer, 0);
 	ZeroMemory(&resource, sizeof(D3D11_MAPPED_SUBRESOURCE));
 }
 
@@ -188,21 +188,21 @@ void BillBoardManager::draw(Graphics*& gfx)
 	UINT offset = 0;
 	static UINT strid = sizeof(point);
 
-	gfx->get_IC()->IASetInputLayout(gfx->getInputL()[1]);
-	gfx->get_IC()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
-	gfx->get_IC()->VSSetShader(gfx->getVS()[1], nullptr, 0);
-	gfx->get_IC()->GSSetShader(gfx->getGS()[0], nullptr, 0);
-	gfx->get_IC()->PSSetShader(gfx->getPS()[1], nullptr, 0);
-	gfx->get_IC()->HSSetShader(nullptr, nullptr, 0);
-	gfx->get_IC()->DSSetShader(nullptr, nullptr, 0);
+	gfx->get_IMctx()->IASetInputLayout(gfx->getInputLayout()[1]);
+	gfx->get_IMctx()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
+	gfx->get_IMctx()->VSSetShader(gfx->getVS()[1], nullptr, 0);
+	gfx->get_IMctx()->GSSetShader(gfx->getGS()[0], nullptr, 0);
+	gfx->get_IMctx()->PSSetShader(gfx->getPS()[1], nullptr, 0);
+	gfx->get_IMctx()->HSSetShader(nullptr, nullptr, 0);
+	gfx->get_IMctx()->DSSetShader(nullptr, nullptr, 0);
 
-	gfx->get_IC()->PSSetShaderResources(0, 1, &SRV);
+	gfx->get_IMctx()->PSSetShaderResources(0, 1, &SRV);
 
-	gfx->get_IC()->VSSetConstantBuffers(0, 1, &Vg_pConstantBuffer);
-	gfx->get_IC()->GSSetConstantBuffers(0, 1, &Gg_pConstantBuffer);
-	gfx->get_IC()->PSSetConstantBuffers(0, 1, &Pg_pConstantBuffer);
+	gfx->get_IMctx()->VSSetConstantBuffers(0, 1, &Vg_pConstantBuffer);
+	gfx->get_IMctx()->GSSetConstantBuffers(0, 1, &Gg_pConstantBuffer);
+	gfx->get_IMctx()->PSSetConstantBuffers(0, 1, &Pg_pConstantBuffer);
 	
-	gfx->get_IC()->IASetVertexBuffers(0, 1, &this->buff, &strid, &offset);
-	gfx->get_IC()->Draw(this->nrOfParticles, 0);
+	gfx->get_IMctx()->IASetVertexBuffers(0, 1, &this->buff, &strid, &offset);
+	gfx->get_IMctx()->Draw(this->nrOfParticles, 0);
 
 }

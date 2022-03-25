@@ -39,7 +39,7 @@ Game::Game(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWS
 	billManager = new BillBoardManager(gfx, rm->getFire(), 10, vec3(0,0,0),vec3(5,5,5));
 	billManager->setAnimation(6, 1, 0.16f);
 	////DCube cannot use standard obj:s without fucking others shaders
-	DCube = new DynamicCube(rm->get_Models("roundsol.obj"), gfx, vec3(5.f, 0.f, 0.f), vec3(0.f, 0.f, 0.f), vec3(2.f, 2.0f, 2.0f));
+	DCube = new DynamicCube(rm->get_Models("roundsol.obj", gfx), gfx, vec3(5.f, 0.f, 0.f), vec3(0.f, 0.f, 0.f), vec3(2.f, 2.0f, 2.0f));
 	//DCube = new DynamicCube(rm->get_Models("DCube.obj"), gfx, vec3(5.f, 0.f, 0.f), vec3(0.f, 0.f, 0.f), vec3(2.f, 2.0f, 2.0f));
 	/////LIGHT////////
 	for (int i = 0; i < nrOfLight; i++) {
@@ -108,12 +108,20 @@ void Game::run()
 		//for shadow
 		//måste uppdatera detta så inte hela object uppdateras när bara skugga ska
 		shadowMap->setUpdateShadow();
+		vec3 camLP = camera->getPos();
+		vec3 camLR = camera->getRot();
 		for (int i = 0; i < nrOfLight; i++) {
+			//set cam position to lightposition
+			camera->setPosition(light[i]->getPos());
+			camera->setRotation(light[i]->getRotation());
 			shadowMap->inUpdateShadow(i);
 			updateShaders(true, false);
 			
 			DrawAllShadowObject();
 		}
+		//set cam position so its the real cam
+		camera->setPosition(camLP);
+		camera->setRotation(camLR);
 		gfx->setProjection(0);//last can be dir light
 
 
@@ -194,12 +202,12 @@ void Game::Update()
 
 void Game::DrawToBuffer()
 {	
-	gfx->get_IC()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	gfx->get_IC()->IASetInputLayout(gfx->getInputL()[0]);
-	gfx->get_IC()->GSSetShader(nullptr, nullptr, 0);
-	gfx->get_IC()->VSSetShader(gfx->getVS()[0], nullptr, 0);
-	gfx->get_IC()->HSSetShader(nullptr, nullptr, 0);
-	gfx->get_IC()->DSSetShader(nullptr, nullptr, 0);
+	gfx->get_IMctx()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	gfx->get_IMctx()->IASetInputLayout(gfx->getInputLayout()[0]);
+	gfx->get_IMctx()->GSSetShader(nullptr, nullptr, 0);
+	gfx->get_IMctx()->VSSetShader(gfx->getVS()[0], nullptr, 0);
+	gfx->get_IMctx()->HSSetShader(nullptr, nullptr, 0);
+	gfx->get_IMctx()->DSSetShader(nullptr, nullptr, 0);
 	for (int i = 0; i < obj.size(); i++) {
 		obj[i]->draw(gfx);
 	}
@@ -210,11 +218,11 @@ void Game::DrawToBuffer()
 	Qtree->draw(gfx, camera);
 	Qtree->clearAlrDraw();
 
-	gfx->get_IC()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	gfx->get_IC()->VSSetShader(gfx->getVS()[0], nullptr, 0);
-	gfx->get_IC()->HSSetShader(nullptr, nullptr, 0);
-	gfx->get_IC()->DSSetShader(nullptr, nullptr, 0);
-	gfx->get_IC()->PSSetShader(gfx->getPS()[0], nullptr, 0);
+	gfx->get_IMctx()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	gfx->get_IMctx()->VSSetShader(gfx->getVS()[0], nullptr, 0);
+	gfx->get_IMctx()->HSSetShader(nullptr, nullptr, 0);
+	gfx->get_IMctx()->DSSetShader(nullptr, nullptr, 0);
+	gfx->get_IMctx()->PSSetShader(gfx->getPS()[0], nullptr, 0);
 	for (int i = 0; i < LightVisualizers.size(); i++) {
 		LightVisualizers[i]->draw(gfx, false);
 	}
@@ -293,21 +301,21 @@ void Game::DrawDynamicCube()
 
 void Game::ForwardDraw()
 {
-	gfx->get_IC()->IASetInputLayout(gfx->getInputL()[0]);
-	gfx->get_IC()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	gfx->get_IC()->GSSetShader(nullptr, nullptr, 0);
-	gfx->get_IC()->HSSetShader(nullptr, nullptr, 0);
-	gfx->get_IC()->DSSetShader(nullptr, nullptr, 0);
+	gfx->get_IMctx()->IASetInputLayout(gfx->getInputLayout()[0]);
+	gfx->get_IMctx()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	gfx->get_IMctx()->GSSetShader(nullptr, nullptr, 0);
+	gfx->get_IMctx()->HSSetShader(nullptr, nullptr, 0);
+	gfx->get_IMctx()->DSSetShader(nullptr, nullptr, 0);
 	DCube->update(camera->getPos(), gfx);
-	DCube->draw(gfx->get_IC());
+	DCube->draw(gfx->get_IMctx());
 
-	gfx->get_IC()->IASetInputLayout(gfx->getInputL()[1]);
-	gfx->get_IC()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
-	gfx->get_IC()->VSSetShader(gfx->getVS()[1], nullptr, 0);
-	gfx->get_IC()->GSSetShader(gfx->getGS()[0], nullptr, 0);
-	gfx->get_IC()->PSSetShader(gfx->getPS()[1], nullptr, 0);
-	gfx->get_IC()->HSSetShader(nullptr, nullptr, 0);
-	gfx->get_IC()->DSSetShader(nullptr, nullptr, 0);
+	gfx->get_IMctx()->IASetInputLayout(gfx->getInputLayout()[1]);
+	gfx->get_IMctx()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
+	gfx->get_IMctx()->VSSetShader(gfx->getVS()[1], nullptr, 0);
+	gfx->get_IMctx()->GSSetShader(gfx->getGS()[0], nullptr, 0);
+	gfx->get_IMctx()->PSSetShader(gfx->getPS()[1], nullptr, 0);
+	gfx->get_IMctx()->HSSetShader(nullptr, nullptr, 0);
+	gfx->get_IMctx()->DSSetShader(nullptr, nullptr, 0);
 	bill->draw(gfx);
 	billManager->draw(gfx);
 }
@@ -315,22 +323,22 @@ void Game::ForwardDraw()
 //the Dynamic cube that draw these infront
 void Game::ForwardDrawCube()
 {
-	gfx->get_IC()->IASetInputLayout(gfx->getInputL()[1]);
-	gfx->get_IC()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
-	gfx->get_IC()->VSSetShader(gfx->getVS()[1], nullptr, 0);
-	gfx->get_IC()->GSSetShader(gfx->getGS()[0], nullptr, 0);
-	gfx->get_IC()->PSSetShader(gfx->getPS()[1], nullptr, 0);
-	gfx->get_IC()->HSSetShader(nullptr, nullptr, 0);
-	gfx->get_IC()->DSSetShader(nullptr, nullptr, 0);
+	gfx->get_IMctx()->IASetInputLayout(gfx->getInputLayout()[1]);
+	gfx->get_IMctx()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
+	gfx->get_IMctx()->VSSetShader(gfx->getVS()[1], nullptr, 0);
+	gfx->get_IMctx()->GSSetShader(gfx->getGS()[0], nullptr, 0);
+	gfx->get_IMctx()->PSSetShader(gfx->getPS()[1], nullptr, 0);
+	gfx->get_IMctx()->HSSetShader(nullptr, nullptr, 0);
+	gfx->get_IMctx()->DSSetShader(nullptr, nullptr, 0);
 	bill->draw(gfx);
 	billManager->draw(gfx);
 }
 
 void Game::DrawAllShadowObject()
 {
-	gfx->get_IC()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	gfx->get_IC()->GSSetShader(nullptr, nullptr, 0);
-	gfx->get_IC()->PSSetShader(nullptr, nullptr, 0);
+	gfx->get_IMctx()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	gfx->get_IMctx()->GSSetShader(nullptr, nullptr, 0);
+	gfx->get_IMctx()->PSSetShader(nullptr, nullptr, 0);
 	for (int i = 0; i < obj.size(); i++) {
 
 		obj[i]->draw(gfx, true);
@@ -375,47 +383,47 @@ void Game::setUpObject()
 {
 	////////OBJECTS///////////
 	//cameras
-	obj.push_back(new GameObject(rm->get_Models("Camera.obj"), gfx, vec3(0.f, 0.f, 10.f), vec3(0.f, 0.f, 0.f), vec3(2.f, 2.0f, 2.0f)));//main
-	obj.push_back(new GameObject(rm->get_Models("Camera.obj"), gfx, vec3(0.f, 100.f, 0.f), vec3(0.f, -1.58f, 0.f), vec3(2.f, 2.0f, 2.0f)));//second
+	obj.push_back(new GameObject(rm->get_Models("Camera.obj", gfx), gfx, vec3(0.f, 0.f, 10.f), vec3(0.f, 0.f, 0.f), vec3(2.f, 2.0f, 2.0f)));//main
+	obj.push_back(new GameObject(rm->get_Models("Camera.obj", gfx), gfx, vec3(0.f, 100.f, 0.f), vec3(0.f, -1.58f, 0.f), vec3(2.f, 2.0f, 2.0f)));//second
 	//
 	////OBJECTS
-	obj.push_back(new GameObject(rm->get_Models("DoubleMesh.obj"), gfx, vec3(10.f, 5.f, 10.f), vec3(-1.56f, 1.56f, 3.2f), vec3(1.f, 1.f, 1.f)));
-	obj.push_back(new GameObject(rm->get_Models("GroundLowPloy.obj"), gfx, vec3(-5.f, 0.f, 0.f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
-	obj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj"), gfx, vec3(0.f, 0.f, -50.f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
+	obj.push_back(new GameObject(rm->get_Models("DoubleMesh.obj", gfx), gfx, vec3(10.f, 5.f, 10.f), vec3(-1.56f, 1.56f, 3.2f), vec3(1.f, 1.f, 1.f)));
+	obj.push_back(new GameObject(rm->get_Models("GroundLowPloy.obj", gfx), gfx, vec3(-5.f, 0.f, 0.f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
+	obj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj", gfx), gfx, vec3(0.f, 0.f, -50.f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
 	//walls
 	//obj.push_back(new GameObject(rm->get_Models("quad2.obj"), gfx, vec3(0.f, 5.f, 20.f),  vec3(-PI/2, -PI/2, PI), vec3(20.f, 20.f, 20.f)));
-	obj.push_back(new GameObject(rm->get_Models("quad2.obj"), gfx, vec3(20.f, 5.f, 0.f),  vec3(-PI/2, 0.f, PI),   vec3(20.f, 20.f, 20.f)));
-	obj.push_back(new GameObject(rm->get_Models("quad2.obj"), gfx, vec3(0.f, 5.f, -20.f), vec3(-PI/2, PI/2, PI),  vec3(20.f, 20.f, 20.f)));
-	obj.push_back(new GameObject(rm->get_Models("quad2.obj"), gfx, vec3(-20.f, 5.f, 0.f), vec3(-PI/2, PI, PI),   vec3(20.f, 20.f, 20.f)));
+	obj.push_back(new GameObject(rm->get_Models("quad2.obj", gfx), gfx, vec3(20.f, 5.f, 0.f),  vec3(-PI/2, 0.f, PI),   vec3(20.f, 20.f, 20.f)));
+	obj.push_back(new GameObject(rm->get_Models("quad2.obj", gfx), gfx, vec3(0.f, 5.f, -20.f), vec3(-PI/2, PI/2, PI),  vec3(20.f, 20.f, 20.f)));
+	obj.push_back(new GameObject(rm->get_Models("quad2.obj", gfx), gfx, vec3(-20.f, 5.f, 0.f), vec3(-PI/2, PI, PI),   vec3(20.f, 20.f, 20.f)));
 	
 	//static
-	stataicObj.push_back(new GameObject(rm->get_Models("stormtrooper.obj"),        gfx, vec3(25.f, 0.f, 0.f), vec3(0.f, 0.f, -1.57f), vec3(1.f, 1.f, 1.f)));
-	stataicObj.push_back(new GameObject(rm->get_Models("stormtrooper.obj"),        gfx, vec3(0.f, 0.f, 25.f), vec3(0.f, 0.f, 1.57f), vec3(1.f, 1.f, 1.f)));
-	stataicObj.push_back(new GameObject(rm->get_Models("stormtrooper.obj"),        gfx, vec3(-25.f, 0.f, 0.f), vec3(-1.57f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
-	stataicObj.push_back(new GameObject(rm->get_Models("stormtrooper.obj"),        gfx, vec3(0.f, 0.f, -25.f), vec3(1.57f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
+	stataicObj.push_back(new GameObject(rm->get_Models("stormtrooper.obj", gfx),        gfx, vec3(25.f, 0.f, 0.f), vec3(0.f, 0.f, -1.57f), vec3(1.f, 1.f, 1.f)));
+	stataicObj.push_back(new GameObject(rm->get_Models("stormtrooper.obj", gfx),        gfx, vec3(0.f, 0.f, 25.f), vec3(0.f, 0.f, 1.57f), vec3(1.f, 1.f, 1.f)));
+	stataicObj.push_back(new GameObject(rm->get_Models("stormtrooper.obj", gfx),        gfx, vec3(-25.f, 0.f, 0.f), vec3(-1.57f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
+	stataicObj.push_back(new GameObject(rm->get_Models("stormtrooper.obj", gfx),        gfx, vec3(0.f, 0.f, -25.f), vec3(1.57f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
 	
-	stataicObj.push_back(new GameObject(rm->get_Models("Sting-Sword-lowpoly.obj"), gfx, vec3(25.f, 0.f, -5.f), vec3(0.f, 0.f, 0.f), vec3(0.3f, 0.3f, 0.3f)));
+	stataicObj.push_back(new GameObject(rm->get_Models("Sting-Sword-lowpoly.obj", gfx), gfx, vec3(25.f, 0.f, -5.f), vec3(0.f, 0.f, 0.f), vec3(0.3f, 0.3f, 0.3f)));
 	
-	stataicObj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj"),     gfx, vec3(25.f, 0.f, 5.f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
-	stataicObj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj"), gfx, vec3(-37.5f, 0.f, -37.5f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
-	stataicObj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj"), gfx, vec3(37.5f, 0.f, -37.5f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
-	stataicObj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj"), gfx, vec3(-37.5f, 0.f, 37.5f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
-	stataicObj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj"), gfx, vec3(37.5f, 0.f, 37.5f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
+	stataicObj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj", gfx),     gfx, vec3(25.f, 0.f, 5.f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
+	stataicObj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj", gfx), gfx, vec3(-37.5f, 0.f, -37.5f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
+	stataicObj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj", gfx), gfx, vec3(37.5f, 0.f, -37.5f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
+	stataicObj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj", gfx), gfx, vec3(-37.5f, 0.f, 37.5f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
+	stataicObj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj", gfx), gfx, vec3(37.5f, 0.f, 37.5f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
 	
-	stataicObj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj"), gfx, vec3(12.5f, 0.f, 37.5f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
-	stataicObj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj"), gfx, vec3(12.5f, 0.f, -37.5f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
-	stataicObj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj"), gfx, vec3(-12.5f, 0.f, 37.5f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
-	stataicObj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj"), gfx, vec3(-12.5f, 0.f, -37.5f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
+	stataicObj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj", gfx), gfx, vec3(12.5f, 0.f, 37.5f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
+	stataicObj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj", gfx), gfx, vec3(12.5f, 0.f, -37.5f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
+	stataicObj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj", gfx), gfx, vec3(-12.5f, 0.f, 37.5f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
+	stataicObj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj", gfx), gfx, vec3(-12.5f, 0.f, -37.5f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
 	
-	stataicObj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj"), gfx, vec3(37.5f, 0.f, 12.5f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
-	stataicObj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj"), gfx, vec3(-37.5f, 0.f, 12.5f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
-	stataicObj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj"), gfx, vec3(37.5f, 0.f, -12.5f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
-	stataicObj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj"), gfx, vec3(-37.5f, 0.f, -12.5f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
+	stataicObj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj", gfx), gfx, vec3(37.5f, 0.f, 12.5f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
+	stataicObj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj", gfx), gfx, vec3(-37.5f, 0.f, 12.5f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
+	stataicObj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj", gfx), gfx, vec3(37.5f, 0.f, -12.5f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
+	stataicObj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj", gfx), gfx, vec3(-37.5f, 0.f, -12.5f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
 	
-	stataicObj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj"), gfx, vec3(12.5f, 0.f, 12.5f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
-	stataicObj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj"), gfx, vec3(-12.5f, 0.f, 12.5f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
-	stataicObj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj"), gfx, vec3(12.5f, 0.f, -12.5f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
-	stataicObj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj"), gfx, vec3(12.5f, 0.f, -12.5f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
+	stataicObj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj", gfx), gfx, vec3(12.5f, 0.f, 12.5f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
+	stataicObj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj", gfx), gfx, vec3(-12.5f, 0.f, 12.5f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
+	stataicObj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj", gfx), gfx, vec3(12.5f, 0.f, -12.5f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
+	stataicObj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj", gfx), gfx, vec3(12.5f, 0.f, -12.5f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
 	//int nrOfPlantsXY = 16;
 	//float sizeOfTree = 100 * 2;
 	//for (int x = 0; x < nrOfPlantsXY; x++) {
@@ -430,7 +438,7 @@ void Game::setUpObject()
 	float gn = 25;
 	for (int x = 0; x < gn; x++) {
 		for (int y = 0; y < gn; y++) {
-			stataicObj.push_back(new GameObject(rm->get_Models("quad2.obj"), gfx, vec3(x*(gw*2) - ((gn)*gw), -4, y*(gw * 2) - ((gn)*gw)), vec3(0, 0, 1.57f), vec3(gw, gw, gw)));
+			stataicObj.push_back(new GameObject(rm->get_Models("quad2.obj", gfx), gfx, vec3(x*(gw*2) - ((gn)*gw), -4, y*(gw * 2) - ((gn)*gw)), vec3(0, 0, 1.57f), vec3(gw, gw, gw)));
 		}
 	}
 

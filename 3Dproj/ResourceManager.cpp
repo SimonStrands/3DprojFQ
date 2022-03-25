@@ -56,15 +56,15 @@ void ResourceManager::loadThings(Graphics*& gfx)
 	//mesh
 
 	std::string names[] = {
-		"GroundLowPloy.obj",
-		"DoubleMesh.obj",
-		"quad2.obj",
-		"roundsol.obj",
-		"stormtrooper.obj",
-		"DCube.obj",
-		"stol.obj",
-		"Sting-Sword-lowpoly.obj",
-		"indoor_plant_02.obj",
+	//	"GroundLowPloy.obj",
+	//	"DoubleMesh.obj",
+	//	"quad2.obj",
+	//	"roundsol.obj",
+	//	"stormtrooper.obj",
+	//	"DCube.obj",
+	//	"stol.obj",
+	//	"Sting-Sword-lowpoly.obj",
+	//	"indoor_plant_02.obj",
 		"Camera.obj"
 	};
 	for (int i = 0; i < _countof(names); i++) {
@@ -85,6 +85,23 @@ void ResourceManager::loadThings(Graphics*& gfx)
 
 ModelObj* ResourceManager::get_Models(std::string key)
 {
+	return Models.find(key)->second;
+}
+
+ModelObj* ResourceManager::get_Models(std::string key, Graphics*& gfx)
+{
+	if (Models.find(key) == Models.end()) {
+		//its not found try to add it to the library
+		ModelObj* model = new ModelObj();
+		model->init("obj/" + key, gfx, def);
+		Models.insert(std::make_pair(key, model));
+
+		
+		for (int p = 0; p < model->getMatrial().size(); p++) {
+			TC::GetInst().add(model->getMatrial()[p]);
+		}
+	}
+	//else we return it
 	return Models.find(key)->second;
 }
 

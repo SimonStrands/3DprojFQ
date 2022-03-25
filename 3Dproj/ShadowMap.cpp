@@ -77,18 +77,18 @@ ID3D11ShaderResourceView*& ShadowMap::fromDepthToSRV()
 void ShadowMap::setUpdateShadow()
 {
 	for (int i = 0; i < nrOfLights; i++) {
-		gfx->get_IC()->ClearDepthStencilView(dsViews[i], D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1, 0);
+		gfx->get_IMctx()->ClearDepthStencilView(dsViews[i], D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1, 0);
 	}
-	gfx->get_IC()->VSSetShader(vertexShadow, nullptr, 0);
-	gfx->get_IC()->PSSetShader(nullptr, nullptr, 0);
+	gfx->get_IMctx()->VSSetShader(vertexShadow, nullptr, 0);
+	gfx->get_IMctx()->PSSetShader(nullptr, nullptr, 0);
 	ID3D11ShaderResourceView* const pSRV[1] = { NULL };
-	gfx->get_IC()->PSSetShaderResources(4, 1, pSRV);
+	gfx->get_IMctx()->PSSetShaderResources(4, 1, pSRV);
 }
 
 void ShadowMap::inUpdateShadow(int whatNrOfLight)
 {
 	ID3D11RenderTargetView* pNullRTV = NULL;
-	gfx->get_IC()->OMSetRenderTargets(1, &pNullRTV, this->Getdepthview(whatNrOfLight));
+	gfx->get_IMctx()->OMSetRenderTargets(1, &pNullRTV, this->Getdepthview(whatNrOfLight));
 
 	gfx->setProjection((int)this->light[whatNrOfLight]->whatOfLight());
 	

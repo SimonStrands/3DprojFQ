@@ -144,7 +144,6 @@ void Camera::rotaiton(DirectX::XMMATRIX &matrix)
 {
 	XRotation(matrix, xCamRot);
 	YRotation(matrix, yCamRot);
-	//ZRotation(matrix, zCamRot);
 }
 
 void Camera::movement()

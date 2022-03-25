@@ -128,9 +128,9 @@ void MeshObj::updatePS(Graphics*& gfx)
 {
 	getKdKaKsNs(gfx->getPixelconstbuffer()->kd.element, gfx->getPixelconstbuffer()->ka.element, gfx->getPixelconstbuffer()->ks.element);
 	D3D11_MAPPED_SUBRESOURCE resource;
-	gfx->get_IC()->Map(Pg_pConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
+	gfx->get_IMctx()->Map(Pg_pConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
 	memcpy(resource.pData, gfx->getPixelconstbuffer(), sizeof(Pcb));
-	gfx->get_IC()->Unmap(Pg_pConstantBuffer, 0);
+	gfx->get_IMctx()->Unmap(Pg_pConstantBuffer, 0);
 	ZeroMemory(&resource, sizeof(D3D11_MAPPED_SUBRESOURCE));
 }
 

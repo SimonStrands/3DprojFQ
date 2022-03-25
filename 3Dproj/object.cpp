@@ -182,9 +182,9 @@ void object::updateVertexShader(Graphics*& gfx)
     //changing vertex Shader cBuffer
     D3D11_MAPPED_SUBRESOURCE resource;
 
-    gfx->get_IC()->Map(this->getVertexConstBuffer(), 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
+    gfx->get_IMctx()->Map(this->getVertexConstBuffer(), 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
     memcpy(resource.pData, gfx->getVertexconstbuffer(), sizeof(Vcb));
-    gfx->get_IC()->Unmap(this->getVertexConstBuffer(), 0);
+    gfx->get_IMctx()->Unmap(this->getVertexConstBuffer(), 0);
     ZeroMemory(&resource, sizeof(D3D11_MAPPED_SUBRESOURCE));
 }
 

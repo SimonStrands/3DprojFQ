@@ -68,15 +68,15 @@ ID3D11ComputeShader *DynamicCube::getCSShader()
 void DynamicCube::ClearRenderTarget(Graphics*& gfx) {
 	FLOAT color[4] = { 0.1f,0.1f,0.1f,1.f };
 	for (int i = 0; i < 6; i++) {
-		gfx->get_IC()->ClearRenderTargetView(RTV[i], color);
+		gfx->get_IMctx()->ClearRenderTargetView(RTV[i], color);
 	}
 }
 
 void DynamicCube::setRenderTarget(Graphics*& gfx, int i)
 {
 	dCubeDeff.BindFirstPass(dsview);
-	gfx->get_IC()->ClearDepthStencilView(dsview, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
-	gfx->get_IC()->OMSetRenderTargets(1, &RTV[i], dsview);
+	gfx->get_IMctx()->ClearDepthStencilView(dsview, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+	gfx->get_IMctx()->OMSetRenderTargets(1, &RTV[i], dsview);
 }
 
 void DynamicCube::update(vec3 camPos, Graphics*& gfx)
@@ -86,7 +86,7 @@ void DynamicCube::update(vec3 camPos, Graphics*& gfx)
 
 void DynamicCube::setViewPort(Graphics*& gfx)
 {
-	gfx->get_IC()->RSSetViewports(1, &this->DviewPort);
+	gfx->get_IMctx()->RSSetViewports(1, &this->DviewPort);
 }
 
 void DynamicCube::firstPass()

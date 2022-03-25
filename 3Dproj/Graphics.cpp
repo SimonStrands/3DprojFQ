@@ -203,14 +203,13 @@ float nextFpsUpdate = 0;
 void Graphics::Update(float dt, vec3 camPos)
 {
 
-	if (getkey('N')) {
+	if (getkey('B')) {
 		LCBG.cameraPos.element[3] = 1;
-		//LCBG.lightPos.element[3] = 3;
 	}
-	if (getkey('M')) {
+	else {
 		LCBG.cameraPos.element[3] = 0;
-		//LCBG.lightPos.element[3] = 3;
 	}
+
 	LCBG.projection.element = vcbd.projection.element;
 	for (int i = 0; i < nrOfLights; i++) {
 		LCBG.lightView.element[i] = this->light[i]->getLightViewProj();
@@ -265,15 +264,11 @@ LCBGS* Graphics::getLightconstbufferforCS()
 {
 	return &LCBG;
 }
-void Graphics::setVProj(DirectX::XMMATRIX& mat)
-{
-	mat = DirectX::XMMatrixPerspectiveFovLH(DirectX::XMConvertToRadians(fov), ratio, nearPlane, farPlane);
-}
 ID3D11Device* Graphics::getDevice()
 {
 	return this->device;
 }
-ID3D11DeviceContext*& Graphics::get_IC()
+ID3D11DeviceContext*& Graphics::get_IMctx()
 {
 	return this->immediateContext;
 }
@@ -306,7 +301,7 @@ IDXGISwapChain*& Graphics::getSwapChain()
 	return this->swapChain;
 }
 
-ID3D11InputLayout** Graphics::getInputL()
+ID3D11InputLayout** Graphics::getInputLayout()
 {
 	return this->inputLayout;
 }

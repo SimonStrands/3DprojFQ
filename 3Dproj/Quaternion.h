@@ -1,6 +1,6 @@
 #pragma once
 #include <cmath>
-
+//not used in this project
 struct Quaternion {
 	Quaternion(float a, float b, float c, float d) 
 	{

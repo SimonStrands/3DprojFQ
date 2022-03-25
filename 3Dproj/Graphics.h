@@ -156,10 +156,10 @@ public:
 	/**/
 	CamPosCB* getCamPosconstbuffer();
 	LCBGS* getLightconstbufferforCS();
-	void setVProj(DirectX::XMMATRIX &mat);
 
 	ID3D11Device* getDevice();
-	ID3D11DeviceContext*& get_IC();
+	//Get immediateContext/deviceContext
+	ID3D11DeviceContext*& get_IMctx();
 	ID3D11Texture2D*& getTexture();
 
 	/// shaders ///
@@ -169,16 +169,19 @@ public:
 	ID3D11HullShader** getHS();
 	ID3D11DomainShader** getDS();
 
-	ID3D11InputLayout** getInputL();
+	ID3D11InputLayout** getInputLayout();
 	ID3D11RenderTargetView*& getRenderTarget();
 	ID3D11DepthStencilView* getDepthStencil();
+	/*0 = pixelconstbuffer, 1 = camConstBuffer*/
 	ID3D11Buffer*& getConstBuffers(int i = 0);
 	IDXGISwapChain*& getSwapChain();
 	void setTransparant(bool transparance);
-	SpotLight**getLight();
+	SpotLight** getLight();
 	vec2 getWH();
-	//to gfx
+	
+	/*make so gfx have lights*/
 	void takeLight(SpotLight **light, int nrOfLights);
+	/*make gfx have imgui*/
 	void takeIM(ImguiManager* manager);
 
 	//update
