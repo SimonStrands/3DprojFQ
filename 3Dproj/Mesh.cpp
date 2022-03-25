@@ -67,7 +67,7 @@ void MeshObj::getKdKaKsNs(float(&kd)[4], float(&ka)[4], float(&ks)[4])
 	ka[3] = 1.f;
 }
 
-void MeshObj::draw(ID3D11DeviceContext*& immediateContext, bool sm)
+void MeshObj::draw(ID3D11DeviceContext*& immediateContext)
 {
 	UINT offset = 0;
 	static UINT strid = sizeof(vertex);
@@ -126,10 +126,10 @@ void MeshObj::SetShader(ID3D11DeviceContext*& immediateContext, int flag)
 
 void MeshObj::updatePS(Graphics*& gfx)
 {
-	getKdKaKsNs(gfx->getPcb()->kd.element, gfx->getPcb()->ka.element, gfx->getPcb()->ks.element);
+	getKdKaKsNs(gfx->getPixelconstbuffer()->kd.element, gfx->getPixelconstbuffer()->ka.element, gfx->getPixelconstbuffer()->ks.element);
 	D3D11_MAPPED_SUBRESOURCE resource;
 	gfx->get_IC()->Map(Pg_pConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
-	memcpy(resource.pData, gfx->getPcb(), sizeof(Pcb));
+	memcpy(resource.pData, gfx->getPixelconstbuffer(), sizeof(Pcb));
 	gfx->get_IC()->Unmap(Pg_pConstantBuffer, 0);
 	ZeroMemory(&resource, sizeof(D3D11_MAPPED_SUBRESOURCE));
 }

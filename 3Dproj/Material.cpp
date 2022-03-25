@@ -24,8 +24,8 @@ Material::Material(ID3D11ShaderResourceView** def)
 		texSRVDS[i] = nullptr;//do I need to do this?
 	}
 	for (int i = 0; i < 3; i++) {
-		this->Ka[i] = 0.1f;
-		this->Kd[i] = 0.1f;
+		this->Ka[i] = 0.3f;
+		this->Kd[i] = 0.8f;
 		this->Ks[i] = 0.1f;
 	}
 	this->Ns = 0;

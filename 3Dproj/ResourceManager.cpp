@@ -32,7 +32,7 @@ void loadWithThread(threadInfo thredData)
 
 void ResourceManager::loadThings(Graphics*& gfx)
 {
-	//default tex
+	//default textures
 	def = new ID3D11ShaderResourceView * [4];
 	//diffuse
 	if (!CreateTexture("Textures/Default/KdDef.png", gfx->getDevice(), gfx->getTexture(), def[0])) {

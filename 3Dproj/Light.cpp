@@ -74,8 +74,8 @@ vec3& Light::getRotation()
 	if (SL != nullptr) {
 		return SL->getRotation();
 	}
-	vec3 a(0, 0, 0);
-	return a;
+	std::cout << "error normal light doesn't have a rotation returning position" << std::endl;
+	return this->pos;
 }
 
 vec3& Light::getPos()

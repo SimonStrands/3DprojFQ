@@ -16,18 +16,20 @@ public:
 	vec3 getScale();
 	const vec3 getPoint();
 
-	void changePos(vec3 pos);
-	void changeRot(vec3 pos);
-	void changeScale(vec3 pos);
-	void changePoint(vec3 point);
-	void addPoint(vec3 point);
-	void addPos(vec3 pos);
+	//TODO : change names on these
+	void setPos(vec3 pos);
+	void setRot(vec3 pos);
+	void setScale(vec3 pos);
+	//change the mid point that the object rotate around 
+	void setPoint(vec3 point);
+	//change the mid point that the object rotate around 
+	void movePoint(vec3 point);
+	void movePos(vec3 pos);
+	//current rotation + rot
 	void addRot(vec3 rot);
 	void addScale(vec3 scale);
 
 	ID3D11Buffer*& getVertexConstBuffer();
-	//ID3D11Buffer*& getPixelConstBuffer();
-	float normalMapping();
 	void getKdKa(float kd[4], float ka[4]);
 
 	//debug
@@ -49,5 +51,10 @@ private:
 	vec3 rPoint;
 	ModelObj* model;
 	ID3D11Buffer* Vg_pConstantBuffer;
+private:
+	//test to see if we can make it faster
+	DirectX::XMMATRIX scaleMat;
+	DirectX::XMMATRIX transMat;
+	DirectX::XMMATRIX pointMat;
 };
 

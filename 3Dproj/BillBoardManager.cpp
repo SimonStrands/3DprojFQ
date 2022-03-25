@@ -2,24 +2,27 @@
 #include "Random.h"
 //set position later
 
-BillBoardManager::BillBoardManager(Graphics*& gfx, ID3D11ShaderResourceView* SRV, int maxSize, vec3 orgin, vec3 sizeofArea):
+BillBoardManager::BillBoardManager(Graphics*& gfx, ID3D11ShaderResourceView* SRV, int nrOfParticles, vec3 orgin, vec3 sizeofArea, int maxNumberOfParticles):
 	anim()
 {
+	this->nrOfParticles = nrOfParticles;
 	//if its not a multiple of 8 add so it is
-	if (maxSize % 8 != 0) {
-		maxSize += (8 - (maxSize % 8));
+	if (nrOfParticles % 8 != 0) {
+		nrOfParticles += (8 - (nrOfParticles % 8));
+	}
+	if (maxNumberOfParticles == 0) {
+		maxNumberOfParticles = nrOfParticles;
 	}
 	srand(time(NULL));
 	//load a Computeshader
 	loadCShader("BillBoardUpdate.cso", gfx->getDevice(), cUpdate);
 	CompConstBuff.time.element = 0;
-	for (int i = 0; i < maxSize; i++) {
+	for (int i = 0; i < maxNumberOfParticles; i++) {
 		billboards.push_back(point(vec3(
 			RandomNumber(orgin.x - sizeofArea.x, orgin.x + sizeofArea.x),
 			RandomNumber(orgin.y - sizeofArea.y, orgin.y + sizeofArea.y),
 			RandomNumber(orgin.z - sizeofArea.z, orgin.z + sizeofArea.z))));
 	}
-	numberOfParticles = maxSize;
 	this->SRV = SRV;
 
 	CreateVertexConstBuffer(gfx, this->Vg_pConstantBuffer);
@@ -29,7 +32,7 @@ BillBoardManager::BillBoardManager(Graphics*& gfx, ID3D11ShaderResourceView* SRV
 
 	//create UAV
 	D3D11_BUFFER_DESC buffDesc;
-	buffDesc.ByteWidth = sizeof(point) * maxSize;
+	buffDesc.ByteWidth = sizeof(point) * maxNumberOfParticles;
 	buffDesc.Usage = D3D11_USAGE_DEFAULT;
 	buffDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER | D3D11_BIND_UNORDERED_ACCESS;//how does this bind with vertex Buffer?
 	buffDesc.CPUAccessFlags = 0;
@@ -50,7 +53,7 @@ BillBoardManager::BillBoardManager(Graphics*& gfx, ID3D11ShaderResourceView* SRV
 	UavDesc.Format = DXGI_FORMAT_R32_FLOAT;
 	UavDesc.ViewDimension = D3D11_UAV_DIMENSION_BUFFER;
 	UavDesc.Buffer.FirstElement = 0;
-	UavDesc.Buffer.NumElements = maxSize * 3;
+	UavDesc.Buffer.NumElements = maxNumberOfParticles * 3;
 	UavDesc.Buffer.Flags = 0;
 	if (FAILED(gfx->getDevice()->CreateUnorderedAccessView(buff, &UavDesc, &billUAV))) {
 		printf("doesn't work create Buffer");
@@ -65,9 +68,6 @@ void BillBoardManager::setAnimation(int noaw, int noah, float tb)
 
 BillBoardManager::~BillBoardManager()
 {
-	//if (SRV != nullptr) {
-	//	SRV->Release();
-	//}
 	if (cUpdate != nullptr) {
 		cUpdate->Release();
 	}
@@ -133,29 +133,29 @@ void BillBoardManager::updateShader(Graphics*& gfx, vec3 camPos)
 
 	DirectX::XMMATRIX rts =  (scal * trans);
 
-	gfx->getVcb()->transform.element = rts;
+	gfx->getVertexconstbuffer()->transform.element = rts;
 
 	//changing vertex Shader cBuffer
 	D3D11_MAPPED_SUBRESOURCE resource;
 
 	gfx->get_IC()->Map(Vg_pConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
-	memcpy(resource.pData, gfx->getVcb(), sizeof(Vcb));
+	memcpy(resource.pData, gfx->getVertexconstbuffer(), sizeof(Vcb));
 	gfx->get_IC()->Unmap(Vg_pConstantBuffer, 0);
 	ZeroMemory(&resource, sizeof(D3D11_MAPPED_SUBRESOURCE));
 
 	//GCB
-	gfx->getGcb()->cameraPos.element[0] = -camPos.x;
-	gfx->getGcb()->cameraPos.element[1] = -camPos.y;
-	gfx->getGcb()->cameraPos.element[2] = -camPos.z;
+	gfx->getGeometryconstbuffer()->cameraPos.element[0] = -camPos.x;
+	gfx->getGeometryconstbuffer()->cameraPos.element[1] = -camPos.y;
+	gfx->getGeometryconstbuffer()->cameraPos.element[2] = -camPos.z;
 
 	//uv
-	gfx->getGcb()->uvCords.element[0] = anim.uv().xyz.x;
-	gfx->getGcb()->uvCords.element[1] = anim.uv().xyz.y;
-	gfx->getGcb()->uvCords.element[2] = anim.uv().xyz.z;
-	gfx->getGcb()->uvCords.element[3] = anim.uv().w;
+	gfx->getGeometryconstbuffer()->uvCords.element[0] = anim.uv().xyz.x;
+	gfx->getGeometryconstbuffer()->uvCords.element[1] = anim.uv().xyz.y;
+	gfx->getGeometryconstbuffer()->uvCords.element[2] = anim.uv().xyz.z;
+	gfx->getGeometryconstbuffer()->uvCords.element[3] = anim.uv().w;
 
 	gfx->get_IC()->Map(Gg_pConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
-	memcpy(resource.pData, gfx->getGcb(), sizeof(Gcb));
+	memcpy(resource.pData, gfx->getGeometryconstbuffer(), sizeof(Gcb));
 	gfx->get_IC()->Unmap(Gg_pConstantBuffer, 0);
 	ZeroMemory(&resource, sizeof(D3D11_MAPPED_SUBRESOURCE));
 
@@ -175,7 +175,12 @@ void BillBoardManager::changeBehavior(ID3D11ComputeShader* cUpdate)
 
 void BillBoardManager::changeNumberOfParticles(int nrOf)
 {
-	this->numberOfParticles;
+	if (nrOf <= billboards.size()) {
+		this->nrOfParticles = nrOf;
+	}
+	else {
+		std::cout << "Tried to exced the maxnumber of particles set" << std::endl;
+	}
 }
 
 void BillBoardManager::draw(Graphics*& gfx)
@@ -198,6 +203,6 @@ void BillBoardManager::draw(Graphics*& gfx)
 	gfx->get_IC()->PSSetConstantBuffers(0, 1, &Pg_pConstantBuffer);
 	
 	gfx->get_IC()->IASetVertexBuffers(0, 1, &this->buff, &strid, &offset);
-	gfx->get_IC()->Draw(this->numberOfParticles, 0);
+	gfx->get_IC()->Draw(this->nrOfParticles, 0);
 
 }

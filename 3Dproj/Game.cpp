@@ -6,33 +6,33 @@ Game::Game(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWS
 	gfx = new Graphics(hInstance, hPrevInstance, lpCmdLine, nCmdShow);
 	defRend = new DeferredRendering(gfx);
 	//Create a buffer for the light const buffer(hlsli)
-	CreateConstBuffer(gfx, gfx->getConstBuffers(0), sizeof(*gfx->getLCB()), gfx->getLCB());
-	CreateConstBuffer(gfx, gfx->getConstBuffers(1), sizeof(*gfx->getCPCB()), gfx->getCPCB());
+	CreateConstBuffer(gfx, gfx->getConstBuffers(0), sizeof(*gfx->getLightconstbufferforCS()), gfx->getLightconstbufferforCS());
+	CreateConstBuffer(gfx, gfx->getConstBuffers(1), sizeof(*gfx->getCamPosconstbuffer()), gfx->getCamPosconstbuffer());
 	//Resource manager
 	rm = new ResourceManager(gfx);
 
+	//create lights
 	nrOfLight = 4;
-	gfx->getLCB()->nrOfLights.element = nrOfLight;
 	light = new Light * [nrOfLight];
 	light[0] = new DirLight(vec3(0,60,8), vec3(0.1f, -PI/2, 1.f));
 	light[1] = new SpotLight(vec3(18, 46, 45), vec3(-2.4f, -0.5, 1));
 	light[2] = new SpotLight(vec3(8, 47.f, 0), vec3(0, -1, 1));
 	light[3] = new SpotLight(vec3(30, 50, 0), vec3(-1, -1, 1));
+	gfx->getLightconstbufferforCS()->nrOfLights.element = nrOfLight;
 	
 	//shadow map needs to take more lights
 	this->shadowMap = new ShadowMap((SpotLight**)light, nrOfLight, gfx);
 	
 	gfx->takeIM(&this->UIManager);
 	mus = new Mouse(gfx->getWH());
-	camera = new Camera(gfx, mus, vec3(0,0,0),vec3(0,0,0));
+	camera = new Camera(gfx, mus, vec3(0,0,0), vec3(1,0,0));
 	camera->setData();
 	
 	setUpObject();
 	//Qtree = new QuadTree(stataicObj, vec2(0, 0), 4, 200);
 	Qtree = new QuadTree(stataicObj, vec2(0, 0), 4, 100);
 	//(pi,3.14) = 180 degrees
-	//Qtree->setUpCamProp(3.14/4, 50);
-	Qtree->setUpCamProp(0.4f, 2000);
+	Qtree->setUpCamProp(2000);
 	
 	
  	bill = new BillBoard(gfx, vec3(0.f, 0.f, 9.f), rm->getFire(), rm->getDef()[1], 6);
@@ -107,14 +107,14 @@ void Game::run()
 		gfx->setTransparant(false);
 		//for shadow
 		//måste uppdatera detta så inte hela object uppdateras när bara skugga ska
+		shadowMap->setUpdateShadow();
 		for (int i = 0; i < nrOfLight; i++) {
-			shadowMap->setUpdateShadow();
 			shadowMap->inUpdateShadow(i);
 			updateShaders(true, false);
 			
 			DrawAllShadowObject();
 		}
-		gfx->Projection(0);//last can be dir light
+		gfx->setProjection(0);//last can be dir light
 
 
 		Update();
@@ -155,19 +155,19 @@ void Game::Update()
 		);
 		XRotation(viewMatrix, obj[1]->getRot().x);
 		YRotation(viewMatrix, obj[1]->getRot().y);
-		gfx->getVcb()->view.element = viewMatrix;
+		gfx->getVertexconstbuffer()->view.element = viewMatrix;
 	}
 	
-	obj[1]->changePos(vec3(obj[0]->getPos().x, obj[1]->getPos().y, obj[0]->getPos().z));
+	obj[1]->setPos(vec3(obj[0]->getPos().x, obj[1]->getPos().y, obj[0]->getPos().z));
 
-	obj[0]->changePos(camera->getPos());
-	obj[0]->changeRot(vec3(camera->getRot().z, camera->getRot().x, -camera->getRot().y) + vec3(0, 1.57f, 0));
+	obj[0]->setPos(camera->getPos());
+	obj[0]->setRot(vec3(camera->getRot().z, camera->getRot().x, -camera->getRot().y) + vec3(0, 1.57f, 0));
 	bill->update((float)dt.dt());
 	billManager->update(dt.dt(), gfx);
 	mus->UpdateMouse();
 	for (int i = 0; i < LightVisualizers.size(); i++) {
-		LightVisualizers[i]->changePos(light[i]->getPos());
-		LightVisualizers[i]->changeRot(vec3(0 , light[i]->getRotation().x, -light[i]->getRotation().y) + vec3(0,1.57,0));
+		LightVisualizers[i]->setPos(light[i]->getPos());
+		LightVisualizers[i]->setRot(vec3(0 , light[i]->getRotation().x, -light[i]->getRotation().y) + vec3(0,1.57f,0));
 	}
 	
 	gfx->Update((float)dt.dt(), camera->getPos());
@@ -203,7 +203,7 @@ void Game::DrawToBuffer()
 	for (int i = 0; i < obj.size(); i++) {
 		obj[i]->draw(gfx);
 	}
-    camera->calcFUL();
+    camera->calcFURVectors();
 	if (getkey('Y')) {
 		std::cout << "stop" << std::endl;
 	}
@@ -222,7 +222,7 @@ void Game::DrawToBuffer()
 
 void Game::DrawDynamicCube()
 {
-	gfx->Projection(2);
+	gfx->setProjection(2);
 	vec3 camLP = camera->getPos();
 	vec3 camRT = camera->getRot();
 	vec3 DCRot = DCube->getRot();
@@ -271,7 +271,7 @@ void Game::DrawDynamicCube()
 
 	//turn things back to how they where
 	gfx->RsetViewPort();
-	gfx->Projection(0);
+	gfx->setProjection(0);
 	camera->setPosition(camLP);
 	camera->setRotation(camRT);
 	camera->updateCamera();
@@ -286,11 +286,9 @@ void Game::DrawDynamicCube()
 		);
 		XRotation(viewMatrix, obj[1]->getRot().x);
 		YRotation(viewMatrix, obj[1]->getRot().y);
-		gfx->getVcb()->view.element = viewMatrix;
+		gfx->getVertexconstbuffer()->view.element = viewMatrix;
 	}
 	updateShaders(true, false);
-	//PEM
-	
 }
 
 void Game::ForwardDraw()
@@ -314,6 +312,7 @@ void Game::ForwardDraw()
 	billManager->draw(gfx);
 }
 
+//the Dynamic cube that draw these infront
 void Game::ForwardDrawCube()
 {
 	gfx->get_IC()->IASetInputLayout(gfx->getInputL()[1]);
@@ -336,7 +335,7 @@ void Game::DrawAllShadowObject()
 
 		obj[i]->draw(gfx, true);
 	}
-	camera->calcFUL();
+	camera->calcFURVectors();
 	Qtree->draw(gfx, camera, true);
 	Qtree->clearAlrDraw();
 }
@@ -354,9 +353,9 @@ void Game::updateShaders(bool vs, bool ps)
 		for (int i = 0; i < LightVisualizers.size(); i++) {
 			LightVisualizers[i]->updateVertexShader(gfx);
 		}
-		for (int i = 0; i < stataicObj.size(); i++) {
-			stataicObj[i]->updateVertexShader(gfx);
-		}
+		//for (int i = 0; i < stataicObj.size(); i++) {
+			//stataicObj[i]->updateVertexShader(gfx);
+		//}
 	}
 	if (ps) {
 		DCube->updatePixelShader(gfx);

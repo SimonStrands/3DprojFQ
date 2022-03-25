@@ -10,33 +10,6 @@
 #include "rotation.h"
 #include "Keyboard.h"
 
-struct DEBUG_CAMERAN {
-	DEBUG_CAMERAN(HWND& wnd, D3D11_VIEWPORT& viewPort, ID3D11RenderTargetView* RTV, IDXGISwapChain* swapChain, ID3D11Device* device, ID3D11DeviceContext* immediateContext):
-	wnd(wnd), viewPort(viewPort){
-		this->RTV = RTV;
-		this->swapChain = swapChain;
-		this->device = device;
-		this->immediateContext = immediateContext;
-	}
-	~DEBUG_CAMERAN() {
-
-	};
-	DEBUG_CAMERAN operator=(DEBUG_CAMERAN other) {
-		this->wnd = other.wnd;
-		this->viewPort = other.viewPort;
-		this->RTV = other.RTV;
-		this->swapChain = other.swapChain;
-		this->device = other.device;
-		this->immediateContext = other.immediateContext;
-	}
-	HWND &wnd;
-	D3D11_VIEWPORT &viewPort;
-	ID3D11RenderTargetView* RTV;
-	IDXGISwapChain* swapChain;
-	ID3D11Device* device;
-	ID3D11DeviceContext* immediateContext;
-};
-
 class ImguiManager;
 
 struct CB {
@@ -122,7 +95,6 @@ public:
 	Graphics(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine, _In_ int nCmdShow);
 	virtual ~Graphics();
 	void RsetViewPort();
-	DEBUG_CAMERAN* SwitchNewGraphics(DEBUG_CAMERAN newCamera);
 private:
 	//D3D11
 	ID3D11Device* device;
@@ -175,17 +147,16 @@ private:
 	void CreateBlendState(int wBlend, bool transparance);
 
 public:
-	void Projection(int flag = 0);
-	//get things 
-	//from gfx
-	Vcb *getVcb();
-	Pcb *getPcb();
-	Gcb* getGcb();
-	CamPosCB* getCPCB();
-	LCBGS* getLCB();
-	void setVView(DirectX::XMMATRIX &mat);
+	/*0 = perspective, 1 = orthographic*/
+	void setProjection(int flag = 0);
+	//get const Buffer
+	Vcb *getVertexconstbuffer();
+	Pcb *getPixelconstbuffer();
+	Gcb* getGeometryconstbuffer();
+	/**/
+	CamPosCB* getCamPosconstbuffer();
+	LCBGS* getLightconstbufferforCS();
 	void setVProj(DirectX::XMMATRIX &mat);
-	void getViewFrustomPlanes(DirectX::XMFLOAT3 res[]);
 
 	ID3D11Device* getDevice();
 	ID3D11DeviceContext*& get_IC();
@@ -201,7 +172,6 @@ public:
 	ID3D11InputLayout** getInputL();
 	ID3D11RenderTargetView*& getRenderTarget();
 	ID3D11DepthStencilView* getDepthStencil();
-	ID3D11Buffer*& getTransGCB();
 	ID3D11Buffer*& getConstBuffers(int i = 0);
 	IDXGISwapChain*& getSwapChain();
 	void setTransparant(bool transparance);
@@ -217,13 +187,5 @@ public:
 	//draw
 	void clearScreen();
 	void setRenderTarget();
-	void present(int lightNr = 0);
-	
-private:
-	//Debug shit
-	void debugcd();
-	void keyboardDebug();
-	bool pressed = false;
-	bool normalMapping;
-	
+	void present(int lightNr = 0);	
 };

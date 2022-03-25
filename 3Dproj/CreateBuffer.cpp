@@ -53,7 +53,7 @@ bool CreateVertexConstBuffer(Graphics*& gfx, ID3D11Buffer*& buff)
 	
 	InitData.SysMemPitch = 0;
 	InitData.SysMemSlicePitch = 0;
-	InitData.pSysMem = gfx->getVcb();
+	InitData.pSysMem = gfx->getVertexconstbuffer();
 
 	HRESULT hr = gfx->getDevice()->CreateBuffer(&CbDesc, &InitData, &buff);
 	if (FAILED(hr)) {
@@ -100,7 +100,7 @@ bool CreatePixelConstBuffer(Graphics*& gfx, ID3D11Buffer*& buff)
 	CbDesc.StructureByteStride = 0;
 	
 	D3D11_SUBRESOURCE_DATA InitData;
-	InitData.pSysMem = gfx->getPcb();
+	InitData.pSysMem = gfx->getPixelconstbuffer();
 	InitData.SysMemPitch = 0;
 	InitData.SysMemSlicePitch = 0;
 	HRESULT hr = gfx->getDevice()->CreateBuffer(&CbDesc, &InitData, &buff);
@@ -119,7 +119,7 @@ bool CreateGeometryConstBuffer(Graphics*& gfx, ID3D11Buffer*& buff)
 	CbDesc.StructureByteStride = 0;
 
 	D3D11_SUBRESOURCE_DATA InitData;
-	InitData.pSysMem = gfx->getPcb();
+	InitData.pSysMem = gfx->getPixelconstbuffer();
 	InitData.SysMemPitch = 0;
 	InitData.SysMemSlicePitch = 0;
 	HRESULT hr = gfx->getDevice()->CreateBuffer(&CbDesc, &InitData, &buff);

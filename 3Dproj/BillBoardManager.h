@@ -17,8 +17,15 @@ struct CTCB : public CB {
 };
 
 class BillBoardManager {
-public://later maybe change between them
-	BillBoardManager(Graphics*& gfx, ID3D11ShaderResourceView* SRV, int maxSize = 10, vec3 orgin = vec3(0,0,0), vec3 sizeofArea = vec3(0, 0, 0));
+public:
+	/*max number of particles must be a multiple of 8 else the code is going to to it for you*/
+	BillBoardManager(Graphics*& gfx, ID3D11ShaderResourceView* SRV, int nrOfParticles = 10, vec3 orgin = vec3(0,0,0), vec3 sizeofArea = vec3(0, 0, 0), int maxNumberOfParticles = 0);
+	/*
+	noaw = nr of Width, 
+	noah = nr of height, 
+	tb = timebetween, 
+	currently only supports x*1 sheets;
+	*/
 	void setAnimation(int noaw, int noah, float tb);
 	virtual ~BillBoardManager();
 
@@ -28,7 +35,7 @@ public://later maybe change between them
 	void changeNumberOfParticles(int nrOf);
 	void draw(Graphics*& gfx);
 private:
-	int numberOfParticles;
+	int nrOfParticles;
 private:
 	CTCB CompConstBuff;
 	vec3 position;

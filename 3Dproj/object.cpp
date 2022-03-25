@@ -3,7 +3,24 @@
 #include <array>
 #include "otherHelps.h"
 
-object::object()
+object::object():
+    scaleMat(
+        scale.x, 0.0f, 0.0f, 0.0f,
+        0.0f, scale.y, 0.0f, 0.0f,
+        0.0f, 0.0f, scale.z, 0.0f,
+        0.0f, 0.0f, 0.0f, 1.0f
+    ),
+    transMat(
+        1.0f, 0.0f, 0.0f, 0.0f,
+        0.0f, 1.0f, 0.0f, 0.0f,
+        0.0f, 0.0f, 1.0f, 0.0f,
+        pos.x, pos.y, pos.z, 1.0f
+    ), pointMat(
+        1.0f, 0.0f, 0.0f, 0.0f,
+        0.0f, 1.0f, 0.0f, 0.0f,
+        0.0f, 0.0f, 1.0f, 0.0f,
+        rPoint.x, rPoint.y, rPoint.z, 1.0f
+    )
 {
     model = nullptr;
     Vg_pConstantBuffer = nullptr;
@@ -12,7 +29,24 @@ object::object()
 object::object(vec3 pos):
     rot(0,0,0),
     scale(1,1,1),
-    rPoint(0,0,0)
+    rPoint(0,0,0),
+    scaleMat(
+        scale.x, 0.0f, 0.0f, 0.0f,
+        0.0f, scale.y, 0.0f, 0.0f,
+        0.0f, 0.0f, scale.z, 0.0f,
+        0.0f, 0.0f, 0.0f, 1.0f
+    ),
+    transMat(
+        1.0f, 0.0f, 0.0f, 0.0f,
+        0.0f, 1.0f, 0.0f, 0.0f,
+        0.0f, 0.0f, 1.0f, 0.0f,
+        pos.x, pos.y, pos.z, 1.0f
+    ), pointMat(
+        1.0f, 0.0f, 0.0f, 0.0f,
+        0.0f, 1.0f, 0.0f, 0.0f,
+        0.0f, 0.0f, 1.0f, 0.0f,
+        rPoint.x, rPoint.y, rPoint.z, 1.0f
+    )
 {
     this->pos = pos;
     Vg_pConstantBuffer = nullptr;
@@ -45,32 +79,32 @@ const vec3 object::getPoint()
     return this->rPoint;
 }
 
-void object::changePos(vec3 pos)
+void object::setPos(vec3 pos)
 {
     this->pos = pos;
 }
 
-void object::changeRot(vec3 rot)
+void object::setRot(vec3 rot)
 {
     this->rot = rot;
 }
 
-void object::changeScale(vec3 scale)
+void object::setScale(vec3 scale)
 {
     this->scale = scale;
 }
 
-void object::changePoint(vec3 point)
+void object::setPoint(vec3 point)
 {
     this->rPoint = point;
 }
 
-void object::addPoint(vec3 point)
+void object::movePoint(vec3 point)
 {
     this->rPoint = this->rPoint + point;
 }
 
-void object::addPos(vec3 pos)
+void object::movePos(vec3 pos)
 {
     this->pos = this->pos + pos;
 }
@@ -85,21 +119,9 @@ void object::addScale(vec3 scale)
     this->scale = this->scale + scale;
 }
 
-
 ID3D11Buffer*& object::getVertexConstBuffer()
 {
     return this->Vg_pConstantBuffer;
-}
-
-//ID3D11Buffer*& object::getPixelConstBuffer()
-//{
-//    return this->Pg_pConstantBuffer;
-//}
-
-float object::normalMapping()
-{
-    //return this->normalMap;
-    return false;
 }
 
 void object::getKdKa(float kd[4], float ka[4])
@@ -143,35 +165,25 @@ void object::updateVertexShader(Graphics*& gfx)
 {
     DirectX::XMMATRIX rot(DirectX::XMMatrixRotationRollPitchYaw(this->getRot().x, this->getRot().y, this->getRot().z));
 
-    DirectX::XMMATRIX scale(
-        this->getScale().x, 0.0f, 0.0f, 0.0f,
-        0.0f, this->getScale().y, 0.0f, 0.0f,
-        0.0f, 0.0f, this->getScale().z, 0.0f,
-        0.0f, 0.0f, 0.0f, 1.0f
-    );
-    //transformPotion
-    DirectX::XMMATRIX trans(
-        1.0f, 0.0f, 0.0f, 0.0f,
-        0.0f, 1.0f, 0.0f, 0.0f,
-        0.0f, 0.0f, 1.0f, 0.0f,
-        this->getPos().x, this->getPos().y, this->getPos().z, 1.0f
-    );
-    DirectX::XMMATRIX point(
-        1.0f, 0.0f, 0.0f, 0.0f,
-        0.0f, 1.0f, 0.0f, 0.0f,
-        0.0f, 0.0f, 1.0f, 0.0f,
-        this->getPoint().x, this->getPoint().y, this->getPoint().z, 1.0f
-    );
-    //DirectX::XMMATRIX rts = point * (scale * (rot * trans));
-    DirectX::XMMATRIX rts = point * (scale * rot * trans);
+    transMat.r->m128_f32[12] = pos.x;
+    transMat.r->m128_f32[13] = pos.y;
+    transMat.r->m128_f32[14] = pos.z;
 
-    gfx->getVcb()->transform.element = rts;
+    scaleMat.r->m128_f32[0] = scale.x;
+    scaleMat.r->m128_f32[5] = scale.y;
+    scaleMat.r->m128_f32[10] = scale.z;
+
+    pointMat.r->m128_f32[12] = rPoint.x;
+    pointMat.r->m128_f32[13] = rPoint.y;
+    pointMat.r->m128_f32[14] = rPoint.z;
+
+    gfx->getVertexconstbuffer()->transform.element = pointMat * (scaleMat * rot * transMat);
 
     //changing vertex Shader cBuffer
     D3D11_MAPPED_SUBRESOURCE resource;
 
     gfx->get_IC()->Map(this->getVertexConstBuffer(), 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
-    memcpy(resource.pData, gfx->getVcb(), sizeof(Vcb));
+    memcpy(resource.pData, gfx->getVertexconstbuffer(), sizeof(Vcb));
     gfx->get_IC()->Unmap(this->getVertexConstBuffer(), 0);
     ZeroMemory(&resource, sizeof(D3D11_MAPPED_SUBRESOURCE));
 }

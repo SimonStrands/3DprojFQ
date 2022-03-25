@@ -12,14 +12,24 @@ class GameObject : public object{
 public:
 	GameObject(ModelObj*file, Graphics*& gfx, vec3 pos = vec3(0, 0, 0), vec3 rot = vec3(0, 0, 0), vec3 scale = vec3(1, 1, 1), std::string otherTex = "");
 	virtual ~GameObject();
-	void Updateshaders(Graphics*& gfx, bool vertex = true, bool pixel = true);
+	
 	void draw(Graphics*& gfx, bool sm = false);
-	void drawDebug(Graphics*& gfx, bool sm = false);
-	void drawDefTest(ID3D11DeviceContext*& immediateContext);
+
+	//update vertexConstBuffer on object
+	void Updateshaders(Graphics*& gfx, bool vertex = true);
+
+	/*if Disp_map exist and this funciton is not called displaysment tesselation will occur 
+	else if tess == true phong tesselation will occur
+	else if tess == false it will not tesselate*/
 	void setTesselation(bool tess, Graphics*& gfx);
-	//0 = lowest 1 = highest
-	void getBox(DirectX::XMVECTOR theReturn[]);
+
+	//gives 2 points 0 = the lowest in x,y and z while 1 is the highest in x,y and zdimensions
+	void getBoundingBox(DirectX::XMVECTOR theReturn[]);
+
+	//see if this object has beened drawned before(used for quad tree)
 	const bool isDrawed();
+
+	//clear that the object has not been drawned before
 	void clearDrawed();
 protected:
 	ModelObj* model;

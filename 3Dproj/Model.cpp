@@ -121,10 +121,10 @@ ModelObj::~ModelObj()
 	}
 }
 
-void ModelObj::draw(Graphics*& gfx, bool sm)
+void ModelObj::draw(Graphics*& gfx, bool shadowmap)
 {
 	for (int i = 0; i < mMeshes.size(); i++) {
-		if (!sm) {
+		if (!shadowmap) {
 			this->mMeshes[i].SetShader(gfx->get_IC());
 			if (this->mMeshes[i].getMatrial()->flags.Maps[4]) {
 				gfx->get_IC()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST);
@@ -148,14 +148,7 @@ void ModelObj::draw(Graphics*& gfx, bool sm)
 			}
 			
 		}
-		mMeshes[i].draw(gfx->get_IC(), sm);
-	}
-}
-
-void ModelObj::drawDefTest(ID3D11DeviceContext*& immediateContext)
-{
-	for (int i = 0; i < mMeshes.size(); i++) {
-		mMeshes[i].draw(immediateContext, true);
+		mMeshes[i].draw(gfx->get_IC());
 	}
 }
 
@@ -169,7 +162,7 @@ std::vector<Material*>& ModelObj::getMatrial()
 	return this->matrial;
 }
 
-vec3* ModelObj::getBox()
+vec3* ModelObj::getBoundingBox()
 {
 	return this->boxSize;
 }

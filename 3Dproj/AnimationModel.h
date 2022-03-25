@@ -3,7 +3,7 @@
 #include "Bone.h"
 #include <map>
 #include "Convertions.h"
-
+//isn't used in 3D course
 /*
 struct AnimVCB : CB {
 	struct {

@@ -15,7 +15,7 @@ public:
 	ID3D11ShaderResourceView*& GetshadowResV();
 	ID3D11ShaderResourceView*& fromDepthToSRV();
 	void setUpdateShadow();
-	void inUpdateShadow(int i);
+	void inUpdateShadow(int whatNrOfLight);
 private:
 
 	bool CreateDepthStencil(ID3D11Device* device, UINT width, UINT height);

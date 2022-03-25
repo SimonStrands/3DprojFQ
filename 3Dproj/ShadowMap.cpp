@@ -85,14 +85,14 @@ void ShadowMap::setUpdateShadow()
 	gfx->get_IC()->PSSetShaderResources(4, 1, pSRV);
 }
 
-void ShadowMap::inUpdateShadow(int i)
+void ShadowMap::inUpdateShadow(int whatNrOfLight)
 {
 	ID3D11RenderTargetView* pNullRTV = NULL;
-	gfx->get_IC()->OMSetRenderTargets(1, &pNullRTV, this->Getdepthview(i));
+	gfx->get_IC()->OMSetRenderTargets(1, &pNullRTV, this->Getdepthview(whatNrOfLight));
 
-	gfx->Projection((int)this->light[i]->whatOfLight());
+	gfx->setProjection((int)this->light[whatNrOfLight]->whatOfLight());
 	
-	gfx->getVcb()->view.element = this->light[i]->getLightView();
+	gfx->getVertexconstbuffer()->view.element = this->light[whatNrOfLight]->getLightView();
 }
 
 bool ShadowMap::CreateDepthStencil(ID3D11Device* device, UINT width, UINT height)

@@ -2,9 +2,10 @@
 #include "Vec.h"
 #include "rotation.h"
 #include "Convertions.h"
+#include <iostream>
 //git
 
-//whatTypeOfLight so I don't ahve to do a dynamic_ thing
+//whatTypeOfLight so I don't ahve to do a dynamic_cast
 enum wTofL {
 	SPOT, DIR
 };
@@ -27,8 +28,11 @@ public:
 	vec3& getRotation();
 	void changeRot(vec3 rot);
 	void addRot(vec3 rot);
+	//get view matrix from light
 	DirectX::XMMATRIX getLightView();
+	//get light and view matrix from light
 	DirectX::XMMATRIX getLightViewProj();
+	//what type of light if its spotlight or directional light
 	const wTofL whatOfLight();
 protected:
 	wTofL flag;

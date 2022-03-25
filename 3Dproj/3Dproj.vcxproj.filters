@@ -183,13 +183,7 @@
     <ClCompile Include="Mesh.cpp">
       <Filter>Source Files\Graphic\mesh loading</Filter>
     </ClCompile>
-    <ClCompile Include="TileAnimation.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ShadowMap.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="DepthStencil.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Model.cpp">
@@ -223,6 +217,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="DeferredRendering.cpp">
+      <Filter>Source Files\Graphic</Filter>
+    </ClCompile>
+    <ClCompile Include="TileAnimation.cpp">
       <Filter>Source Files\Graphic</Filter>
     </ClCompile>
   </ItemGroup>
@@ -317,9 +314,6 @@
     <ClInclude Include="Mesh.h">
       <Filter>Header Files\Game</Filter>
     </ClInclude>
-    <ClInclude Include="Textures.h">
-      <Filter>Header Files\Game</Filter>
-    </ClInclude>
     <ClInclude Include="GameObject.h">
       <Filter>Header Files\Game</Filter>
     </ClInclude>
@@ -339,9 +333,6 @@
       <Filter>Header Files\Graphic\Animation</Filter>
     </ClInclude>
     <ClInclude Include="ShadowMap.h">
-      <Filter>Header Files\Graphic\Shadow</Filter>
-    </ClInclude>
-    <ClInclude Include="DepthStencil.h">
       <Filter>Header Files\Graphic\Shadow</Filter>
     </ClInclude>
     <ClInclude Include="Model.h">

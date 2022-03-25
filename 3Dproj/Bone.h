@@ -6,8 +6,8 @@
 #include <vector>
 #include <unordered_map>
 #include "Quaternion.h"
+//isn't used in 3D course
 
-//hereChange
 struct BoneVertex {
 	float pos[3];
 	float uv[2];

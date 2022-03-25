@@ -4,8 +4,8 @@
 
 Camera::Camera(Graphics *&gfx, Mouse* mus, vec3 pos, vec3 rot)
 {
-	this->Lcbd = gfx->getLCB();
-	this->Vcbd = gfx->getVcb();
+	this->Lcbd = gfx->getLightconstbufferforCS();
+	this->Vcbd = gfx->getVertexconstbuffer();
 	this->mus = mus;
 	this->mouseSensitivity = 5.0f;
 	this->xCamPos = pos.x;
@@ -15,6 +15,7 @@ Camera::Camera(Graphics *&gfx, Mouse* mus, vec3 pos, vec3 rot)
 	this->xCamRot = rot.x;
 	this->yCamRot = rot.y;
 	this->zCamRot = rot.z;
+	this->calcFURVectors();
 }
 
 Camera::~Camera()
@@ -63,7 +64,7 @@ vec3 Camera::getRot()
 	return vec3(xCamRot, yCamRot, 0);
 }
 
-void Camera::calcFUL()
+void Camera::calcFURVectors()
 {
 	DirectX::XMMATRIX viewMatrix = DirectX::XMMATRIX(
 		1.0f, 0.0f, 0.0f, 0.0f,
@@ -91,38 +92,26 @@ vec3 Camera::getUpVector()
 	return FUL[1];
 }
 
-vec3 Camera::getLeftVector()
+vec3 Camera::getRightVector()
 {
 	return FUL[2];
 }
 
-void Camera::getViewFrustoms(vec3 frustoms[], float angle)
+void Camera::getViewFrustoms(vec3 frustoms[])
 {
-	//vec3 nearCenter = getPos() - getForwardVec() * nearDist;
 	vec3 nearCenter = getForwardVec() * nearDist;
 	vec3 farCenter = getPos() - getForwardVec() * farDist;
-
 
 	float nearHeight = 2 * tan(fov / 2) * nearDist;
 	float farHeight = 2 * tan(fov / 2) * farDist;
 	float nearWidth = nearHeight * ratio;
 	float farWidth = farHeight * ratio;
 
-	//up left, up right, down right, down left 
-
-	frustoms[0] = vec3(nearCenter - getLeftVector() * ((float)nearWidth * 0.5f)).Normalize();
-	frustoms[1] = vec3(nearCenter + getLeftVector() * ((float)nearWidth * 0.5f)).Normalize();
+	//left, right, up, down 
+	frustoms[0] = vec3(nearCenter - getRightVector() * ((float)nearWidth * 0.5f)).Normalize();
+	frustoms[1] = vec3(nearCenter + getRightVector() * ((float)nearWidth * 0.5f)).Normalize();
 	frustoms[2] = vec3(nearCenter + getUpVector() * ((float)nearHeight * 0.5f)).Normalize();
 	frustoms[3] = vec3(nearCenter - getUpVector() * ((float)nearHeight * 0.5f)).Normalize();
-	//frustoms[0] = vec3(nearCenter - getLeftVector() * (nearWidth * 0.5) + getUpVector() * (nearHeight * 0.5));
-	//frustoms[1] = vec3(nearCenter + getLeftVector() * (nearWidth * 0.5) + getUpVector() * (nearHeight * 0.5));
-	//frustoms[2] = vec3(nearCenter + getLeftVector() * (nearWidth * 0.5) - getUpVector() * (nearHeight * 0.5));
-	//frustoms[3] = vec3(nearCenter - getLeftVector() * (nearWidth * 0.5) - getUpVector() * (nearHeight * 0.5));
-
-	//frustoms[4] = vec3(farCenter - getLeftVector() * (nearWidth * 0.5) + getUpVector() * (nearHeight * 0.5));
-	//frustoms[5] = vec3(farCenter + getLeftVector() * (nearWidth * 0.5) + getUpVector() * (nearHeight * 0.5));
-	//frustoms[6] = vec3(farCenter + getLeftVector() * (nearWidth * 0.5) - getUpVector() * (nearHeight * 0.5));
-	//frustoms[7] = vec3(farCenter - getLeftVector() * (nearWidth * 0.5) - getUpVector() * (nearHeight * 0.5));
 }
 
 void Camera::setRotation(vec3 newRot)

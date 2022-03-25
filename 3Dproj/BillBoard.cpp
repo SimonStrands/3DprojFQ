@@ -87,29 +87,29 @@ void BillBoard::UpdateShader(Graphics*& gfx, vec3 cameraPos, bool v, bool p, boo
 {
 	this->updateVertexShader(gfx);
 
-	this->getKdKa(gfx->getPcb()->kd.element, gfx->getPcb()->ka.element);
+	this->getKdKa(gfx->getPixelconstbuffer()->kd.element, gfx->getPixelconstbuffer()->ka.element);
 
 
 	//changing pixel shader cBuffer
 	D3D11_MAPPED_SUBRESOURCE resource;
 	gfx->get_IC()->Map(Pg_pConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
-	memcpy(resource.pData, gfx->getPcb(), sizeof(Pcb));
+	memcpy(resource.pData, gfx->getPixelconstbuffer(), sizeof(Pcb));
 	gfx->get_IC()->Unmap(Pg_pConstantBuffer, 0);
 	ZeroMemory(&resource, sizeof(D3D11_MAPPED_SUBRESOURCE));
 
 	//GCB
-	gfx->getGcb()->cameraPos.element[0] = -cameraPos.x;
-	gfx->getGcb()->cameraPos.element[1] = -cameraPos.y;
-	gfx->getGcb()->cameraPos.element[2] = -cameraPos.z;
+	gfx->getGeometryconstbuffer()->cameraPos.element[0] = -cameraPos.x;
+	gfx->getGeometryconstbuffer()->cameraPos.element[1] = -cameraPos.y;
+	gfx->getGeometryconstbuffer()->cameraPos.element[2] = -cameraPos.z;
 
 	//uv
-	gfx->getGcb()->uvCords.element[0] = this->getTAnim().uv().xyz.x;
-	gfx->getGcb()->uvCords.element[1] = this->getTAnim().uv().xyz.y;
-	gfx->getGcb()->uvCords.element[2] = this->getTAnim().uv().xyz.z;
-	gfx->getGcb()->uvCords.element[3] = this->getTAnim().uv().w;
+	gfx->getGeometryconstbuffer()->uvCords.element[0] = this->getTAnim().uv().xyz.x;
+	gfx->getGeometryconstbuffer()->uvCords.element[1] = this->getTAnim().uv().xyz.y;
+	gfx->getGeometryconstbuffer()->uvCords.element[2] = this->getTAnim().uv().xyz.z;
+	gfx->getGeometryconstbuffer()->uvCords.element[3] = this->getTAnim().uv().w;
 
 	gfx->get_IC()->Map(this->getGCB(), 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
-	memcpy(resource.pData, gfx->getGcb(), sizeof(Gcb));
+	memcpy(resource.pData, gfx->getGeometryconstbuffer(), sizeof(Gcb));
 	gfx->get_IC()->Unmap(this->getGCB(), 0);
 	ZeroMemory(&resource, sizeof(D3D11_MAPPED_SUBRESOURCE));
 }

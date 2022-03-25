@@ -2,9 +2,9 @@
 
 GameObject::GameObject(ModelObj*file, Graphics*& gfx, vec3 pos, vec3 rot, vec3 scale, std::string otherTex)
 {
-	this->changePos(pos);
-	this->changeScale(scale);
-	this->changeRot(rot);
+	this->setPos(pos);
+	this->setScale(scale);
+	this->setRot(rot);
 	this->model = file;
 	CreateVertexConstBuffer(gfx, this->getVertexConstBuffer());
 	object::setModel(model);
@@ -15,7 +15,7 @@ GameObject::~GameObject()
 {
 	
 }
-static bool once = false;
+
 void GameObject::draw(Graphics *&gfx, bool sm)
 {
 	drawed = true;
@@ -25,20 +25,6 @@ void GameObject::draw(Graphics *&gfx, bool sm)
 	model->draw(gfx, sm);
 }
 
-void GameObject::drawDebug(Graphics*& gfx, bool sm)
-{
-	drawed = true;
-	gfx->get_IC()->VSSetConstantBuffers(0, 1, &this->getVertexConstBuffer());
-	gfx->get_IC()->DSSetConstantBuffers(0, 1, &this->getVertexConstBuffer());
-	gfx->get_IC()->HSSetConstantBuffers(0, 1, &this->getVertexConstBuffer());
-	model->draw(gfx, sm);
-}
-
-void GameObject::drawDefTest(ID3D11DeviceContext*& immediateContext)
-{
-	immediateContext->VSSetConstantBuffers(0, 1, &this->getVertexConstBuffer());
-	model->drawDefTest(immediateContext);
-}
 
 void GameObject::setTesselation(bool tess, Graphics*& gfx)
 {
@@ -50,13 +36,13 @@ void GameObject::setTesselation(bool tess, Graphics*& gfx)
 }
 
 
-void GameObject::getBox(DirectX::XMVECTOR theReturn[])
+void GameObject::getBoundingBox(DirectX::XMVECTOR theReturn[])
 {
 	//rotations
 	DirectX::XMMATRIX rot(DirectX::XMMatrixRotationRollPitchYaw(this->getRot().x, this->getRot().y, this->getRot().z));
 
-	DirectX::XMVECTOR low =  { model->getBox()[1].x ,model->getBox()[1].y ,model->getBox()[1].z , 1 };
-	DirectX::XMVECTOR high = { model->getBox()[0].x ,model->getBox()[0].y ,model->getBox()[0].z , 1 };
+	DirectX::XMVECTOR low =  { model->getBoundingBox()[1].x ,model->getBoundingBox()[1].y ,model->getBoundingBox()[1].z , 1 };
+	DirectX::XMVECTOR high = { model->getBoundingBox()[0].x ,model->getBoundingBox()[0].y ,model->getBoundingBox()[0].z , 1 };
 
 	theReturn[0] = DirectX::XMVectorAdd(DirectX::XMVector4Transform(DirectX::XMVectorMultiply(low, this->getScale().toXMvector()), rot), this->getPos().toXMvector());
 	theReturn[1] = DirectX::XMVectorAdd(DirectX::XMVector4Transform(DirectX::XMVectorMultiply(high, this->getScale().toXMvector()), rot), this->getPos().toXMvector());
@@ -76,11 +62,9 @@ void GameObject::clearDrawed()
 	this->drawed = false;
 }
 
-void GameObject::Updateshaders(Graphics*& gfx, bool vertex, bool pixel)
+void GameObject::Updateshaders(Graphics*& gfx, bool vertex)
 {
 	if (vertex) {
 		this->updateVertexShader(gfx);
-	}
-	if (pixel) {
 	}
 }

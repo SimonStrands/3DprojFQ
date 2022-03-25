@@ -3,16 +3,6 @@
 #include "imgui_impl_dx11.h"
 #include "imgui_impl_win32.h"
 
-//debug nothing to look here at
-void Graphics::debugcd()
-{
-}
-//keyboard buttons + rotation
-void Graphics::keyboardDebug()
-{
-
-}
-
 ID3D11Buffer*& Graphics::getConstBuffers(int i)
 {
 	switch (i)
@@ -30,7 +20,7 @@ ID3D11Buffer*& Graphics::getConstBuffers(int i)
 }
 
 
-void Graphics::Projection(int flag)
+void Graphics::setProjection(int flag)
 {
 	//setting projection matrix
 	switch (flag)
@@ -78,7 +68,6 @@ Graphics::Graphics(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	nearPlane = 0.1f;
 	nrOfObject = 0;
 	Pg_pConstantBuffer = nullptr;
-	normalMapping = true;//?
 
 	inputLayout = new ID3D11InputLayout * [2]{nullptr, nullptr};
 
@@ -102,7 +91,7 @@ Graphics::Graphics(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	this->pcbd.ks = {1.f,1.f,1.f,0};
 	//
 	//setting matrixes
-	Projection();
+	setProjection();
 	//if delete this happens it will get an error and program will stop working(I want this to happen when I debug)
 	if (!setUpWindow(hInstance, WIDTH, HEIGHT, nCmdShow, wnd)) {
 		std::cerr << "failed" << std::endl;
@@ -210,20 +199,6 @@ void Graphics::RsetViewPort()
 	immediateContext->RSSetViewports(1, &viewPort);
 }
 
-DEBUG_CAMERAN* Graphics::SwitchNewGraphics(DEBUG_CAMERAN newCamera)
-{
-	DEBUG_CAMERAN* theReturn = new DEBUG_CAMERAN({wnd, viewPort, renderTarget, swapChain, device, immediateContext});
-
-	this->wnd = newCamera.wnd;
-	this->viewPort = newCamera.viewPort;
-	this->renderTarget = newCamera.RTV;
-	this->swapChain = newCamera.swapChain;
-	this->device = newCamera.device;
-	this->immediateContext = newCamera.immediateContext;
-
-	return theReturn;
-}
-
 float nextFpsUpdate = 0;
 void Graphics::Update(float dt, vec3 camPos)
 {
@@ -238,7 +213,6 @@ void Graphics::Update(float dt, vec3 camPos)
 	}
 	LCBG.projection.element = vcbd.projection.element;
 	for (int i = 0; i < nrOfLights; i++) {
-		//LCBG.lightView.element[i] = this->light[i]->getLightViewProj();
 		LCBG.lightView.element[i] = this->light[i]->getLightViewProj();
 		LCBG.lightPos.element[i][0] = light[i]->getPos().x;
 		LCBG.lightPos.element[i][1] = light[i]->getPos().y;
@@ -273,28 +247,23 @@ void Graphics::Update(float dt, vec3 camPos)
 		float fps = 1.f / (float)dt;
 		SetWindowTextA(wnd, std::to_string(fps).c_str());
 	}
-	keyboardDebug();
 }
 
-Vcb *Graphics::getVcb()
+Vcb *Graphics::getVertexconstbuffer()
 {
 	return &vcbd;
 }
-Pcb *Graphics::getPcb()
+Pcb *Graphics::getPixelconstbuffer()
 {
 	return &pcbd;
 }
-Gcb* Graphics::getGcb()
+Gcb* Graphics::getGeometryconstbuffer()
 {
 	return &gcbd;
 }
-LCBGS* Graphics::getLCB()
+LCBGS* Graphics::getLightconstbufferforCS()
 {
 	return &LCBG;
-}
-void Graphics::setVView(DirectX::XMMATRIX &mat)
-{
-	mat = this->vcbd.view.element;
 }
 void Graphics::setVProj(DirectX::XMMATRIX& mat)
 {
@@ -336,12 +305,7 @@ IDXGISwapChain*& Graphics::getSwapChain()
 {
 	return this->swapChain;
 }
-void Graphics::getViewFrustomPlanes(DirectX::XMFLOAT3 res[])
-{
-	
-	//vec3 camPos = vec3(gcbd.cameraPos.element[0], gcbd.cameraPos.element[1], gcbd.cameraPos.element[2]);
-	//vec3 nearCenter = 
-}
+
 ID3D11InputLayout** Graphics::getInputL()
 {
 	return this->inputLayout;
@@ -350,7 +314,7 @@ ID3D11RenderTargetView*& Graphics::getRenderTarget()
 {
 	return this->renderTarget;
 }
-CamPosCB* Graphics::getCPCB()
+CamPosCB* Graphics::getCamPosconstbuffer()
 {
 	return &this->CPCB;
 }

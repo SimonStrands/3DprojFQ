@@ -1,7 +1,7 @@
 #pragma once
 #include <Windows.h>
-#include "DepthStencil.h"
 #include <iostream>
+#include <d3d11.h>
 //git
 //static DepthStencil depth;
 

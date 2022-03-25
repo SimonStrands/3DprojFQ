@@ -9,11 +9,10 @@ public:
 	ModelObj();
 	void init(const std::string& ModelFile, Graphics*& gfx, ID3D11ShaderResourceView** def);
 	virtual ~ModelObj();
-	void draw(Graphics*& gfx, bool sm = false);
-	void drawDefTest(ID3D11DeviceContext*& immediateContext);
+	void draw(Graphics*& gfx, bool shadowmap = false);
 	std::vector<MeshObj> &getMehses();
 	std::vector<Material*> &getMatrial();
-	vec3* getBox();
+	vec3* getBoundingBox();
 private:
 	bool loadModel(const std::string& ModelFile);
 	std::vector<MeshObj> mMeshes;
