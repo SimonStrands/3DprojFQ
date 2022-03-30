@@ -2,9 +2,6 @@
 #include <mutex>
 #include <thread>
 
-std::mutex createVertexBufferMutex;
-std::mutex createConstVertexBufferMutex;
-
 MeshObj::MeshObj(Graphics*& gfx, std::vector<vertex> vertecies, Material *material)
 {
 	this->HS = nullptr;
@@ -12,13 +9,17 @@ MeshObj::MeshObj(Graphics*& gfx, std::vector<vertex> vertecies, Material *materi
 	this->nrOfVertexes = (int)vertecies.size();
 	this->matrial = material;
 	//kanske?
-	createVertexBufferMutex.lock();
 	CreateVertexBuffer(gfx->getDevice(), vertecies, this->vertexBuffer);
-	createVertexBufferMutex.unlock();
-
-	createConstVertexBufferMutex.lock();
 	CreateVertexConstBuffer(gfx, this->Pg_pConstantBuffer);
-	createConstVertexBufferMutex.unlock();
+}
+
+MeshObj::MeshObj(Graphics*& gfx, int NrOfvertecies, Material* material)
+{
+	this->HS = nullptr;
+	this->DS = nullptr;
+	this->nrOfVertexes = NrOfvertecies;
+	this->matrial = material;
+	CreateVertexConstBuffer(gfx, this->Pg_pConstantBuffer);
 }
 
 void MeshObj::begone()
@@ -77,6 +78,13 @@ void MeshObj::draw(ID3D11DeviceContext*& immediateContext)
 	immediateContext->PSSetConstantBuffers(0, 1, &this->Pg_pConstantBuffer);
 	immediateContext->IASetVertexBuffers(0, 1, &this->vertexBuffer, &strid, &offset);
 	immediateContext->Draw(this->nrOfVertexes, 0);
+}
+void MeshObj::draw(ID3D11DeviceContext*& immediateContext, int startVertex)
+{
+	immediateContext->DSSetShaderResources(0, 1, this->matrial->texSRVDS);
+	immediateContext->PSSetShaderResources(0, 4, this->matrial->texSRVPS);
+	immediateContext->PSSetConstantBuffers(0, 1, &this->Pg_pConstantBuffer);
+	immediateContext->Draw(this->nrOfVertexes, startVertex);
 }
 
 void MeshObj::draw2(ID3D11DeviceContext*& immediateContext)

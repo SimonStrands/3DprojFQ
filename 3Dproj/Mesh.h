@@ -12,6 +12,7 @@
 class MeshObj {
 public:
 	MeshObj(Graphics*& gfx, std::vector<vertex> vertecies, Material *material);
+	MeshObj(Graphics*& gfx, int NrOfvertecies, Material *material);
 	//another type of delete 
 	void begone();
 	virtual ~MeshObj();
@@ -21,6 +22,7 @@ public:
 	//getting ka,kd,ks from what was written in the mtl file
 	void getKdKaKsNs(float (&kd)[4], float (&ka)[4], float(&ks)[4]);
 	void draw(ID3D11DeviceContext*& immediateContext);
+	void draw(ID3D11DeviceContext*& immediateContext, int startVertex);
 	void draw2(ID3D11DeviceContext*& immediateContext);
 	/*Set Shaders on this object*/
 	void SetShaders(ID3D11VertexShader* VS);

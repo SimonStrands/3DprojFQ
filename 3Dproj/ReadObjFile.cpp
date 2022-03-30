@@ -177,11 +177,9 @@ bool getMatrialFromFile(std::string fileName, std::vector<Material*> &matrial, G
 }
 
 
-void createMesh(Graphics*& gfx, std::vector<MeshObj> &Meshes, std::vector<vertex> &vertecies, Material* matrial) {
-	fixtangent(vertecies);
-	MeshObj a(gfx, vertecies, matrial);
+void createMesh(Graphics*& gfx, std::vector<MeshObj> &Meshes, int nrOfVertex, Material* matrial) {
+	MeshObj a(gfx, nrOfVertex, matrial);
 	Meshes.push_back(a);
-	//Meshes.push_back(MeshObj(gfx, vertecies, matrial));
 	if (matrial->flags.Maps[3]) {
 		Meshes[Meshes.size() - 1].SetShaders(gfx->getVS()[0], gfx->getPS()[0]);
 	}
@@ -192,7 +190,6 @@ void createMesh(Graphics*& gfx, std::vector<MeshObj> &Meshes, std::vector<vertex
 		Meshes[Meshes.size() - 1].SetShaders(gfx->getVS()[2]);
 		Meshes[Meshes.size() - 1].SetShaders(gfx->getHS()[0], gfx->getDS()[0]);
 	}
-	vertecies.clear();
 }
 
 void readFace(std::string readWord, std::vector<vertex> &vertecies, std::vector<std::array<float, 3>> vPos, std::vector<std::array<float, 2>> vUv, std::vector<std::array<float, 4>> vNorm) {
@@ -204,7 +201,6 @@ void readFace(std::string readWord, std::vector<vertex> &vertecies, std::vector<
 		a >> trash >> sTemp2[0] >> sTemp2[1] >> sTemp2[2] >> sTemp2[3];
 		if (sTemp2[3] != "") {
 			for (int i = 0; i < 3; i++) {
-				//nrOfVertexes++;
 				sTemp = getDest(sTemp2[i]);
 				//när jag läser in faces så får dem första sex alltid samma p.g.a det är så dem har skrivit det på obj filen
 				vertecies.push_back(vertex(vPos[std::stoi(sTemp[0]) - 1], vUv[std::stoi(sTemp[1]) - 1], vNorm[std::stoi(sTemp[2]) - 1]));
@@ -253,7 +249,7 @@ void getLowest(vec3 box[2], std::array<float, 3> vPos)
 	}
 }
 
-bool readObjFile(std::vector<MeshObj>& Meshes, std::string fileName, std::vector<Material*> &matrial, Graphics*& gfx, vec3 box[2])
+bool readObjFile(std::vector<MeshObj>& Meshes, std::string fileName, std::vector<Material*> &matrial, Graphics*& gfx, vec3 box[2], ModelObj& model)
 {
 
 	std::vector<vertex> vertecies;
@@ -269,6 +265,7 @@ bool readObjFile(std::vector<MeshObj>& Meshes, std::string fileName, std::vector
 	std::string trash;
 	bool useOfG = false;
 	bool first = true;
+	int lastNrOfVertex = 0;
 	if (!infile.is_open()) {
 		return false;
 	}
@@ -276,7 +273,8 @@ bool readObjFile(std::vector<MeshObj>& Meshes, std::string fileName, std::vector
 	while (std::getline(infile, readWord)) {
 		if (ff && readWord.substr(0, 1) != "f") {
 			ff = false;//we have read all the faces and now create a mesh
-			createMesh(gfx, Meshes, vertecies, matrial[currentMatrial]);
+			createMesh(gfx, Meshes, vertecies.size() - lastNrOfVertex, matrial[currentMatrial]);
+			lastNrOfVertex = vertecies.size();
 			nrOfMeshesOffset--;
 		}//read vertexes
 		if (readWord.substr(0, 2) == "v ") {
@@ -317,12 +315,15 @@ bool readObjFile(std::vector<MeshObj>& Meshes, std::string fileName, std::vector
 		}
 	}
 	if (nrOfMeshesOffset > 0) {
-		createMesh(gfx, Meshes, vertecies, matrial[currentMatrial]);
+		createMesh(gfx, Meshes, vertecies.size() - lastNrOfVertex, matrial[currentMatrial]);
+		lastNrOfVertex = vertecies.size();
 	}
 	else if (nrOfMeshesOffset < 0) {
 		std::cout << "error" << std::endl;
 		return false;
 	}
+	fixtangent(vertecies);
+	model.createVertexBuffeer(gfx, vertecies);
 	return true;
 }
 /*

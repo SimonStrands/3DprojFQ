@@ -101,7 +101,7 @@ bool Model::LoadModel(const std::string& modelfile)
 ModelObj::ModelObj(const std::string& ModelFile, Graphics*& gfx, ID3D11ShaderResourceView** def)
 {
 	getMatrialFromFile(ModelFile, matrial, gfx, def);
-	readObjFile(mMeshes, ModelFile, matrial, gfx, boxSize);
+	readObjFile(mMeshes, ModelFile, matrial, gfx, boxSize, *this);
 }
 
 ModelObj::ModelObj()
@@ -111,10 +111,15 @@ ModelObj::ModelObj()
 void ModelObj::init(const std::string& ModelFile, Graphics*& gfx, ID3D11ShaderResourceView** def)
 {
 	getMatrialFromFile(ModelFile, matrial, gfx, def);
-	if (!readObjFile(mMeshes, ModelFile, matrial, gfx, boxSize)) {
+	if (!readObjFile(mMeshes, ModelFile, matrial, gfx, boxSize, *this)) {
 		std::cout << "couldn't load " << ModelFile << std::endl;
 		MessageBox(nullptr, L"sorry couldn't load file look in terminal for more info", L"ERROR", MB_ICONWARNING | MB_OK);
 	}
+}
+
+void ModelObj::createVertexBuffeer(Graphics*& gfx, std::vector<vertex> vertecies)
+{
+	CreateVertexBuffer(gfx->getDevice(), vertecies, vertexBuffer);
 }
 
 ModelObj::~ModelObj()
@@ -126,6 +131,11 @@ ModelObj::~ModelObj()
 
 void ModelObj::draw(Graphics*& gfx, bool shadowmap)
 {
+	UINT offset = 0;
+	static UINT strid = sizeof(vertex);
+	gfx->get_IMctx()->IASetVertexBuffers(0, 1, &this->vertexBuffer, &strid, &offset);
+	int startVertex = 0;
+
 	for (int i = 0; i < mMeshes.size(); i++) {
 		if (!shadowmap) {
 			this->mMeshes[i].SetShader(gfx->get_IMctx());
@@ -152,7 +162,8 @@ void ModelObj::draw(Graphics*& gfx, bool shadowmap)
 			}
 			
 		}
-		mMeshes[i].draw(gfx->get_IMctx());
+		mMeshes[i].draw(gfx->get_IMctx(), startVertex);
+		startVertex += mMeshes[i].getNrOfVertex();
 	}
 }
 

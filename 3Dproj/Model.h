@@ -8,6 +8,7 @@ public:
 	ModelObj(const std::string& ModelFile, Graphics*& gfx, ID3D11ShaderResourceView** def);
 	ModelObj();
 	void init(const std::string& ModelFile, Graphics*& gfx, ID3D11ShaderResourceView** def);
+	void createVertexBuffeer(Graphics*& gfx, std::vector<vertex> vertecies);
 	virtual ~ModelObj();
 	void draw(Graphics*& gfx, bool shadowmap = false);
 	std::vector<MeshObj> &getMehses();
@@ -15,6 +16,7 @@ public:
 	vec3* getBoundingBox();
 private:
 	bool loadModel(const std::string& ModelFile);
+	ID3D11Buffer* vertexBuffer;
 	std::vector<MeshObj> mMeshes;
 	std::vector<Material*> matrial;
 	vec3 boxSize[2];
