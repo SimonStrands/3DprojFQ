@@ -13,6 +13,7 @@ public:
 	void draw(Graphics*& gfx, bool shadowmap = false);
 	std::vector<MeshObj> &getMehses();
 	std::vector<Material*> &getMatrial();
+	ID3D11Buffer*& getVertexBuffer();
 	vec3* getBoundingBox();
 private:
 	bool loadModel(const std::string& ModelFile);

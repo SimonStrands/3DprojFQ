@@ -48,10 +48,12 @@ void DynamicCube::draw(ID3D11DeviceContext*& immediateContext)
 
 	UINT offset = 0;
 	static UINT strid = sizeof(vertex);
+	immediateContext->IASetVertexBuffers(0, 1, &this->model->getVertexBuffer(), &strid, &offset);
 	immediateContext->PSSetShaderResources(0, 1, &this->CubeResV);
-
+	int startVertex = 0;
 	for (int i = 0; i < this->model->getMehses().size(); i++) {
-		this->model->getMehses()[i].draw2(immediateContext);
+		this->model->getMehses()[i].draw2(immediateContext, startVertex);
+		startVertex += model->getMehses()[i].getNrOfVertex();
 	}
 }
 

@@ -2,17 +2,6 @@
 #include <mutex>
 #include <thread>
 
-MeshObj::MeshObj(Graphics*& gfx, std::vector<vertex> vertecies, Material *material)
-{
-	this->HS = nullptr;
-	this->DS = nullptr;
-	this->nrOfVertexes = (int)vertecies.size();
-	this->matrial = material;
-	//kanske?
-	CreateVertexBuffer(gfx->getDevice(), vertecies, this->vertexBuffer);
-	CreateVertexConstBuffer(gfx, this->Pg_pConstantBuffer);
-}
-
 MeshObj::MeshObj(Graphics*& gfx, int NrOfvertecies, Material* material)
 {
 	this->HS = nullptr;
@@ -24,9 +13,6 @@ MeshObj::MeshObj(Graphics*& gfx, int NrOfvertecies, Material* material)
 
 void MeshObj::begone()
 {
-	if (this->vertexBuffer != nullptr) {
-		this->vertexBuffer->Release();
-	}
 	if (this->Pg_pConstantBuffer != nullptr) {
 		this->Pg_pConstantBuffer->Release();
 	}
@@ -37,11 +23,6 @@ void MeshObj::begone()
 
 MeshObj::~MeshObj()
 {
-}
-
-ID3D11Buffer*& MeshObj::getVertexBuffer()
-{
-	return this->vertexBuffer;
 }
 
 ID3D11ShaderResourceView** MeshObj::getTextures()
@@ -68,17 +49,6 @@ void MeshObj::getKdKaKsNs(float(&kd)[4], float(&ka)[4], float(&ks)[4])
 	ka[3] = 1.f;
 }
 
-void MeshObj::draw(ID3D11DeviceContext*& immediateContext)
-{
-	UINT offset = 0;
-	static UINT strid = sizeof(vertex);
-
-	immediateContext->DSSetShaderResources(0, 1, this->matrial->texSRVDS);
-	immediateContext->PSSetShaderResources(0, 4, this->matrial->texSRVPS);
-	immediateContext->PSSetConstantBuffers(0, 1, &this->Pg_pConstantBuffer);
-	immediateContext->IASetVertexBuffers(0, 1, &this->vertexBuffer, &strid, &offset);
-	immediateContext->Draw(this->nrOfVertexes, 0);
-}
 void MeshObj::draw(ID3D11DeviceContext*& immediateContext, int startVertex)
 {
 	immediateContext->DSSetShaderResources(0, 1, this->matrial->texSRVDS);
@@ -87,13 +57,12 @@ void MeshObj::draw(ID3D11DeviceContext*& immediateContext, int startVertex)
 	immediateContext->Draw(this->nrOfVertexes, startVertex);
 }
 
-void MeshObj::draw2(ID3D11DeviceContext*& immediateContext)
+void MeshObj::draw2(ID3D11DeviceContext*& immediateContext, int startVertex)
 {
 	UINT offset = 0;
 	static UINT strid = sizeof(vertex);
 	SetShader(immediateContext, 0);
-	immediateContext->IASetVertexBuffers(0, 1, &this->vertexBuffer, &strid, &offset);
-	immediateContext->Draw(this->nrOfVertexes, 0);
+	immediateContext->Draw(this->nrOfVertexes, startVertex);
 }
 
 

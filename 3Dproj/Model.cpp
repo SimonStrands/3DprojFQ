@@ -127,6 +127,7 @@ ModelObj::~ModelObj()
 	for (int i = 0; i < mMeshes.size(); i++) {
 		mMeshes[i].begone();
 	}
+	vertexBuffer->Release();
 }
 
 void ModelObj::draw(Graphics*& gfx, bool shadowmap)
@@ -175,6 +176,11 @@ std::vector<MeshObj> &ModelObj::getMehses()
 std::vector<Material*>& ModelObj::getMatrial()
 {
 	return this->matrial;
+}
+
+ID3D11Buffer*& ModelObj::getVertexBuffer()
+{
+	return this->vertexBuffer;
 }
 
 vec3* ModelObj::getBoundingBox()

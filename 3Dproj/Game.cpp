@@ -361,9 +361,6 @@ void Game::updateShaders(bool vs, bool ps)
 		for (int i = 0; i < LightVisualizers.size(); i++) {
 			LightVisualizers[i]->updateVertexShader(gfx);
 		}
-		//for (int i = 0; i < stataicObj.size(); i++) {
-			//stataicObj[i]->updateVertexShader(gfx);
-		//}
 	}
 	if (ps) {
 		DCube->updatePixelShader(gfx);

@@ -11,19 +11,16 @@
 //for obj only
 class MeshObj {
 public:
-	MeshObj(Graphics*& gfx, std::vector<vertex> vertecies, Material *material);
 	MeshObj(Graphics*& gfx, int NrOfvertecies, Material *material);
 	//another type of delete 
 	void begone();
 	virtual ~MeshObj();
-	ID3D11Buffer*& getVertexBuffer();
 	ID3D11ShaderResourceView** getTextures();
 	int& getNrOfVertex();
 	//getting ka,kd,ks from what was written in the mtl file
 	void getKdKaKsNs(float (&kd)[4], float (&ka)[4], float(&ks)[4]);
-	void draw(ID3D11DeviceContext*& immediateContext);
 	void draw(ID3D11DeviceContext*& immediateContext, int startVertex);
-	void draw2(ID3D11DeviceContext*& immediateContext);
+	void draw2(ID3D11DeviceContext*& immediateContext, int startVertex);
 	/*Set Shaders on this object*/
 	void SetShaders(ID3D11VertexShader* VS);
 	/*Set Shaders on this object*/
@@ -46,10 +43,10 @@ private:
 	int nrOfVertexes;
 	bool defTexture[4] = { false, false, false, false };
 	Material* matrial;
-	ID3D11Buffer* vertexBuffer;
+	//ID3D11Buffer* vertexBuffer;
 	ID3D11Buffer* Pg_pConstantBuffer;
 
-	std::vector<MeshObj> SubMeshes;
+	std::vector<MeshObj> SubMeshes;//don't need?
 };
 
 /*class Mesh {
