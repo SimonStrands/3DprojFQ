@@ -2,6 +2,8 @@
 #include <d3d11.h>
 #include "Graphics.h"
 
+class ResourceManager;
+
 struct textureFlags {
 	bool Maps[5] = { false, false, false, false, false };
 				// map_Kd, map_Ka, map_Ks, map_Bumb, map_Disp
@@ -13,7 +15,7 @@ struct Material {
 	Material(const Material& other);
 	Material& operator=(const Material& other);
 	~Material();
-	void loadTexture(std::string filename, Graphics*& gfx, int WhatRSV, ID3D11ShaderResourceView** def);
+	void loadTexture(std::string filename, Graphics*& gfx, int WhatRSV, ResourceManager* rm);
 	void begone();
 	textureFlags flags;
 	float Ns = 0;

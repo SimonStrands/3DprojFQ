@@ -25,11 +25,6 @@ ResourceManager::~ResourceManager()
 	delete defMatrial;
 }
 
-void loadWithThread(threadInfo thredData)
-{
-	thredData.model->init(thredData.name, thredData.gfx, thredData.def);
-}
-
 void ResourceManager::loadThings(Graphics*& gfx)
 {
 	//default textures
@@ -69,7 +64,7 @@ void ResourceManager::loadThings(Graphics*& gfx)
 	};
 	for (int i = 0; i < _countof(names); i++) {
 		ModelObj* model = new ModelObj();
-		model->init("obj/" + names[i], gfx, def);
+		model->init("obj/" + names[i], gfx, this);
 		Models.insert(std::make_pair(names[i], model));
 	}
 	for (int i = 0; i < _countof(names); i++) {
@@ -93,7 +88,7 @@ ModelObj* ResourceManager::get_Models(std::string key, Graphics*& gfx)
 	if (Models.find(key) == Models.end()) {
 		//its not found try to add it to the library
 		ModelObj* model = new ModelObj();
-		model->init("obj/" + key, gfx, def);
+		model->init("obj/" + key, gfx, this);
 		Models.insert(std::make_pair(key, model));
 
 		
@@ -103,6 +98,25 @@ ModelObj* ResourceManager::get_Models(std::string key, Graphics*& gfx)
 	}
 	//else we return it
 	return Models.find(key)->second;
+}
+
+bool ResourceManager::getTexture(std::string fileName, Graphics*& gfx, ID3D11ShaderResourceView*& texSRV)
+{
+	if (textures.find(fileName) == textures.end()) {
+		//find it 
+		ID3D11Texture2D* tex;
+		if (CreateTexture(fileName, gfx->getDevice(), tex, texSRV)) {
+			textures.insert(std::make_pair(fileName, texSRV));
+			TC::GetInst().add(texSRV);
+		}
+		else {
+			return false;
+		}
+	}
+	else {
+		texSRV = textures.find(fileName)->second;
+	}
+	return true;
 }
 
 ID3D11ShaderResourceView** ResourceManager::getDef()

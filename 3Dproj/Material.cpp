@@ -1,5 +1,6 @@
 #include "Material.h"
 #include "TrashCollector.h"
+#include "ResourceManager.h"
 
 Material::Material()
 {
@@ -81,12 +82,11 @@ Material::~Material()
 	delete[] this->texSRVPS;
 }
 
-void Material::loadTexture(std::string filename, Graphics*& gfx, int WhatRSV, ID3D11ShaderResourceView** def)
+void Material::loadTexture(std::string filename, Graphics*& gfx, int WhatRSV, ResourceManager* rm)
 {
 	ID3D11Texture2D* tex;
-	if (WhatRSV == 4) {//its a disp_map
-		if (CreateTexture(filename, gfx->getDevice(), tex, this->texSRVDS[0])) {
-			TC::GetInst().add(this->texSRVDS[0]);
+	if (WhatRSV == 4) {
+		if (rm->getTexture(filename, gfx, this->texSRVDS[0])) {
 			flags.Maps[WhatRSV] = true;
 		}
 		else {
@@ -94,15 +94,13 @@ void Material::loadTexture(std::string filename, Graphics*& gfx, int WhatRSV, ID
 		}
 	}
 	else {
-		if (CreateTexture(filename, gfx->getDevice(), tex, this->texSRVPS[WhatRSV])) {
-			TC::GetInst().add(this->texSRVPS[WhatRSV]);
+		if (rm->getTexture(filename, gfx, this->texSRVPS[WhatRSV])) {
 			flags.Maps[WhatRSV] = true;
-		}
+		}	
 		else {
-			this->texSRVPS[WhatRSV] = def[WhatRSV];
+			this->texSRVPS[WhatRSV] = rm->getDef()[WhatRSV];
 		}
 	}
-
 }
 
 void Material::begone()

@@ -5,13 +5,6 @@
 #include <thread>
 #include "TrashCollector.h"
 
-struct threadInfo {
-	ModelObj* model;
-	std::string name;
-	ID3D11ShaderResourceView** def;
-	Graphics*& gfx;
-};
-
 class ResourceManager {
 public:
 	ResourceManager(Graphics *& gfx);
@@ -26,6 +19,7 @@ public:
 	ModelObj* get_Models(std::string key);
 	/*can use this method even if the object is not already loded*/
 	ModelObj* get_Models(std::string key, Graphics*& gfx);
+	bool getTexture(std::string fileName, Graphics*& gfx, ID3D11ShaderResourceView*& texSRV);
 	
 private:
 #pragma region Textures
@@ -34,6 +28,7 @@ private:
 #pragma endregion
 
 	std::map<std::string, ModelObj*> Models;
+	std::map<std::string, ID3D11ShaderResourceView*> textures;
 	Material* defMatrial;
 
 	void addMaterialToTrashCollector(ModelObj* model);

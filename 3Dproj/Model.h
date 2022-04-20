@@ -1,13 +1,14 @@
 #pragma once
 #include "Mesh.h"
 
+class ResourceManager;
 class Graphics;
 
 class ModelObj {
 public:
-	ModelObj(const std::string& ModelFile, Graphics*& gfx, ID3D11ShaderResourceView** def);
+	ModelObj(const std::string& ModelFile, Graphics*& gfx, ResourceManager* rm);
 	ModelObj();
-	void init(const std::string& ModelFile, Graphics*& gfx, ID3D11ShaderResourceView** def);
+	void init(const std::string& ModelFile, Graphics*& gfx, ResourceManager* rm);
 	virtual ~ModelObj();
 	void draw(Graphics*& gfx, bool shadowmap = false);
 	std::vector<MeshObj> &getMehses();

@@ -1,6 +1,7 @@
 #include "ReadObjFile.h"
 #include <DirectXMath.h>
 #include "TrashCollector.h"
+#include "ResourceManager.h"
 
 std::vector<vec3> calcTangent(vertex* vex1, vertex* vex2, vertex* vex3)
 {
@@ -64,7 +65,7 @@ void fixtangent(std::vector<vertex> &vertecies)
 	}
 }
 
-bool getMatrialFromFile(std::string fileName, std::vector<Material*> &matrial, Graphics*& gfx, ID3D11ShaderResourceView** def)
+bool getMatrialFromFile(std::string fileName, std::vector<Material*> &matrial, Graphics*& gfx, ResourceManager* rm)
 {
 	std::ifstream infile(fileName);
 	std::string readWord;
@@ -92,7 +93,7 @@ bool getMatrialFromFile(std::string fileName, std::vector<Material*> &matrial, G
 		while (std::getline(infile, readWord)) {
 			if (readWord.substr(0, 6) == "newmtl") {
 				CTR++;
-				matrial.resize(CTR + 1, new Material(def));
+				matrial.resize(CTR + 1, new Material(rm->getDef()));
 				std::istringstream a;
 				std::string b;
 				a.str(readWord);
@@ -128,28 +129,28 @@ bool getMatrialFromFile(std::string fileName, std::vector<Material*> &matrial, G
 				std::istringstream a;
 				a.str(readWord);
 				a >> trash >> mapName;
-				matrial[CTR]->loadTexture(mapName, gfx, 1, def);
+				matrial[CTR]->loadTexture(mapName, gfx, 1, rm);
 			}
 			else if (readWord.substr(0, 6) == "map_Kd") {
 				//map_diffuse
 				std::istringstream a;
 				a.str(readWord);
 				a >> trash >> mapName;
-				matrial[CTR]->loadTexture(mapName, gfx, 0, def);
+				matrial[CTR]->loadTexture(mapName, gfx, 0, rm);
 			}
 			else if (readWord.substr(0, 6) == "map_Ks") {
 				//map_Specular
 				std::istringstream a;
 				a.str(readWord);
 				a >> trash >> mapName;
-				matrial[CTR]->loadTexture(mapName, gfx, 2, def);
+				matrial[CTR]->loadTexture(mapName, gfx, 2, rm);
 			}
 			else if (readWord.substr(0, 4) == "disp") {
 				//map_Specular
 				std::istringstream a;
 				a.str(readWord);
 				a >> trash >> mapName;
-				matrial[CTR]->loadTexture(mapName, gfx, 4, def);
+				matrial[CTR]->loadTexture(mapName, gfx, 4, rm);
 			}
 			else if (readWord.substr(0, 8) == "map_Bump") {
 				//map_normal
@@ -160,7 +161,7 @@ bool getMatrialFromFile(std::string fileName, std::vector<Material*> &matrial, G
 				while (a >> b && !done) {
 					if (!(b.substr(0, 2) == "-bm" || b.substr(0, 8) == "map_Bump" || int(b[0]) < 58)) {
 						done = true;
-						matrial[CTR]->loadTexture(b, gfx, 3, def);
+						matrial[CTR]->loadTexture(b, gfx, 3, rm);
 					}
 				}
 			}
@@ -171,7 +172,7 @@ bool getMatrialFromFile(std::string fileName, std::vector<Material*> &matrial, G
 		return false;
 	}
 	if (matrial.size() == 0) {
-		matrial.push_back(new Material(def));
+		matrial.push_back(new Material(rm->getDef()));
 	}
 	return true;
 }

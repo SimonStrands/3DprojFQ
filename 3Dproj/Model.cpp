@@ -1,5 +1,6 @@
 #include "Model.h"
 #include "ReadObjFile.h"
+#include "ResourceManager.h"
 /*
 Model::Model(const std::string filePath, Graphics*& gfx, vec3 pos, vec3 rot, vec3 scale)
 {
@@ -98,9 +99,9 @@ bool Model::LoadModel(const std::string& modelfile)
 
 */
 
-ModelObj::ModelObj(const std::string& ModelFile, Graphics*& gfx, ID3D11ShaderResourceView** def)
+ModelObj::ModelObj(const std::string& ModelFile, Graphics*& gfx, ResourceManager* rm)
 {
-	getMatrialFromFile(ModelFile, matrial, gfx, def);
+	getMatrialFromFile(ModelFile, matrial, gfx, rm);
 	readObjFile(mMeshes, ModelFile, matrial, gfx, boxSize);
 }
 
@@ -108,9 +109,9 @@ ModelObj::ModelObj()
 {
 }
 
-void ModelObj::init(const std::string& ModelFile, Graphics*& gfx, ID3D11ShaderResourceView** def)
+void ModelObj::init(const std::string& ModelFile, Graphics*& gfx, ResourceManager* rm)
 {
-	getMatrialFromFile(ModelFile, matrial, gfx, def);
+	getMatrialFromFile(ModelFile, matrial, gfx, rm);
 	if (!readObjFile(mMeshes, ModelFile, matrial, gfx, boxSize)) {
 		std::cout << "couldn't load " << ModelFile << std::endl;
 		MessageBox(nullptr, L"sorry couldn't load file look in terminal for more info", L"ERROR", MB_ICONWARNING | MB_OK);
