@@ -53,13 +53,17 @@ std::vector<vec3> calcTangent(vertex* vex1, vertex* vex2, vertex* vex3)
 	return theReturn;
 }
 
-void fixtangent(std::vector<vertex> &vertecies)
+void fixtangent(std::vector<vertex> &vertecies, std::vector<DWORD>& indecies)
 {
-	for (int i = 0; i < vertecies.size();) {
-		std::vector<vec3> tanbi = calcTangent(&vertecies[i], &vertecies[i+1], &vertecies[i+2]);
+	for (int i = 0; i < indecies.size();) {
+		int a = indecies[i];
+		int b = indecies[i+1];
+		int c = indecies[i+2];
+		std::vector<vec3> tanbi = calcTangent(&vertecies[indecies[i]], &vertecies[indecies[i+1]], &vertecies[indecies[i+2]]);
 		tanbi[0].Normalize(); tanbi[1].Normalize();
 		for (int p = 0; p < 3; p++) {
-			vertecies[i + p].fixtang(tanbi[0], tanbi[1]);
+			vertecies[indecies[i+p]].fixtang(tanbi[0], tanbi[1]);
+			//vertecies[i + p].fixtang(tanbi[0], tanbi[1]);
 		}
 		i += 3;
 	}
@@ -177,10 +181,15 @@ bool getMatrialFromFile(std::string fileName, std::vector<Material*> &matrial, G
 	return true;
 }
 
-
-void createMesh(Graphics*& gfx, std::vector<MeshObj> &Meshes, std::vector<vertex> &vertecies, Material* matrial) {
-	fixtangent(vertecies);
-	MeshObj a(gfx, vertecies, matrial);
+static int countdown = 0;
+void createMesh(Graphics*& gfx, std::vector<MeshObj> &Meshes, std::vector<vertex> &vertecies, std::vector<DWORD> &indecies, Material* matrial) {
+	countdown++;
+	if (countdown == 7) {
+		std::cout << countdown << std::endl;
+	}
+	
+	fixtangent(vertecies, indecies);
+	MeshObj a(gfx, vertecies, indecies, matrial);
 	Meshes.push_back(a);
 	if (matrial->flags.Maps[3]) {
 		Meshes[Meshes.size() - 1].SetShaders(gfx->getVS()[0], gfx->getPS()[0]);
@@ -193,9 +202,10 @@ void createMesh(Graphics*& gfx, std::vector<MeshObj> &Meshes, std::vector<vertex
 		Meshes[Meshes.size() - 1].SetShaders(gfx->getHS()[0], gfx->getDS()[0]);
 	}
 	vertecies.clear();
+	indecies.clear();
 }
 
-void readFace(std::string readWord, std::vector<vertex> &vertecies, std::vector<std::array<float, 3>> vPos, std::vector<std::array<float, 2>> vUv, std::vector<std::array<float, 4>> vNorm) {
+void readFace(std::string readWord, std::vector<vertex> &vertecies, std::vector<DWORD> &indecies, std::vector<std::array<float, 3>> vPos, std::vector<std::array<float, 2>> vUv, std::vector<std::array<float, 4>> vNorm) {
 	std::string* sTemp;
 	std::string sTemp2[4];
 	std::string trash;
@@ -212,13 +222,16 @@ void readFace(std::string readWord, std::vector<vertex> &vertecies, std::vector<
 				b.str(sTemp2[i]);
 				b >> indeciesVertecies >> trashChar >> indeciesUV >> trashChar >> indeciesNormals;
 				vertecies.push_back(vertex(vPos[indeciesVertecies - 1], vUv[indeciesUV - 1], vNorm[indeciesNormals - 1]));
+				indecies.push_back(vertecies.size() - 1);
 				b.clear();
 			}
 			b.str(sTemp2[3]);
 			b >> indeciesVertecies >> trashChar >> indeciesUV >> trashChar >> indeciesNormals;
-			vertecies.push_back(vertecies[vertecies.size() - 1]);
+			//vertecies.push_back(vertecies[vertecies.size() - 1]); 
+			indecies.push_back(vertecies.size() - 3);
+			indecies.push_back(vertecies.size() - 1);
 			vertecies.push_back(vertex(vPos[indeciesVertecies - 1], vUv[indeciesUV - 1], vNorm[indeciesNormals - 1]));
-			vertecies.push_back(vertecies[vertecies.size() - 5]);
+			indecies.push_back(vertecies.size() - 1);
 			b.clear();
 		}
 		else {
@@ -226,6 +239,7 @@ void readFace(std::string readWord, std::vector<vertex> &vertecies, std::vector<
 				b.str(sTemp2[i]);
 				b >> indeciesVertecies >> trashChar >> indeciesUV >> trashChar >> indeciesNormals;
 				vertecies.push_back(vertex(vPos[indeciesVertecies - 1], vUv[indeciesUV - 1], vNorm[indeciesNormals - 1]));
+				indecies.push_back(vertecies.size() - 1);
 				b.clear();
 			}
 		}
@@ -257,7 +271,7 @@ void getLowest(vec3 box[2], std::array<float, 3> vPos)
 
 bool readObjFile(std::vector<MeshObj>& Meshes, std::string fileName, std::vector<Material*> &matrial, Graphics*& gfx, vec3 box[2])
 {
-
+	std::vector<DWORD> indecies;
 	std::vector<vertex> vertecies;
 	std::vector<std::array<float, 3>>vPos;
 	std::vector<std::array<float, 2>>vUv;
@@ -278,7 +292,7 @@ bool readObjFile(std::vector<MeshObj>& Meshes, std::string fileName, std::vector
 	while (std::getline(infile, readWord)) {
 		if (ff && readWord.substr(0, 1) != "f") {
 			ff = false;//we have read all the faces and now create a mesh
-			createMesh(gfx, Meshes, vertecies, matrial[currentMatrial]);
+			createMesh(gfx, Meshes, vertecies, indecies, matrial[currentMatrial]);
 			nrOfMeshesOffset--;
 		}//read vertexes
 		if (readWord.substr(0, 2) == "v ") {
@@ -302,7 +316,7 @@ bool readObjFile(std::vector<MeshObj>& Meshes, std::string fileName, std::vector
 			vNorm[vNorm.size() - 1][3] = 0;
 		}//read face
 		else if (readWord.substr(0, 1) == "f") {
-			readFace(readWord, vertecies, vPos, vUv, vNorm);
+			readFace(readWord, vertecies, indecies, vPos, vUv, vNorm);
 			if (!ff) { nrOfMeshesOffset++; };
 			ff = true;
 		}
@@ -319,7 +333,7 @@ bool readObjFile(std::vector<MeshObj>& Meshes, std::string fileName, std::vector
 		}
 	}
 	if (nrOfMeshesOffset > 0) {
-		createMesh(gfx, Meshes, vertecies, matrial[currentMatrial]);
+		createMesh(gfx, Meshes, vertecies, indecies, matrial[currentMatrial]);
 	}
 	else if (nrOfMeshesOffset < 0) {
 		std::cout << "error" << std::endl;

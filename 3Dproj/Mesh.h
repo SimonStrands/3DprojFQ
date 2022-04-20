@@ -11,7 +11,7 @@
 //for obj only
 class MeshObj {
 public:
-	MeshObj(Graphics*& gfx, std::vector<vertex> vertecies, Material *material);
+	MeshObj(Graphics*& gfx, std::vector<vertex> vertecies, std::vector<DWORD> indecies, Material *material);
 	//another type of delete 
 	void begone();
 	virtual ~MeshObj();
@@ -42,9 +42,11 @@ public:
 	ID3D11DomainShader* DS;
 private:
 	int nrOfVertexes;
+	int nrOfIndecies;
 	bool defTexture[4] = { false, false, false, false };
 	Material* matrial;
 	ID3D11Buffer* vertexBuffer;
+	ID3D11Buffer* indeciesBuffer;
 	ID3D11Buffer* Pg_pConstantBuffer;
 
 	std::vector<MeshObj> SubMeshes;

@@ -84,7 +84,6 @@ Material::~Material()
 
 void Material::loadTexture(std::string filename, Graphics*& gfx, int WhatRSV, ResourceManager* rm)
 {
-	ID3D11Texture2D* tex;
 	if (WhatRSV == 4) {
 		if (rm->getTexture(filename, gfx, this->texSRVDS[0])) {
 			flags.Maps[WhatRSV] = true;

@@ -2,23 +2,18 @@
 #include <mutex>
 #include <thread>
 
-std::mutex createVertexBufferMutex;
-std::mutex createConstVertexBufferMutex;
-
-MeshObj::MeshObj(Graphics*& gfx, std::vector<vertex> vertecies, Material *material)
+MeshObj::MeshObj(Graphics*& gfx, std::vector<vertex> vertecies, std::vector<DWORD> indecies, Material *material)
 {
 	this->HS = nullptr;
 	this->DS = nullptr;
 	this->nrOfVertexes = (int)vertecies.size();
+	this->nrOfIndecies = (int)indecies.size();
 	this->matrial = material;
 	//kanske?
-	createVertexBufferMutex.lock();
 	CreateVertexBuffer(gfx->getDevice(), vertecies, this->vertexBuffer);
-	createVertexBufferMutex.unlock();
+	CreateVertexBuffer(gfx->getDevice(), indecies, this->indeciesBuffer, true);
 
-	createConstVertexBufferMutex.lock();
 	CreateVertexConstBuffer(gfx, this->Pg_pConstantBuffer);
-	createConstVertexBufferMutex.unlock();
 }
 
 void MeshObj::begone()
@@ -76,7 +71,9 @@ void MeshObj::draw(ID3D11DeviceContext*& immediateContext)
 	immediateContext->PSSetShaderResources(0, 4, this->matrial->texSRVPS);
 	immediateContext->PSSetConstantBuffers(0, 1, &this->Pg_pConstantBuffer);
 	immediateContext->IASetVertexBuffers(0, 1, &this->vertexBuffer, &strid, &offset);
-	immediateContext->Draw(this->nrOfVertexes, 0);
+	immediateContext->IASetIndexBuffer(this->indeciesBuffer, DXGI_FORMAT_R32_UINT, offset);
+	immediateContext->DrawIndexed(nrOfIndecies, 0, 0);
+	//immediateContext->Draw(this->nrOfVertexes, 0);
 }
 
 void MeshObj::draw2(ID3D11DeviceContext*& immediateContext)
@@ -85,7 +82,9 @@ void MeshObj::draw2(ID3D11DeviceContext*& immediateContext)
 	static UINT strid = sizeof(vertex);
 	SetShader(immediateContext, 0);
 	immediateContext->IASetVertexBuffers(0, 1, &this->vertexBuffer, &strid, &offset);
-	immediateContext->Draw(this->nrOfVertexes, 0);
+	immediateContext->IASetIndexBuffer(this->indeciesBuffer, DXGI_FORMAT_R32_UINT, offset);
+	immediateContext->DrawIndexed(nrOfIndecies, 0, 0);
+	//immediateContext->Draw(this->nrOfVertexes, 0);
 }
 
 
