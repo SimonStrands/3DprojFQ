@@ -183,11 +183,6 @@ bool getMatrialFromFile(std::string fileName, std::vector<Material*> &matrial, G
 
 static int countdown = 0;
 void createMesh(Graphics*& gfx, std::vector<MeshObj> &Meshes, std::vector<vertex> &vertecies, std::vector<DWORD> &indecies, Material* matrial) {
-	countdown++;
-	if (countdown == 7) {
-		std::cout << countdown << std::endl;
-	}
-	
 	fixtangent(vertecies, indecies);
 	MeshObj a(gfx, vertecies, indecies, matrial);
 	Meshes.push_back(a);

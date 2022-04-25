@@ -21,6 +21,9 @@ void MeshObj::begone()
 	if (this->vertexBuffer != nullptr) {
 		this->vertexBuffer->Release();
 	}
+	if (this->indeciesBuffer != nullptr) {
+		this->indeciesBuffer->Release();
+	}
 	if (this->Pg_pConstantBuffer != nullptr) {
 		this->Pg_pConstantBuffer->Release();
 	}
