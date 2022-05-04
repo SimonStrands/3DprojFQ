@@ -79,6 +79,33 @@ const vec3 object::getPoint()
     return this->rPoint;
 }
 
+DirectX::XMMATRIX object::getWorldMatrix()
+{
+    DirectX::XMMATRIX rot(DirectX::XMMatrixRotationRollPitchYaw(this->getRot().x, this->getRot().y, this->getRot().z));
+
+    transMat = DirectX::XMMatrixSet(
+        1.0f, 0.0f, 0.0f, 0.0f,
+        0.0f, 1.0f, 0.0f, 0.0f,
+        0.0f, 0.0f, 1.0f, 0.0f,
+        pos.x, pos.y, pos.z, 1.0f
+    );
+
+    scaleMat = DirectX::XMMatrixSet(
+        scale.x, 0.0f, 0.0f, 0.0f,
+        0.0f, scale.y, 0.0f, 0.0f,
+        0.0f, 0.0f, scale.z, 0.0f,
+        0.0f, 0.0f, 0.0f, 1.0f
+    );
+
+    pointMat = DirectX::XMMatrixSet(1.0f, 0.0f, 0.0f, 0.0f,
+        0.0f, 1.0f, 0.0f, 0.0f,
+        0.0f, 0.0f, 1.0f, 0.0f,
+        rPoint.x, rPoint.y, rPoint.z, 1.0f
+    );
+
+    return  pointMat * (scaleMat * rot * transMat);;
+}
+
 void object::setPos(vec3 pos)
 {
     this->pos = pos;
@@ -165,17 +192,25 @@ void object::updateVertexShader(Graphics*& gfx)
 {
     DirectX::XMMATRIX rot(DirectX::XMMatrixRotationRollPitchYaw(this->getRot().x, this->getRot().y, this->getRot().z));
 
-    transMat.r->m128_f32[12] = pos.x;
-    transMat.r->m128_f32[13] = pos.y;
-    transMat.r->m128_f32[14] = pos.z;
+    transMat = DirectX::XMMatrixSet(
+        1.0f, 0.0f, 0.0f, 0.0f,
+        0.0f, 1.0f, 0.0f, 0.0f,
+        0.0f, 0.0f, 1.0f, 0.0f,
+        pos.x, pos.y, pos.z, 1.0f
+    );
 
-    scaleMat.r->m128_f32[0] = scale.x;
-    scaleMat.r->m128_f32[5] = scale.y;
-    scaleMat.r->m128_f32[10] = scale.z;
+    scaleMat = DirectX::XMMatrixSet(
+        scale.x, 0.0f, 0.0f, 0.0f,
+        0.0f, scale.y, 0.0f, 0.0f,
+        0.0f, 0.0f, scale.z, 0.0f,
+        0.0f, 0.0f, 0.0f, 1.0f
+    );
 
-    pointMat.r->m128_f32[12] = rPoint.x;
-    pointMat.r->m128_f32[13] = rPoint.y;
-    pointMat.r->m128_f32[14] = rPoint.z;
+    pointMat = DirectX::XMMatrixSet(1.0f, 0.0f, 0.0f, 0.0f,
+        0.0f, 1.0f, 0.0f, 0.0f,
+        0.0f, 0.0f, 1.0f, 0.0f,
+        rPoint.x, rPoint.y, rPoint.z, 1.0f
+    );
 
     gfx->getVertexconstbuffer()->transform.element = pointMat * (scaleMat * rot * transMat);
 

@@ -8,7 +8,7 @@
 
 class Camera {
 public:
-	Camera(Graphics *&gfx, Mouse *mus = nullptr, vec3 pos = vec3(0,0,10), vec3 rot = vec3(0,0,1));
+	Camera(Graphics *&gfx, Mouse *mus = nullptr, Keyboard *keyboard = nullptr, vec3 pos = vec3(0,0,10), vec3 rot = vec3(0,0,1));
 	virtual ~Camera();
 	void updateCamera();
 	void updateCamera(float dt);
@@ -26,11 +26,12 @@ public:
 	void getViewFrustoms(vec3 frustoms[]);
 	void setRotation(vec3 newRot);
 	void setPosition(vec3 newpos);
-	//void lookDir(vec3 lookdir); //don't know how to make these yet
-	//void lookAt(vec3 lookat);	  //don't know how to make these yet
+	void rotateCamera(vec3 rotation);
+
 	void setData(float FOVRadians = 90, float viewRatio = 16/9, float nearDist = 0.001, float farDist = 2000);
 private:
 	Mouse *mus;
+	Keyboard* keyboard;
 	Vcb *Vcbd;
 	LCBGS* Lcbd;
 	void rotaiton(DirectX::XMMATRIX &matrix);
@@ -45,7 +46,7 @@ private:
 
 	//data
 	float speed;
-	float mouseSensitivity;
+	float mouseSensitivity;//for keyboard
 	float xCamPos;
 	float yCamPos;
 	float zCamPos;

@@ -2,11 +2,12 @@
 #include <iostream>
 //git
 
-Camera::Camera(Graphics *&gfx, Mouse* mus, vec3 pos, vec3 rot)
+Camera::Camera(Graphics *&gfx, Mouse* mus, Keyboard* keyboard, vec3 pos, vec3 rot)
 {
 	this->Lcbd = gfx->getLightconstbufferforCS();
 	this->Vcbd = gfx->getVertexconstbuffer();
 	this->mus = mus;
+	this->keyboard = keyboard;
 	this->mouseSensitivity = 5.0f;
 	this->xCamPos = pos.x;
 	this->yCamPos = pos.y;
@@ -77,9 +78,11 @@ void Camera::calcFURVectors()
 
 	//just add it to the pixel shader
 	movement();
-	FUL[0] = vec3(viewMatrix.r->m128_f32[2], viewMatrix.r->m128_f32[6], viewMatrix.r->m128_f32[10]);
-	FUL[1] = vec3(viewMatrix.r->m128_f32[1], viewMatrix.r->m128_f32[5], viewMatrix.r->m128_f32[9]);
-	FUL[2] = vec3(viewMatrix.r->m128_f32[0], viewMatrix.r->m128_f32[4], viewMatrix.r->m128_f32[8]);
+	DirectX::XMFLOAT4X4 theViewMatrix;
+	DirectX::XMStoreFloat4x4(&theViewMatrix, viewMatrix);
+	FUL[0] = vec3(theViewMatrix._13, theViewMatrix._23, theViewMatrix._33);
+	FUL[1] = vec3(theViewMatrix._12, theViewMatrix._22, theViewMatrix._32);
+	FUL[2] = vec3(theViewMatrix._11, theViewMatrix._21, theViewMatrix._31);
 }
 
 vec3 Camera::getForwardVec()
@@ -127,6 +130,14 @@ void Camera::setPosition(vec3 newpos)
 	this->zCamPos = newpos.z;
 }
 
+void Camera::rotateCamera(vec3 rotation)
+{
+	xCamRot += rotation.x * mus->getSense();
+	yCamRot -= rotation.y * mus->getSense();
+	std::cout << rotation.x << "x" << std::endl;
+	std::cout << rotation.y << "x" << std::endl;
+}
+
 void Camera::setData(float FOVRadians, float viewRatio, float nearDist, float farDist)
 {
 	this->ratio = viewRatio;
@@ -157,48 +168,48 @@ void Camera::handleEvent(float dt)
 {
 	translation = DirectX::XMFLOAT3(0, 0, 0);
 	//movement
-	if (getkey('W') && !once) {
+	if (keyboard->isKeyPressed('W') && !once) {
 		translation = DirectX::XMFLOAT3(0, 0, -(float)dt);
 		Translate(dt);
 	}
-	if (getkey('D')) {
+	if (keyboard->isKeyPressed('D')) {
 		translation = DirectX::XMFLOAT3(-(float)dt, 0, 0);
 		Translate(dt);
 	}
-	if (getkey('S')) {
+	if (keyboard->isKeyPressed('S')) {
 		translation = DirectX::XMFLOAT3(0, 0, (float)dt);
 		Translate(dt);
 	}
-	if (getkey('A')) {
+	if (keyboard->isKeyPressed('A')) {
 		translation = DirectX::XMFLOAT3((float)dt, 0, 0);
 		Translate(dt);
 	}
-	if (GetKeyState(VK_SPACE) & 0x8000) {
+	if (keyboard->isKeyPressed(VK_SPACE)) {
 		yCamPos += movementspeed * (float)dt;
 	}
-	if (GetKeyState(VK_SHIFT) & 0x8000) {
+	if (keyboard->isKeyPressed(VK_SHIFT)) {
 		yCamPos -= movementspeed * (float)dt;
 	}
 	
 	//rot
 	if (!mus->getMouseActive()) {
-		if (GetKeyState(VK_RIGHT) & 0x8000) {
+		if (keyboard->isKeyPressed(VK_RIGHT)) {
 			xCamRot += mouseSensitivity * (float)dt;
 		}
-		if (GetKeyState(VK_LEFT) & 0x8000) {
+		if (keyboard->isKeyPressed(VK_LEFT)) {
 			xCamRot -= mouseSensitivity * (float)dt;
 		}
-		if (GetKeyState(VK_UP) & 0x8000) {
+		if (keyboard->isKeyPressed(VK_UP)) {
 			yCamRot += mouseSensitivity * (float)dt;
 		}
-		if (GetKeyState(VK_DOWN) & 0x8000) {
+		if (keyboard->isKeyPressed(VK_DOWN)) {
 			yCamRot -= mouseSensitivity * (float)dt;
 		}
 	}
-	else {
-		xCamRot += mus->getDeltaPos().x * mus->getSense() * (float)dt;
-		yCamRot -= mus->getDeltaPos().y * mus->getSense() * (float)dt;
-	}
+	//else {
+	//	xCamRot += mus->getDeltaPos().x * mus->getSense() * (float)dt;
+	//	yCamRot -= mus->getDeltaPos().y * mus->getSense() * (float)dt;
+	//}
 }
 
 void Camera::Translate(float dt)

@@ -196,12 +196,15 @@
     <ClCompile Include="QuadTree.cpp" />
     <ClCompile Include="Random.cpp" />
     <ClCompile Include="ReadObjFile.cpp" />
+    <ClCompile Include="RenderWindow.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="rotation.cpp" />
     <ClCompile Include="ShadowMap.cpp" />
     <ClCompile Include="TileAnimation.cpp" />
     <ClCompile Include="TrashCollector.cpp" />
     <ClCompile Include="Vec.cpp" />
+    <ClCompile Include="WindowClass.cpp" />
+    <ClCompile Include="WindowContainer.cpp" />
     <ClCompile Include="WindowHelper.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -244,6 +247,7 @@
     <ClInclude Include="Quaternion.h" />
     <ClInclude Include="Random.h" />
     <ClInclude Include="ReadObjFile.h" />
+    <ClInclude Include="RenderWindow.h" />
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="rotation.h" />
     <ClInclude Include="ShadowMap.h" />
@@ -252,6 +256,8 @@
     <ClInclude Include="TrashCollector.h" />
     <ClInclude Include="Vec.h" />
     <ClInclude Include="vertex.h" />
+    <ClInclude Include="WindowClass.h" />
+    <ClInclude Include="WindowContainer.h" />
     <ClInclude Include="WindowHelper.h" />
   </ItemGroup>
   <ItemGroup>

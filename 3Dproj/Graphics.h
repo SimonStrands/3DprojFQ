@@ -9,6 +9,7 @@
 #include "deltaTime.h"
 #include "rotation.h"
 #include "Keyboard.h"
+#include "WindowClass.h"
 
 class ImguiManager;
 
@@ -90,12 +91,13 @@ private:
 	//window
 	const UINT WIDTH = 1920;
 	const UINT HEIGHT = 1080;
-	HWND wnd;
+	//HWND wnd;
 public:
 	Graphics(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine, _In_ int nCmdShow);
 	virtual ~Graphics();
 	void RsetViewPort();
 private:
+	Window windowClass;
 	//D3D11
 	ID3D11Device* device;
 	ID3D11DeviceContext* immediateContext;
@@ -178,6 +180,7 @@ public:
 	void setTransparant(bool transparance);
 	SpotLight** getLight();
 	vec2 getWH();
+	Window& getWindowClass();
 	
 	/*make so gfx have lights*/
 	void takeLight(SpotLight **light, int nrOfLights);

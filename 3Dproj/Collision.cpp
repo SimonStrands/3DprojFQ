@@ -20,38 +20,3 @@ bool collision2d(DirectX::XMFLOAT4 point[], vec2 pos, float size) {
 	}
 	return true;
 }
-
-/*
-//TODO : check this?
-	for (int i = 0; i < 2; i++) {
-		if (point[i].x < pos.x + size / 2 &&
-			point[i].x > pos.x - size / 2 &&
-			point[i].z < pos.y + size / 2 &&
-			point[i].z < pos.y - size / 2) {
-			return true;
-		}
-	}
-	//check the two other points
-	if (point[1].x < pos.x + size / 2 &&
-		point[0].y < pos.x + size / 2 &&
-		point[1].x > pos.x - size / 2 &&
-		point[0].y > pos.x - size / 2) {
-		return true;
-	}
-	if (point[0].x < pos.x + size / 2 &&
-		point[1].y < pos.x + size / 2 &&
-		point[0].x > pos.x - size / 2 &&
-		point[1].y > pos.x - size / 2) {
-		return true;
-	}
-
-	//check if the tringle covers the current triangle
-	if (point[0].x < pos.x - size / 2 &&
-		point[0].z < pos.y - size / 2 &&
-		point[1].x > pos.x + size / 2 &&
-		point[1].z > pos.y + size / 2)
-	{
-		return true;
-	}
-	return false;
-*/

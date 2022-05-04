@@ -93,11 +93,14 @@ Graphics::Graphics(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	//setting matrixes
 	setProjection();
 	//if delete this happens it will get an error and program will stop working(I want this to happen when I debug)
-	if (!setUpWindow(hInstance, WIDTH, HEIGHT, nCmdShow, wnd)) {
-		std::cerr << "failed" << std::endl;
-	}
-	ImGui_ImplWin32_Init(wnd);
-	if (!SetupD3D11(WIDTH, HEIGHT, wnd, device, immediateContext, swapChain, renderTarget, dsTexture, dsView, viewPort, pRS))
+	//if (!setUpWindow(hInstance, WIDTH, HEIGHT, nCmdShow, wnd)) {
+	//	std::cerr << "failed" << std::endl;
+	//}
+
+	windowClass.Initialize(hInstance, "a", "a", this->WIDTH, this->HEIGHT);
+
+	ImGui_ImplWin32_Init(windowClass.getRenderWindow().getHandle());
+	if (!SetupD3D11(WIDTH, HEIGHT, windowClass.getRenderWindow().getHandle(), device, immediateContext, swapChain, renderTarget, dsTexture, dsView, viewPort, pRS))
 	{
 		std::cerr << "cant set up" << std::endl;
 		delete this;
@@ -244,7 +247,7 @@ void Graphics::Update(float dt, vec3 camPos)
 	if (nextFpsUpdate >= 0.5f) {
 		nextFpsUpdate = 0;
 		float fps = 1.f / (float)dt;
-		SetWindowTextA(wnd, std::to_string(fps).c_str());
+		SetWindowTextA(windowClass.getRenderWindow().getHandle(), std::to_string(fps).c_str());
 	}
 }
 
@@ -325,6 +328,11 @@ SpotLight **Graphics::getLight()
 vec2 Graphics::getWH()
 {
 	return vec2((float)WIDTH, (float)HEIGHT);
+}
+
+Window& Graphics::getWindowClass()
+{
+	return windowClass;
 }
 
 void Graphics::setTransparant(bool transparance)

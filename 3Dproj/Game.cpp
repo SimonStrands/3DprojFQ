@@ -24,13 +24,14 @@ Game::Game(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWS
 	this->shadowMap = new ShadowMap((SpotLight**)light, nrOfLight, gfx);
 	
 	gfx->takeIM(&this->UIManager);
-	mus = new Mouse(gfx->getWH());
-	camera = new Camera(gfx, mus, vec3(0,0,0), vec3(1,0,0));
+	mus = gfx->getWindowClass().getMouse();
+	keyboard = gfx->getWindowClass().getKeyboard();
+	camera = new Camera(gfx, mus, keyboard, vec3(0,0,0), vec3(1,0,0));
 	camera->setData();
 	
 	setUpObject();
 	//Qtree = new QuadTree(stataicObj, vec2(0, 0), 4, 200);
-	Qtree = new QuadTree(stataicObj, vec2(0, 0), 4, 100);
+	Qtree = new QuadTree(stataicObj, vec2(0, 0), 4, 250);
 	//(pi,3.14) = 180 degrees
 	Qtree->setUpCamProp(2000);
 	
@@ -38,7 +39,7 @@ Game::Game(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWS
  	bill = new BillBoard(gfx, vec3(0.f, 0.f, 9.f), rm->getFire(), rm->getDef()[1], 6);
 	billManager = new BillBoardManager(gfx, rm->getFire(), 10, vec3(0,0,0),vec3(5,5,5));
 	billManager->setAnimation(6, 1, 0.16f);
-	////DCube cannot use standard obj:s without fucking others shaders
+	////DCube cannot use others standard obj:s without messing up others shaders
 	DCube = new DynamicCube(rm->get_Models("roundsol.obj", gfx), gfx, vec3(5.f, 0.f, 0.f), vec3(0.f, 0.f, 0.f), vec3(2.f, 2.0f, 2.0f));
 	//DCube = new DynamicCube(rm->get_Models("DCube.obj"), gfx, vec3(5.f, 0.f, 0.f), vec3(0.f, 0.f, 0.f), vec3(2.f, 2.0f, 2.0f));
 	/////LIGHT////////
@@ -68,7 +69,6 @@ Game::~Game()
 
 	//logic and other
 	delete defRend;
-	delete mus;
 	delete camera;
 	if (shadowMap != nullptr) {
 		delete shadowMap;
@@ -96,12 +96,19 @@ Game::~Game()
 void Game::run()
 {
 	static bool once = true;
-	while (msg.message != WM_QUIT && once)
+	while (msg.message != WM_QUIT && gfx->getWindowClass().ProcessMessages() && once)
 	{
-		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
-		{
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
+		while (!mus->EventBufferEmpty() && mus->getMouseActive()) {
+			mouseEvent e = mus->ReadEvent();
+			if (e.getType() == mouseEvent::EventType::RAW_MOVE) {
+				camera->rotateCamera(vec3(e.getPosX(), e.getPosY(),0));
+			}
+		}
+		if (keyboard->isKeyPressed(VK_TAB)) {
+			gfx->getWindowClass().HideCoursor();
+		}
+		else if (keyboard->isKeyPressed(VK_ESCAPE)) {
+			gfx->getWindowClass().ShowCoursor();
 		}
 		gfx->clearScreen();
 		gfx->setTransparant(false);
@@ -129,7 +136,7 @@ void Game::run()
 		updateShaders();
 
 		bill->UpdateShader(gfx, camera->getPos());
-		DrawDynamicCube();
+		//DrawDynamicCube();
 		
 		defRend->BindFirstPass();
 
@@ -172,7 +179,7 @@ void Game::Update()
 	obj[0]->setRot(vec3(camera->getRot().z, camera->getRot().x, -camera->getRot().y) + vec3(0, 1.57f, 0));
 	bill->update((float)dt.dt());
 	billManager->update(dt.dt(), gfx);
-	mus->UpdateMouse();
+
 	for (int i = 0; i < LightVisualizers.size(); i++) {
 		LightVisualizers[i]->setPos(light[i]->getPos());
 		LightVisualizers[i]->setRot(vec3(0 , light[i]->getRotation().x, -light[i]->getRotation().y) + vec3(0,1.57f,0));
@@ -212,9 +219,6 @@ void Game::DrawToBuffer()
 		obj[i]->draw(gfx);
 	}
     camera->calcFURVectors();
-	if (getkey('Y')) {
-		std::cout << "stop" << std::endl;
-	}
 	Qtree->draw(gfx, camera);
 	Qtree->clearAlrDraw();
 
@@ -427,6 +431,8 @@ void Game::setUpObject()
 			stataicObj.push_back(new GameObject(rm->get_Models("quad2.obj", gfx), gfx, vec3(x*(gw*2) - ((gn)*gw), -4, y*(gw * 2) - ((gn)*gw)), vec3(0, 0, 1.57f), vec3(gw, gw, gw)));
 		}
 	}
+	//obj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj", gfx), gfx, vec3(25 *(gw*2) - ((gn)*gw), -4, 25 *(gw * 2) - ((gn)*gw)), vec3(0, 0, 0.f), vec3(1, 1, 1)));
+	obj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj", gfx), gfx, vec3(250, 1, 250), vec3(0, 0, 0.f), vec3(1, 1, 1)));
 
 
 	obj[3]->setTesselation(true, gfx);

@@ -41,9 +41,7 @@ QuadTree::QuadTree(std::vector<GameObject*>& objectList, vec2 position, int dept
 		for (int i = 0; i < objectList.size(); i++) {
 			DirectX::XMFLOAT4 a[2];
 			DirectX::XMVECTOR p[2];
-			objectList[i]->getBoundingBox(p);
-			DirectX::XMStoreFloat4(&a[0], p[0]);
-			DirectX::XMStoreFloat4(&a[1], p[1]);
+			objectList[i]->getBoundingBox(a);
 			if (collision2d(a, position, size)) {//it is inside this quad tree
 				//add it to this object list
 				std::cout << "added obj at id: " << tisid << std::endl;
@@ -155,8 +153,7 @@ void QuadTree::Sdraw(Graphics*& gfx, Camera* cam, bool shadowMap)
 							float ud = -((nodes[i]->position + offset - this->qtCD->CamPos) * (this->qtCD->UpNorm));
 							float dd = -((nodes[i]->position + offset - this->qtCD->CamPos) * (this->qtCD->DownNorm));
 							//see if that point is inside frustom
-							//float Lsize = sqrt(size * size * 2);//make so we don't miss anything
-							if (ld < 0 && rd < 0 && ud < 0 && dd < 0) {
+							if (ld < 0.01 && rd < 0.01 && ud < 0.01 && dd < 0.01) {//a little bit room for error
 								done = true;
 								nodes[i]->Sdraw(gfx, cam, shadowMap);
 							}

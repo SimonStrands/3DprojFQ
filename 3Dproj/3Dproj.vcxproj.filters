@@ -222,6 +222,15 @@
     <ClCompile Include="TileAnimation.cpp">
       <Filter>Source Files\Graphic</Filter>
     </ClCompile>
+    <ClCompile Include="RenderWindow.cpp">
+      <Filter>Header Files\Events</Filter>
+    </ClCompile>
+    <ClCompile Include="WindowClass.cpp">
+      <Filter>Header Files\Events</Filter>
+    </ClCompile>
+    <ClCompile Include="WindowContainer.cpp">
+      <Filter>Header Files\Events</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="D311Helper.h">
@@ -367,6 +376,15 @@
     </ClInclude>
     <ClInclude Include="Collision.h">
       <Filter>Header Files\Other</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderWindow.h">
+      <Filter>Header Files\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="WindowClass.h">
+      <Filter>Header Files\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="WindowContainer.h">
+      <Filter>Header Files\Events</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

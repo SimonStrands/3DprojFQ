@@ -24,7 +24,7 @@ public:
 	void setTesselation(bool tess, Graphics*& gfx);
 
 	//gives 2 points 0 = the lowest in x,y and z while 1 is the highest in x,y and zdimensions
-	void getBoundingBox(DirectX::XMVECTOR theReturn[]);
+	void getBoundingBox(DirectX::XMFLOAT4 theReturn[]);
 
 	//see if this object has beened drawned before(used for quad tree)
 	const bool isDrawed();
