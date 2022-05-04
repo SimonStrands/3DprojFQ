@@ -20,14 +20,13 @@ void main( uint3 DTid : SV_DispatchThreadID )
     
     const float SMWIDTH = 1920;
     const float SMHEIGHT = 1080;
-    const int nrOfTempLight = 1;
     if (length(normal.xyz) > 0.2f)//check if there is any object at all
     {
         float4 lightning = float4(0, 0, 0, 0);
         for (int i = 0; i < nrOfLight; i++)
         {
             float3 lightColor = float3(1, 1, 1);
-
+    
             float3 lightDir = normalize(lightPos[i].xyz - fragPos.xyz);
 			//calculate if we are in shadow
             const float4 shadowCamera = fragPos;

@@ -5,7 +5,7 @@
 Mouse::Mouse(vec2 WH):
 	wndWH(WH.x, WH.y)
 {
-	mouseSense = 0.6;
+	mouseSense = 0.6f;
 	mouse_active = false;
 	once = false;
 	x = y = 0;

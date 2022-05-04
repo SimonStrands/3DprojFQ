@@ -43,7 +43,7 @@ bool DeferredRendering::InitDeferred(int w, int h)
 	textureDesc.Height = h;
 	textureDesc.MipLevels = 1;
 	textureDesc.ArraySize = 1;
-	textureDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+	textureDesc.Format = DXGI_FORMAT_R16G16B16A16_FLOAT;
 	textureDesc.SampleDesc.Count = 1;
 	textureDesc.SampleDesc.Quality = 0;
 	textureDesc.Usage = D3D11_USAGE_DEFAULT;
@@ -82,8 +82,8 @@ bool DeferredRendering::InitDeferred(int w, int h)
 	}
 	ID3D11Texture2D* depthStencilTex = nullptr;
 	D3D11_TEXTURE2D_DESC depthStencilBufferDesc{};
-	depthStencilBufferDesc.Width = gfx->getWH().x;
-	depthStencilBufferDesc.Height = gfx->getWH().y;
+	depthStencilBufferDesc.Width = (UINT)gfx->getWH().x;
+	depthStencilBufferDesc.Height = (UINT)gfx->getWH().y;
 	depthStencilBufferDesc.MipLevels = 1;
 	depthStencilBufferDesc.ArraySize = 1;
 	depthStencilBufferDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
@@ -132,8 +132,8 @@ void DeferredRendering::BindFirstPass(ID3D11DepthStencilView* depth)
 	gfx->get_IMctx()->ClearRenderTargetView(DeferredRTV[0], color);
 	gfx->get_IMctx()->ClearRenderTargetView(DeferredRTV[1], color);
 	gfx->get_IMctx()->ClearRenderTargetView(DeferredRTV[2], color);
-	gfx->get_IMctx()->ClearRenderTargetView(DeferredRTV[3], color);
-	gfx->get_IMctx()->ClearRenderTargetView(DeferredRTV[4], color);
+	//gfx->get_IMctx()->ClearRenderTargetView(DeferredRTV[3], color);
+	//gfx->get_IMctx()->ClearRenderTargetView(DeferredRTV[4], color);
 }
 
 void DeferredRendering::BindSecondPass(ID3D11ShaderResourceView*& ShadowMapping)

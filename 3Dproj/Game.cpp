@@ -14,7 +14,7 @@ Game::Game(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWS
 	//create lights
 	nrOfLight = 4;
 	light = new Light * [nrOfLight];
-	light[0] = new DirLight(vec3(0,60,8), vec3(0.1f, -PI/2, 1.f));
+	light[0] = new DirLight(vec3(0,60,8), vec3(0.1f, -PI/2, 1.f), 50,50);
 	light[1] = new SpotLight(vec3(18, 46, 45), vec3(-2.4f, -0.5, 1));
 	light[2] = new SpotLight(vec3(8, 47.f, 0), vec3(0, -1, 1));
 	light[3] = new SpotLight(vec3(30, 50, 0), vec3(-1, -1, 1));
@@ -130,7 +130,7 @@ void Game::run()
 
 		bill->UpdateShader(gfx, camera->getPos());
 		DrawDynamicCube();
-		//
+		
 		defRend->BindFirstPass();
 
 		this->DrawToBuffer();
@@ -361,9 +361,6 @@ void Game::updateShaders(bool vs, bool ps)
 		for (int i = 0; i < LightVisualizers.size(); i++) {
 			LightVisualizers[i]->updateVertexShader(gfx);
 		}
-		//for (int i = 0; i < stataicObj.size(); i++) {
-			//stataicObj[i]->updateVertexShader(gfx);
-		//}
 	}
 	if (ps) {
 		DCube->updatePixelShader(gfx);
@@ -390,19 +387,17 @@ void Game::setUpObject()
 	obj.push_back(new GameObject(rm->get_Models("DoubleMesh.obj", gfx), gfx, vec3(10.f, 5.f, 10.f), vec3(-1.56f, 1.56f, 3.2f), vec3(1.f, 1.f, 1.f)));
 	obj.push_back(new GameObject(rm->get_Models("GroundLowPloy.obj", gfx), gfx, vec3(-5.f, 0.f, 0.f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
 	obj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj", gfx), gfx, vec3(0.f, 0.f, -50.f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
+	//obj.push_back(new GameObject(rm->get_Models("sponza.obj", gfx), gfx, vec3(0.f, -5.f, 10.f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
 	//walls
-	//obj.push_back(new GameObject(rm->get_Models("quad2.obj"), gfx, vec3(0.f, 5.f, 20.f),  vec3(-PI/2, -PI/2, PI), vec3(20.f, 20.f, 20.f)));
 	obj.push_back(new GameObject(rm->get_Models("quad2.obj", gfx), gfx, vec3(20.f, 5.f, 0.f),  vec3(-PI/2, 0.f, PI),   vec3(20.f, 20.f, 20.f)));
 	obj.push_back(new GameObject(rm->get_Models("quad2.obj", gfx), gfx, vec3(0.f, 5.f, -20.f), vec3(-PI/2, PI/2, PI),  vec3(20.f, 20.f, 20.f)));
-	obj.push_back(new GameObject(rm->get_Models("quad2.obj", gfx), gfx, vec3(-20.f, 5.f, 0.f), vec3(-PI/2, PI, PI),   vec3(20.f, 20.f, 20.f)));
+	obj.push_back(new GameObject(rm->get_Models("quadMaps.obj", gfx), gfx, vec3(-20.f, 5.f, 0.f), vec3(-PI/2, PI, PI),   vec3(20.f, 20.f, 20.f)));
 	
 	//static
 	stataicObj.push_back(new GameObject(rm->get_Models("stormtrooper.obj", gfx),        gfx, vec3(25.f, 0.f, 0.f), vec3(0.f, 0.f, -1.57f), vec3(1.f, 1.f, 1.f)));
 	stataicObj.push_back(new GameObject(rm->get_Models("stormtrooper.obj", gfx),        gfx, vec3(0.f, 0.f, 25.f), vec3(0.f, 0.f, 1.57f), vec3(1.f, 1.f, 1.f)));
 	stataicObj.push_back(new GameObject(rm->get_Models("stormtrooper.obj", gfx),        gfx, vec3(-25.f, 0.f, 0.f), vec3(-1.57f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
 	stataicObj.push_back(new GameObject(rm->get_Models("stormtrooper.obj", gfx),        gfx, vec3(0.f, 0.f, -25.f), vec3(1.57f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
-	
-	stataicObj.push_back(new GameObject(rm->get_Models("Sting-Sword-lowpoly.obj", gfx), gfx, vec3(25.f, 0.f, -5.f), vec3(0.f, 0.f, 0.f), vec3(0.3f, 0.3f, 0.3f)));
 	
 	stataicObj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj", gfx),     gfx, vec3(25.f, 0.f, 5.f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
 	stataicObj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj", gfx), gfx, vec3(-37.5f, 0.f, -37.5f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
@@ -424,15 +419,6 @@ void Game::setUpObject()
 	stataicObj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj", gfx), gfx, vec3(-12.5f, 0.f, 12.5f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
 	stataicObj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj", gfx), gfx, vec3(12.5f, 0.f, -12.5f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
 	stataicObj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj", gfx), gfx, vec3(12.5f, 0.f, -12.5f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
-	//int nrOfPlantsXY = 16;
-	//float sizeOfTree = 100 * 2;
-	//for (int x = 0; x < nrOfPlantsXY; x++) {
-	//	for (int y = 0; y < nrOfPlantsXY; y++) {
-	//		stataicObj.push_back(new GameObject(rm->get_IDK(),
-	//			gfx, vec3(((sizeOfTree/ nrOfPlantsXY) * x) - sizeOfTree/2, 0.f, ((sizeOfTree / nrOfPlantsXY) * y) - sizeOfTree / 2),
-	//			vec3(0.f, 0.f, 1.58f), vec3(5.f, 5.f, 5.f)));
-	//	}
-	//}
 	
 	float gw = 10;
 	float gn = 25;

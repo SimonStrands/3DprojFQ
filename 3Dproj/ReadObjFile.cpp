@@ -201,7 +201,6 @@ void createMesh(Graphics*& gfx, std::vector<MeshObj> &Meshes, std::vector<vertex
 }
 
 void readFace(std::string readWord, std::vector<vertex> &vertecies, std::vector<DWORD> &indecies, std::vector<std::array<float, 3>> vPos, std::vector<std::array<float, 2>> vUv, std::vector<std::array<float, 4>> vNorm) {
-	std::string* sTemp;
 	std::string sTemp2[4];
 	std::string trash;
 	char trashChar;
@@ -217,16 +216,16 @@ void readFace(std::string readWord, std::vector<vertex> &vertecies, std::vector<
 				b.str(sTemp2[i]);
 				b >> indeciesVertecies >> trashChar >> indeciesUV >> trashChar >> indeciesNormals;
 				vertecies.push_back(vertex(vPos[indeciesVertecies - 1], vUv[indeciesUV - 1], vNorm[indeciesNormals - 1]));
-				indecies.push_back(vertecies.size() - 1);
+				indecies.push_back((DWORD)((int)vertecies.size() - 1));
 				b.clear();
 			}
 			b.str(sTemp2[3]);
 			b >> indeciesVertecies >> trashChar >> indeciesUV >> trashChar >> indeciesNormals;
 			//vertecies.push_back(vertecies[vertecies.size() - 1]); 
-			indecies.push_back(vertecies.size() - 3);
-			indecies.push_back(vertecies.size() - 1);
+			indecies.push_back((DWORD)((int)vertecies.size() - 3));
+			indecies.push_back((DWORD)((int)vertecies.size() - 1));
 			vertecies.push_back(vertex(vPos[indeciesVertecies - 1], vUv[indeciesUV - 1], vNorm[indeciesNormals - 1]));
-			indecies.push_back(vertecies.size() - 1);
+			indecies.push_back((DWORD)((int)vertecies.size() - 1));
 			b.clear();
 		}
 		else {
@@ -234,7 +233,7 @@ void readFace(std::string readWord, std::vector<vertex> &vertecies, std::vector<
 				b.str(sTemp2[i]);
 				b >> indeciesVertecies >> trashChar >> indeciesUV >> trashChar >> indeciesNormals;
 				vertecies.push_back(vertex(vPos[indeciesVertecies - 1], vUv[indeciesUV - 1], vNorm[indeciesNormals - 1]));
-				indecies.push_back(vertecies.size() - 1);
+				indecies.push_back((DWORD)((int)vertecies.size() - 1));
 				b.clear();
 			}
 		}

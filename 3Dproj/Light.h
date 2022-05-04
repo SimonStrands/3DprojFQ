@@ -5,7 +5,6 @@
 #include <iostream>
 //git
 
-//whatTypeOfLight so I don't ahve to do a dynamic_cast
 enum wTofL {
 	SPOT, DIR
 };
