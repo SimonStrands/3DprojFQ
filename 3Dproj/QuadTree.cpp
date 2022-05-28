@@ -122,13 +122,18 @@ void QuadTree::Sdraw(Graphics*& gfx, Camera* cam, bool shadowMap)
 			nodes[i]->position.y = this->qtCD->CamPos.y;
 			if ((this->qtCD->CamPos - nodes[i]->position).length() < farPlane + size) {
 				//check if we are inside the node or if the nodes mid is inside
-				if (isInsideQuad(nodes[i], this->qtCD->CamPos)) {
+				if (isInsideQuad(nodes[i], this->qtCD->CamPos) && false) {
 					nodes[i]->Sdraw(gfx, cam, shadowMap);
 				}
 				else {
 					//check so point is not behind us
-					nodes[i]->position.y = 0;
-					nodes[i]->position.y = this->qtCD->CamPos.y + (this->qtCD->forwardVector.y * (this->qtCD->CamPos - nodes[i]->position).length());
+					//nodes[i]->position.y = 0;
+					//nodes[i]->position.y = this->qtCD->CamPos.y + (this->qtCD->forwardVector.y * (this->qtCD->CamPos - nodes[i]->position).length());
+					vec3 lineDir(0, 1, 0);
+					vec3 n = lineDir.X(qtCD->forwardVector);
+					vec3 n2 = lineDir.X(n);
+
+
 					bool done = false;
 					for (int qp = 0; qp < 4 && !done; qp++) {
 						//watch all four corners
@@ -147,6 +152,13 @@ void QuadTree::Sdraw(Graphics*& gfx, Camera* cam, bool shadowMap)
 							offset = vec3(-nodes[i]->size, 0, nodes[i]->size);
 							break;
 						}
+						vec3 nodePosWithOffset = (nodes[i]->position + offset);
+						float d = n2 * nodePosWithOffset;
+						float t = (d - n2 * qtCD->forwardVector) / (n2 * qtCD->forwardVector);
+						t = abs(t);
+						vec3 pos = qtCD->CamPos + (qtCD->forwardVector * t);
+						nodes[i]->position.y = pos.y;
+
 						if (pointInFront(nodes[i]->position + offset - this->qtCD->CamPos, this->qtCD->forwardVector)) {
 							float ld = (nodes[i]->position + offset - this->qtCD->CamPos) * (this->qtCD->LeftNorm);
 							float rd = (nodes[i]->position + offset - this->qtCD->CamPos) * (this->qtCD->RightNorm);

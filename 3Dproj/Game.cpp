@@ -124,7 +124,7 @@ void Game::run()
 			shadowMap->inUpdateShadow(i);
 			updateShaders(true, false);
 			
-			DrawAllShadowObject();
+			//DrawAllShadowObject();
 		}
 		//set cam position so its the real cam
 		camera->setPosition(camLP);
