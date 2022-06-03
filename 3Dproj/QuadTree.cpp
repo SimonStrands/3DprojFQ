@@ -127,8 +127,8 @@ void QuadTree::Sdraw(Graphics*& gfx, Camera* cam, bool shadowMap)
 				}
 				else {
 					//check so point is not behind us
-					nodes[i]->position.y = 0;
-					nodes[i]->position.y = this->qtCD->CamPos.y + (this->qtCD->forwardVector.y * (this->qtCD->CamPos - nodes[i]->position).length());
+					
+					
 					bool done = false;
 					for (int qp = 0; qp < 4 && !done; qp++) {
 						//watch all four corners
@@ -147,6 +147,8 @@ void QuadTree::Sdraw(Graphics*& gfx, Camera* cam, bool shadowMap)
 							offset = vec3(-nodes[i]->size, 0, nodes[i]->size);
 							break;
 						}
+						nodes[i]->position.y = 0;
+						nodes[i]->position.y = this->qtCD->CamPos.y + (this->qtCD->forwardVector.y * (this->qtCD->CamPos - nodes[i]->position + offset).length());
 						if (pointInFront(nodes[i]->position + offset - this->qtCD->CamPos, this->qtCD->forwardVector)) {
 							float ld = (nodes[i]->position + offset - this->qtCD->CamPos) * (this->qtCD->LeftNorm);
 							float rd = (nodes[i]->position + offset - this->qtCD->CamPos) * (this->qtCD->RightNorm);
