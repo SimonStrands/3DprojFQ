@@ -11,7 +11,7 @@ QuadTree::QuadTree(std::vector<GameObject*>& objectList, vec2 position, int dept
 	this->size = size;
 	first = fi;
 	if (fi) {
-		this->ObjectList = objectList;
+		//this->ObjectList = objectList;//doesn't get to use this method even if its faster
 		qtCD = new QTCamData;
 	}
 	if (depth != 0) {//else we gonna create quadtree
@@ -44,7 +44,6 @@ QuadTree::QuadTree(std::vector<GameObject*>& objectList, vec2 position, int dept
 			objectList[i]->getBoundingBox(a);
 			if (collision2d(a, position, size)) {//it is inside this quad tree
 				//add it to this object list
-				std::cout << "added obj at id: " << tisid << std::endl;
 				this->ObjectList.push_back(objectList[i]);
 				//if its inside we don't remove it cuz it can me in multiple trees at the same time
 			}
@@ -126,9 +125,6 @@ void QuadTree::Sdraw(Graphics*& gfx, Camera* cam, bool shadowMap)
 					nodes[i]->Sdraw(gfx, cam, shadowMap);
 				}
 				else {
-					//check so point is not behind us
-					
-					
 					bool done = false;
 					for (int qp = 0; qp < 4 && !done; qp++) {
 						//watch all four corners
@@ -149,6 +145,7 @@ void QuadTree::Sdraw(Graphics*& gfx, Camera* cam, bool shadowMap)
 						}
 						nodes[i]->position.y = 0;
 						nodes[i]->position.y = this->qtCD->CamPos.y + (this->qtCD->forwardVector.y * (this->qtCD->CamPos - nodes[i]->position + offset).length());
+						//check so point is not behind us
 						if (pointInFront(nodes[i]->position + offset - this->qtCD->CamPos, this->qtCD->forwardVector)) {
 							float ld = (nodes[i]->position + offset - this->qtCD->CamPos) * (this->qtCD->LeftNorm);
 							float rd = (nodes[i]->position + offset - this->qtCD->CamPos) * (this->qtCD->RightNorm);
@@ -176,9 +173,24 @@ vec2 QuadTree::getPosition()
 
 void QuadTree::clearAlrDraw()
 {
-	for (int i = 0; i < ObjectList.size(); i++) {
-		ObjectList[i]->clearDrawed();
+	//this is better but I do not get to use this
+	//for (int i = 0; i < ObjectList.size(); i++) {
+	//	ObjectList[i]->clearDrawed();
+	//}
+
+	//this is worse but I do not get to use it
+	if (this->depth != 0) {
+		nodes[0]->clearAlrDraw();
+		nodes[1]->clearAlrDraw();
+		nodes[2]->clearAlrDraw();
+		nodes[3]->clearAlrDraw();
 	}
+	else {
+		for (int i = 0; i < ObjectList.size(); i++) {
+			ObjectList[i]->clearDrawed();
+		}
+	}
+	
 }
 
 bool QuadTree::isInsideQuad(QuadTree *node, vec3 camPos)
