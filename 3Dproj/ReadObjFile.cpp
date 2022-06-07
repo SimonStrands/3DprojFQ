@@ -210,50 +210,53 @@ void readFace(std::string readWord, std::vector<vertex> &vertecies, std::vector<
 		a >> trash >> sTemp2[0] >> sTemp2[1] >> sTemp2[2] >> sTemp2[3];
 		std::stringstream b;
 		int indeciesVertecies, indeciesUV, indeciesNormals;
-		
+		std::map<std::string, DWORD>::iterator it;
 		if (sTemp2[3] != "") {
-			int a[3];
+			DWORD a[3];
 			for (int i = 0; i < 3; i++) {
 				b.str(sTemp2[i]);
 				b >> indeciesVertecies >> trashChar >> indeciesUV >> trashChar >> indeciesNormals;
-				if (mapOfVertecies.find(sTemp2[i]) == mapOfVertecies.end()) {
+				it = mapOfVertecies.find(sTemp2[i]);
+				if (it == mapOfVertecies.end()) {
 					//a new vertecy
 					vertecies.push_back(vertex(vPos[indeciesVertecies - 1], vUv[indeciesUV - 1], vNorm[indeciesNormals - 1]));
-					indecies.push_back((DWORD)((int)vertecies.size() - 1));
-					a[i] = (DWORD)((int)vertecies.size() - 1);
-					mapOfVertecies.insert(std::pair<std::string, int>(sTemp2[i], (int)vertecies.size() - 1));
+					indecies.push_back((DWORD)(vertecies.size() - 1));
+					a[i] = (DWORD)(vertecies.size() - 1);
+					mapOfVertecies.insert(std::pair<std::string, DWORD>(sTemp2[i], (DWORD)vertecies.size() - 1));
 				}
 				else {
 					//old vertecy
-					a[i] = mapOfVertecies.find(sTemp2[i])->second;
-					indecies.push_back((DWORD)(mapOfVertecies.find(sTemp2[i])->second));
+					a[i] = it->second;
+					indecies.push_back(it->second);
 				}
 				b.clear();
 			}
 			b.str(sTemp2[3]);
 			b >> indeciesVertecies >> trashChar >> indeciesUV >> trashChar >> indeciesNormals; 
-			indecies.push_back((DWORD)(a[0]));
-			indecies.push_back((DWORD)(a[2]));
-			if (mapOfVertecies.find(sTemp2[3]) == mapOfVertecies.end()) {
+			indecies.push_back(a[0]);
+			indecies.push_back(a[2]);
+			it = mapOfVertecies.find(sTemp2[3]);
+			if (it == mapOfVertecies.end()) {
 				vertecies.push_back(vertex(vPos[indeciesVertecies - 1], vUv[indeciesUV - 1], vNorm[indeciesNormals - 1]));
-				indecies.push_back((DWORD)((int)vertecies.size() - 1));
+				indecies.push_back((DWORD)(vertecies.size() - 1));
 			}
 			else {
-				indecies.push_back((DWORD)(mapOfVertecies.find(sTemp2[3])->second));
+				indecies.push_back(it->second);
 			}
 			b.clear();
 		}
 		else {
 			for (int i = 0; i < 3; i++) {
-				if (mapOfVertecies.find(sTemp2[i]) == mapOfVertecies.end()) {
+				it = mapOfVertecies.find(sTemp2[i]);
+				if (it == mapOfVertecies.end()) {
 					b.str(sTemp2[i]);
 					b >> indeciesVertecies >> trashChar >> indeciesUV >> trashChar >> indeciesNormals;
 					vertecies.push_back(vertex(vPos[indeciesVertecies - 1], vUv[indeciesUV - 1], vNorm[indeciesNormals - 1]));
-					mapOfVertecies.insert(std::pair<std::string, DWORD>(sTemp2[i], (DWORD)((int)vertecies.size() - 1)));
-					indecies.push_back((DWORD)((int)vertecies.size() - 1));
+					mapOfVertecies.insert(std::pair<std::string, DWORD>(sTemp2[i], (DWORD)(vertecies.size() - 1)));
+					indecies.push_back((DWORD)(vertecies.size() - 1));
 				}
 				else {
-					indecies.push_back(mapOfVertecies.find(sTemp2[i])->second);
+					indecies.push_back(it->second);
 				}
 				
 				b.clear();

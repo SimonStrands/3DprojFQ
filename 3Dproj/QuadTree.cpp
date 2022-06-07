@@ -143,8 +143,12 @@ void QuadTree::Sdraw(Graphics*& gfx, Camera* cam, bool shadowMap)
 							offset = vec3(-nodes[i]->size, 0, nodes[i]->size);
 							break;
 						}
-						nodes[i]->position.y = 0;
-						nodes[i]->position.y = this->qtCD->CamPos.y + (this->qtCD->forwardVector.y * (this->qtCD->CamPos - nodes[i]->position + offset).length());
+						nodes[i]->position.y = this->qtCD->CamPos.y;
+						//nodes[i]->position.y = this->qtCD->CamPos.y + (this->qtCD->forwardVector.y * (this->qtCD->CamPos - nodes[i]->position + offset).length());
+						nodes[i]->position.y = this->qtCD->CamPos.y + tan(this->qtCD->forwardVector.y) * (this->qtCD->CamPos - nodes[i]->position + offset).length();
+
+						//drawDebugObjects(nodes[i]->position, i, gfx);
+
 						//check so point is not behind us
 						if (pointInFront(nodes[i]->position + offset - this->qtCD->CamPos, this->qtCD->forwardVector)) {
 							float ld = (nodes[i]->position + offset - this->qtCD->CamPos) * (this->qtCD->LeftNorm);
@@ -170,6 +174,30 @@ vec2 QuadTree::getPosition()
 {
 	return vec2(this->position.x, this->position.y);
 }
+
+//#if NDEBUG
+//void QuadTree::CreateDebugObjects(ModelObj* DebugObj, Graphics*& gfx)
+//{
+//	DebugObjects = new GameObject*[4];
+//	DebugObjects[0] = new GameObject(DebugObj, gfx, this->position, vec3(0, 0, 0), vec3(0.5f, 0.5f, 0.5f));
+//	DebugObjects[1] = new GameObject(DebugObj, gfx, this->position, vec3(0, 0, 0), vec3(0.5f, 0.5f, 0.5f));
+//	DebugObjects[2] = new GameObject(DebugObj, gfx, this->position, vec3(0, 0, 0), vec3(0.5f, 0.5f, 0.5f));
+//	DebugObjects[3] = new GameObject(DebugObj, gfx, this->position, vec3(0, 0, 0), vec3(0.5f, 0.5f, 0.5f));
+//	
+//	if (depth != 0) {
+//		nodes[0]->CreateDebugObjects(DebugObj, gfx);
+//		nodes[1]->CreateDebugObjects(DebugObj, gfx);
+//		nodes[2]->CreateDebugObjects(DebugObj, gfx);
+//		nodes[3]->CreateDebugObjects(DebugObj, gfx);
+//	}
+//}
+//void QuadTree::drawDebugObjects(vec3 pos, int i, Graphics*& gfx)
+//{
+//	DebugObjects[i]->setPos(pos);
+//	DebugObjects[i]->updateVertexShader(gfx);
+//	DebugObjects[i]->draw(gfx); 
+//}
+//#endif
 
 void QuadTree::clearAlrDraw()
 {

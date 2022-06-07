@@ -23,6 +23,12 @@ public:
 	void draw(Graphics*& gfx, Camera* cam, bool shadowMap = false);
 	void clearAlrDraw();
 	vec2 getPosition();
+
+//#if NDEBUG
+	//GameObject** DebugObjects;
+	//void CreateDebugObjects(ModelObj* DebugObj, Graphics*& gfx);
+	//void drawDebugObjects(vec3 pos, int i, Graphics*& gfx);
+//#endif
 private:
 	//objects
 	int tisid;

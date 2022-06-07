@@ -30,7 +30,8 @@ Game::Game(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWS
 	camera->setData();
 	
 	setUpObject();
-	Qtree = new QuadTree(stataicObj, vec2(0, 0), 4, 250);
+	Qtree = new QuadTree(stataicObj, vec2(0, 0), 2, 250);
+	//Qtree->CreateDebugObjects(rm->get_Models("DCube.obj", gfx), gfx);
 	//(pi,3.14) = 180 degrees
 	Qtree->setUpCamProp(2000);
 	
