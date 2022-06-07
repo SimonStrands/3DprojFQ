@@ -30,7 +30,7 @@ Game::Game(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWS
 	camera->setData();
 	
 	setUpObject();
-	Qtree = new QuadTree(stataicObj, vec2(0, 0), 2, 250);
+	Qtree = new QuadTree(stataicObj, vec2(0, 0), 4, 250);
 	//Qtree->CreateDebugObjects(rm->get_Models("DCube.obj", gfx), gfx);
 	//(pi,3.14) = 180 degrees
 	Qtree->setUpCamProp(2000);
@@ -424,13 +424,13 @@ void Game::setUpObject()
 	stataicObj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj", gfx), gfx, vec3(12.5f, 0.f, -12.5f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
 	stataicObj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj", gfx), gfx, vec3(12.5f, 0.f, -12.5f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
 	
-	//float gw = 10;
-	//float gn = 10;
-	//for (int x = 0; x < gn; x++) {
-	//	for (int y = 0; y < gn; y++) {
-	//		stataicObj.push_back(new GameObject(rm->get_Models("quad2.obj", gfx), gfx, vec3(x*(gw*2) - ((gn)*gw), -4, y*(gw * 2) - ((gn)*gw)), vec3(0, 0, 1.57f), vec3(gw, gw, gw)));
-	//	}
-	//}
+	float gw = 10;
+	float gn = 10;
+	for (int x = 0; x < gn; x++) {
+		for (int y = 0; y < gn; y++) {
+			stataicObj.push_back(new GameObject(rm->get_Models("quad2.obj", gfx), gfx, vec3(x*(gw*2) - ((gn)*gw), -4, y*(gw * 2) - ((gn)*gw)), vec3(0, 0, 1.57f), vec3(gw, gw, gw)));
+		}
+	}
 	////obj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj", gfx), gfx, vec3(25 *(gw*2) - ((gn)*gw), -4, 25 *(gw * 2) - ((gn)*gw)), vec3(0, 0, 0.f), vec3(1, 1, 1)));
 	//obj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj", gfx), gfx, vec3(250, 1, 250), vec3(0, 0, 0.f), vec3(1, 1, 1)));
 
