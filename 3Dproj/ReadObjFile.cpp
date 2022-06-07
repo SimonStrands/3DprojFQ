@@ -2,6 +2,7 @@
 #include <DirectXMath.h>
 #include "TrashCollector.h"
 #include "ResourceManager.h"
+#include <map>
 
 std::vector<vec3> calcTangent(vertex* vex1, vertex* vex2, vertex* vex3)
 {
@@ -200,7 +201,7 @@ void createMesh(Graphics*& gfx, std::vector<MeshObj> &Meshes, std::vector<vertex
 	indecies.clear();
 }
 
-void readFace(std::string readWord, std::vector<vertex> &vertecies, std::vector<DWORD> &indecies, std::vector<std::array<float, 3>> vPos, std::vector<std::array<float, 2>> vUv, std::vector<std::array<float, 4>> vNorm) {
+void readFace(std::string readWord, std::vector<vertex> &vertecies, std::vector<DWORD> &indecies, std::vector<std::array<float, 3>> vPos, std::vector<std::array<float, 2>> vUv, std::vector<std::array<float, 4>> vNorm, std::map<std::string, DWORD> &mapOfVertecies) {
 	std::string sTemp2[4];
 	std::string trash;
 	char trashChar;
@@ -211,29 +212,50 @@ void readFace(std::string readWord, std::vector<vertex> &vertecies, std::vector<
 		int indeciesVertecies, indeciesUV, indeciesNormals;
 		
 		if (sTemp2[3] != "") {
-			
+			int a[3];
 			for (int i = 0; i < 3; i++) {
 				b.str(sTemp2[i]);
 				b >> indeciesVertecies >> trashChar >> indeciesUV >> trashChar >> indeciesNormals;
-				vertecies.push_back(vertex(vPos[indeciesVertecies - 1], vUv[indeciesUV - 1], vNorm[indeciesNormals - 1]));
-				indecies.push_back((DWORD)((int)vertecies.size() - 1));
+				if (mapOfVertecies.find(sTemp2[i]) == mapOfVertecies.end()) {
+					//a new vertecy
+					vertecies.push_back(vertex(vPos[indeciesVertecies - 1], vUv[indeciesUV - 1], vNorm[indeciesNormals - 1]));
+					indecies.push_back((DWORD)((int)vertecies.size() - 1));
+					a[i] = (DWORD)((int)vertecies.size() - 1);
+					mapOfVertecies.insert(std::pair<std::string, int>(sTemp2[i], (int)vertecies.size() - 1));
+				}
+				else {
+					//old vertecy
+					a[i] = mapOfVertecies.find(sTemp2[i])->second;
+					indecies.push_back((DWORD)(mapOfVertecies.find(sTemp2[i])->second));
+				}
 				b.clear();
 			}
 			b.str(sTemp2[3]);
-			b >> indeciesVertecies >> trashChar >> indeciesUV >> trashChar >> indeciesNormals;
-			//vertecies.push_back(vertecies[vertecies.size() - 1]); 
-			indecies.push_back((DWORD)((int)vertecies.size() - 3));
-			indecies.push_back((DWORD)((int)vertecies.size() - 1));
-			vertecies.push_back(vertex(vPos[indeciesVertecies - 1], vUv[indeciesUV - 1], vNorm[indeciesNormals - 1]));
-			indecies.push_back((DWORD)((int)vertecies.size() - 1));
+			b >> indeciesVertecies >> trashChar >> indeciesUV >> trashChar >> indeciesNormals; 
+			indecies.push_back((DWORD)(a[0]));
+			indecies.push_back((DWORD)(a[2]));
+			if (mapOfVertecies.find(sTemp2[3]) == mapOfVertecies.end()) {
+				vertecies.push_back(vertex(vPos[indeciesVertecies - 1], vUv[indeciesUV - 1], vNorm[indeciesNormals - 1]));
+				indecies.push_back((DWORD)((int)vertecies.size() - 1));
+			}
+			else {
+				indecies.push_back((DWORD)(mapOfVertecies.find(sTemp2[3])->second));
+			}
 			b.clear();
 		}
 		else {
 			for (int i = 0; i < 3; i++) {
-				b.str(sTemp2[i]);
-				b >> indeciesVertecies >> trashChar >> indeciesUV >> trashChar >> indeciesNormals;
-				vertecies.push_back(vertex(vPos[indeciesVertecies - 1], vUv[indeciesUV - 1], vNorm[indeciesNormals - 1]));
-				indecies.push_back((DWORD)((int)vertecies.size() - 1));
+				if (mapOfVertecies.find(sTemp2[i]) == mapOfVertecies.end()) {
+					b.str(sTemp2[i]);
+					b >> indeciesVertecies >> trashChar >> indeciesUV >> trashChar >> indeciesNormals;
+					vertecies.push_back(vertex(vPos[indeciesVertecies - 1], vUv[indeciesUV - 1], vNorm[indeciesNormals - 1]));
+					mapOfVertecies.insert(std::pair<std::string, DWORD>(sTemp2[i], (DWORD)((int)vertecies.size() - 1)));
+					indecies.push_back((DWORD)((int)vertecies.size() - 1));
+				}
+				else {
+					indecies.push_back(mapOfVertecies.find(sTemp2[i])->second);
+				}
+				
 				b.clear();
 			}
 		}
@@ -267,6 +289,7 @@ bool readObjFile(std::vector<MeshObj>& Meshes, std::string fileName, std::vector
 {
 	std::vector<DWORD> indecies;
 	std::vector<vertex> vertecies;
+	std::map<std::string, DWORD> mapOfVertecies;
 	std::vector<std::array<float, 3>>vPos;
 	std::vector<std::array<float, 2>>vUv;
 	std::vector<std::array<float, 4>>vNorm;
@@ -310,7 +333,7 @@ bool readObjFile(std::vector<MeshObj>& Meshes, std::string fileName, std::vector
 			vNorm[vNorm.size() - 1][3] = 0;
 		}//read face
 		else if (readWord.substr(0, 1) == "f") {
-			readFace(readWord, vertecies, indecies, vPos, vUv, vNorm);
+			readFace(readWord, vertecies, indecies, vPos, vUv, vNorm, mapOfVertecies);
 			if (!ff) { nrOfMeshesOffset++; };
 			ff = true;
 		}

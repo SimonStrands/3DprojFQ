@@ -396,6 +396,7 @@ void Game::setUpObject()
 	obj.push_back(new GameObject(rm->get_Models("quad2.obj", gfx), gfx, vec3(20.f, 5.f, 0.f),  vec3(-PI/2, 0.f, PI),   vec3(20.f, 20.f, 20.f)));
 	obj.push_back(new GameObject(rm->get_Models("quad2.obj", gfx), gfx, vec3(0.f, 5.f, -20.f), vec3(-PI/2, PI/2, PI),  vec3(20.f, 20.f, 20.f)));
 	obj.push_back(new GameObject(rm->get_Models("quadMaps.obj", gfx), gfx, vec3(-20.f, 5.f, 0.f), vec3(-PI/2, PI, PI),   vec3(20.f, 20.f, 20.f)));
+	obj.push_back(new GameObject(rm->get_Models("TriQuaTest.obj", gfx), gfx, vec3(-20.f, 5.f, 0.f), vec3(-PI/2, PI, PI),   vec3(2.f, 2.f, 2.f)));
 	
 	//static
 	//stataicObj.push_back(new GameObject(rm->get_Models("stormtrooper.obj", gfx),        gfx, vec3(25.f, 0.f, 0.f), vec3(0.f, 0.f, -1.57f), vec3(1.f, 1.f, 1.f)));
