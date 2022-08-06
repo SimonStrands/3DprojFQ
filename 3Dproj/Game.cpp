@@ -136,7 +136,7 @@ void Game::run()
 		updateShaders();
 
 		bill->UpdateShader(gfx, camera->getPos());
-		DrawDynamicCube();
+		//DrawDynamicCube();
 		
 		defRend->BindFirstPass();
 
@@ -388,9 +388,9 @@ void Game::setUpObject()
 	obj.push_back(new GameObject(rm->get_Models("Camera.obj", gfx), gfx, vec3(0.f, 100.f, 0.f), vec3(0.f, -1.58f, 0.f), vec3(2.f, 2.0f, 2.0f)));//second
 	//
 	////OBJECTS
-	obj.push_back(new GameObject(rm->get_Models("DoubleMesh.obj", gfx), gfx, vec3(10.f, 5.f, 10.f), vec3(-1.56f, 1.56f, 3.2f), vec3(1.f, 1.f, 1.f)));
-	obj.push_back(new GameObject(rm->get_Models("GroundLowPloy.obj", gfx), gfx, vec3(-5.f, 0.f, 0.f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
-	obj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj", gfx), gfx, vec3(0.f, 0.f, -50.f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
+	//obj.push_back(new GameObject(rm->get_Models("DoubleMesh.obj", gfx), gfx, vec3(10.f, 5.f, 10.f), vec3(-1.56f, 1.56f, 3.2f), vec3(1.f, 1.f, 1.f)));
+	//obj.push_back(new GameObject(rm->get_Models("GroundLowPloy.obj", gfx), gfx, vec3(-5.f, 0.f, 0.f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
+	//obj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj", gfx), gfx, vec3(0.f, 0.f, -50.f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
 	//obj.push_back(new GameObject(rm->get_Models("sponza.obj", gfx), gfx, vec3(0.f, -5.f, 10.f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
 	//walls
 	obj.push_back(new GameObject(rm->get_Models("quad2.obj", gfx), gfx, vec3(20.f, 5.f, 0.f),  vec3(-PI/2, 0.f, PI),   vec3(20.f, 20.f, 20.f)));
@@ -398,31 +398,31 @@ void Game::setUpObject()
 	obj.push_back(new GameObject(rm->get_Models("quadMaps.obj", gfx), gfx, vec3(-20.f, 5.f, 0.f), vec3(-PI/2, PI, PI),   vec3(20.f, 20.f, 20.f)));
 	
 	//static
-	stataicObj.push_back(new GameObject(rm->get_Models("stormtrooper.obj", gfx),        gfx, vec3(25.f, 0.f, 0.f), vec3(0.f, 0.f, -1.57f), vec3(1.f, 1.f, 1.f)));
-	stataicObj.push_back(new GameObject(rm->get_Models("stormtrooper.obj", gfx),        gfx, vec3(0.f, 0.f, 25.f), vec3(0.f, 0.f, 1.57f), vec3(1.f, 1.f, 1.f)));
-	stataicObj.push_back(new GameObject(rm->get_Models("stormtrooper.obj", gfx),        gfx, vec3(-25.f, 0.f, 0.f), vec3(-1.57f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
-	stataicObj.push_back(new GameObject(rm->get_Models("stormtrooper.obj", gfx),        gfx, vec3(0.f, 0.f, -25.f), vec3(1.57f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
-	
-	stataicObj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj", gfx),     gfx, vec3(25.f, 0.f, 5.f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
-	stataicObj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj", gfx), gfx, vec3(-37.5f, 0.f, -37.5f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
-	stataicObj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj", gfx), gfx, vec3(37.5f, 0.f, -37.5f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
-	stataicObj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj", gfx), gfx, vec3(-37.5f, 0.f, 37.5f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
-	stataicObj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj", gfx), gfx, vec3(37.5f, 0.f, 37.5f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
-	
-	stataicObj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj", gfx), gfx, vec3(12.5f, 0.f, 37.5f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
-	stataicObj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj", gfx), gfx, vec3(12.5f, 0.f, -37.5f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
-	stataicObj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj", gfx), gfx, vec3(-12.5f, 0.f, 37.5f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
-	stataicObj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj", gfx), gfx, vec3(-12.5f, 0.f, -37.5f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
-	
-	stataicObj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj", gfx), gfx, vec3(37.5f, 0.f, 12.5f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
-	stataicObj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj", gfx), gfx, vec3(-37.5f, 0.f, 12.5f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
-	stataicObj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj", gfx), gfx, vec3(37.5f, 0.f, -12.5f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
-	stataicObj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj", gfx), gfx, vec3(-37.5f, 0.f, -12.5f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
-	
-	stataicObj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj", gfx), gfx, vec3(12.5f, 0.f, 12.5f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
-	stataicObj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj", gfx), gfx, vec3(-12.5f, 0.f, 12.5f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
-	stataicObj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj", gfx), gfx, vec3(12.5f, 0.f, -12.5f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
-	stataicObj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj", gfx), gfx, vec3(12.5f, 0.f, -12.5f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
+	//stataicObj.push_back(new GameObject(rm->get_Models("stormtrooper.obj", gfx),        gfx, vec3(25.f, 0.f, 0.f), vec3(0.f, 0.f, -1.57f), vec3(1.f, 1.f, 1.f)));
+	//stataicObj.push_back(new GameObject(rm->get_Models("stormtrooper.obj", gfx),        gfx, vec3(0.f, 0.f, 25.f), vec3(0.f, 0.f, 1.57f), vec3(1.f, 1.f, 1.f)));
+	//stataicObj.push_back(new GameObject(rm->get_Models("stormtrooper.obj", gfx),        gfx, vec3(-25.f, 0.f, 0.f), vec3(-1.57f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
+	//stataicObj.push_back(new GameObject(rm->get_Models("stormtrooper.obj", gfx),        gfx, vec3(0.f, 0.f, -25.f), vec3(1.57f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
+	//
+	//stataicObj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj", gfx),     gfx, vec3(25.f, 0.f, 5.f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
+	//stataicObj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj", gfx), gfx, vec3(-37.5f, 0.f, -37.5f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
+	//stataicObj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj", gfx), gfx, vec3(37.5f, 0.f, -37.5f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
+	//stataicObj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj", gfx), gfx, vec3(-37.5f, 0.f, 37.5f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
+	//stataicObj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj", gfx), gfx, vec3(37.5f, 0.f, 37.5f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
+	//
+	//stataicObj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj", gfx), gfx, vec3(12.5f, 0.f, 37.5f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
+	//stataicObj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj", gfx), gfx, vec3(12.5f, 0.f, -37.5f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
+	//stataicObj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj", gfx), gfx, vec3(-12.5f, 0.f, 37.5f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
+	//stataicObj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj", gfx), gfx, vec3(-12.5f, 0.f, -37.5f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
+	//
+	//stataicObj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj", gfx), gfx, vec3(37.5f, 0.f, 12.5f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
+	//stataicObj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj", gfx), gfx, vec3(-37.5f, 0.f, 12.5f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
+	//stataicObj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj", gfx), gfx, vec3(37.5f, 0.f, -12.5f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
+	//stataicObj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj", gfx), gfx, vec3(-37.5f, 0.f, -12.5f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
+	//
+	//stataicObj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj", gfx), gfx, vec3(12.5f, 0.f, 12.5f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
+	//stataicObj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj", gfx), gfx, vec3(-12.5f, 0.f, 12.5f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
+	//stataicObj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj", gfx), gfx, vec3(12.5f, 0.f, -12.5f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
+	//stataicObj.push_back(new GameObject(rm->get_Models("indoor_plant_02.obj", gfx), gfx, vec3(12.5f, 0.f, -12.5f), vec3(0.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f)));
 	
 	float gw = 10;
 	float gn = 10;

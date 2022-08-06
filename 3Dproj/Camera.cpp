@@ -134,8 +134,6 @@ void Camera::rotateCamera(vec3 rotation)
 {
 	xCamRot += rotation.x * mus->getSense();
 	yCamRot -= rotation.y * mus->getSense();
-	std::cout << rotation.x << "x" << std::endl;
-	std::cout << rotation.y << "x" << std::endl;
 }
 
 void Camera::setData(float FOVRadians, float viewRatio, float nearDist, float farDist)

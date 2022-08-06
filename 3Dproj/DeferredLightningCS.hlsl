@@ -12,7 +12,7 @@ Texture2DArray<float4> shadowMapping : register(t5);
 [numthreads(32, 8, 1)]//32 16
 void main( uint3 DTid : SV_DispatchThreadID )
 {
-    float4 color = gTexDiffuse.Load(int3(DTid.xy, 0));    
+    float4 color = gTexDiffuse.Load(int3(DTid.xy, 0));
     float4 fragPos  = gTexPosition.Load( int3(DTid.xy, 0));
     float4 normal   = gTexNormal.Load(   int3(DTid.xy, 0));
     float4 gAmbient  = gTexAmbient.Load(  int3(DTid.xy, 0));

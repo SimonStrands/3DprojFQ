@@ -211,6 +211,7 @@ void readFace(std::string readWord, std::vector<vertex> &vertecies, std::vector<
 		std::stringstream b;
 		int indeciesVertecies, indeciesUV, indeciesNormals;
 		std::map<std::string, DWORD>::iterator it;
+		//if we have four vertecis per face
 		if (sTemp2[3] != "") {
 			DWORD a[3];
 			for (int i = 0; i < 3; i++) {
@@ -237,18 +238,21 @@ void readFace(std::string readWord, std::vector<vertex> &vertecies, std::vector<
 			indecies.push_back(a[2]);
 			it = mapOfVertecies.find(sTemp2[3]);
 			if (it == mapOfVertecies.end()) {
+				//new vertecy
 				vertecies.push_back(vertex(vPos[indeciesVertecies - 1], vUv[indeciesUV - 1], vNorm[indeciesNormals - 1]));
 				indecies.push_back((DWORD)(vertecies.size() - 1));
 			}
 			else {
+				//old vertecy
 				indecies.push_back(it->second);
 			}
 			b.clear();
 		}
-		else {
+		else {//if we have 3 vertecies per face
 			for (int i = 0; i < 3; i++) {
-				it = mapOfVertecies.find(sTemp2[i]);
+				it = mapOfVertecies.find(sTemp2[i]);//check if we have seen this vertecy before
 				if (it == mapOfVertecies.end()) {
+					//no
 					b.str(sTemp2[i]);
 					b >> indeciesVertecies >> trashChar >> indeciesUV >> trashChar >> indeciesNormals;
 					vertecies.push_back(vertex(vPos[indeciesVertecies - 1], vUv[indeciesUV - 1], vNorm[indeciesNormals - 1]));
@@ -256,6 +260,7 @@ void readFace(std::string readWord, std::vector<vertex> &vertecies, std::vector<
 					indecies.push_back((DWORD)(vertecies.size() - 1));
 				}
 				else {
+					//yes
 					indecies.push_back(it->second);
 				}
 				
