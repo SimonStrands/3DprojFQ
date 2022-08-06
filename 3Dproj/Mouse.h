@@ -8,7 +8,7 @@ struct MousePoint
 	int x, y;
 };
 
-//made with help from Jpres https://www.youtube.com/channel/UC5Lxe7GAsk_f8qMBsNmlOJg
+//made from Jpres https://www.youtube.com/channel/UC5Lxe7GAsk_f8qMBsNmlOJg
 class mouseEvent {
 public:
 	enum EventType
@@ -29,6 +29,7 @@ private:
 	EventType type;
 	int x;
 	int y;
+
 public:
 	mouseEvent();
 	mouseEvent(const EventType type, const int x, const int y);
@@ -47,6 +48,11 @@ public:
 	bool IsLeftDown();
 	bool isMiddleDown();
 	bool isRightDown();
+
+	bool isLeftPressed();
+	bool isMiddlePressed();
+	bool isRightPressed();
+
 	MousePoint getPos();
 	int getPosX();
 	int getPosY();
@@ -66,14 +72,18 @@ public:
 	void onWheelUp(int x, int y);
 	void onWheelDown(int x, int y);
 	void onMouseMove(int x, int y);
-
+	void activateMouse(bool activate);
+	void clear();
+	void clearEventBuffer(); //Do this before game start...	
+	void set_captureEvent(bool status);
 private:
-	void activateMouse();
 	bool mouse_active;
 	bool once;
 	int x, y;
 	bool leaftIsDown, rightIsDown, midIsDown;
+	bool leaftDown, rightDown, midDown;
 	float mouseSense;
+	bool captureEvent = true;
 	std::queue<mouseEvent>mouseBuffer;
 };
 

@@ -6,10 +6,14 @@
 #include "D311Helper.h"
 #include "WindowHelper.h"
 #include "Light.h"
-#include "deltaTime.h"
+//#include "deltaTime.h"
 #include "rotation.h"
 #include "Keyboard.h"
+
+#include "Settings.h"
 #include "WindowClass.h"
+
+#define PI 3.14159265359f
 
 class ImguiManager;
 
@@ -89,8 +93,8 @@ class Graphics {
 
 private:
 	//window
-	const UINT WIDTH = 1920;
-	const UINT HEIGHT = 1080;
+	UINT WIDTH;
+	UINT HEIGHT;
 	//HWND wnd;
 public:
 	Graphics(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine, _In_ int nCmdShow);
@@ -188,7 +192,8 @@ public:
 	void takeIM(ImguiManager* manager);
 
 	//update
-	void Update(float dt, vec3 camPos = vec3(0,0,0));
+	void Update(vec3 camPos = vec3(0,0,0));
+	void UpdateFPSCounter(float dt);
 
 	//draw
 	void clearScreen();

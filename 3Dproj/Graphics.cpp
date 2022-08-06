@@ -69,6 +69,9 @@ Graphics::Graphics(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	nrOfObject = 0;
 	Pg_pConstantBuffer = nullptr;
 
+	WIDTH = resolutions[settingsSingleTon::GetInst().getSettings().resolution][0];
+	HEIGHT = resolutions[settingsSingleTon::GetInst().getSettings().resolution][1];
+
 	inputLayout = new ID3D11InputLayout * [2]{nullptr, nullptr};
 
 	vShader = new ID3D11VertexShader * [4]{ nullptr, nullptr, nullptr };//3 is used
@@ -203,7 +206,7 @@ void Graphics::RsetViewPort()
 }
 
 float nextFpsUpdate = 0;
-void Graphics::Update(float dt, vec3 camPos)
+void Graphics::Update(vec3 camPos)
 {
 
 	if (getkey('B')) {
@@ -233,7 +236,7 @@ void Graphics::Update(float dt, vec3 camPos)
 	this->CPCB.cameraPos.element[1] = camPos.y;
 	this->CPCB.cameraPos.element[2] = camPos.z;
 	this->CPCB.cameraPos.element[3] = 0;
-
+	
 	immediateContext->Map(camConstBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
 	memcpy(resource.pData, &CPCB, sizeof(CamPosCB));
 	immediateContext->Unmap(camConstBuffer, 0);
@@ -241,14 +244,6 @@ void Graphics::Update(float dt, vec3 camPos)
 	immediateContext->PSSetConstantBuffers(5, 1, &camConstBuffer);
 
 	immediateContext->HSSetConstantBuffers(5, 1, &camConstBuffer);
-
-	//fps
-	nextFpsUpdate += (float)dt;
-	if (nextFpsUpdate >= 0.5f) {
-		nextFpsUpdate = 0;
-		float fps = 1.f / (float)dt;
-		SetWindowTextA(windowClass.getRenderWindow().getHandle(), std::to_string(fps).c_str());
-	}
 }
 
 Vcb *Graphics::getVertexconstbuffer()
@@ -372,4 +367,20 @@ void Graphics::present(int lightNr)
 {
 	this->imguimanager->updateRender(lightNr);
 	swapChain->Present(0, 0);
+}
+
+void Graphics::UpdateFPSCounter(float dt)
+{
+	//fps
+	static int a = 0;
+	static float nextFpsUpdate = 0;
+
+	nextFpsUpdate += (float)dt;
+	a++;
+	if (nextFpsUpdate >= 0.5f) {
+		nextFpsUpdate = 0;
+		float fps = (float)(a * 2);
+		a = 0;
+		SetWindowTextA(windowClass.getRenderWindow().getHandle(), ("Game || fps: " + std::to_string(static_cast<int>(fps))).c_str());
+	}
 }

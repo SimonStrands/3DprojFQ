@@ -1,5 +1,4 @@
 //git
-//#include "MVP.hlsli"
 struct VertexShaderInput
 {
     float3 position : POSITION;

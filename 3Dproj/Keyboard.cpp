@@ -18,6 +18,13 @@ bool Keyboard::isKeyPressed(unsigned char letter)
 	return KeysDown[letter];
 }
 
+bool Keyboard::isKeyReleased(unsigned char letter)
+{
+	bool ret = oKeyReleased[letter];
+	oKeyReleased[letter] = false;
+	return ret;
+}
+
 void Keyboard::onKeyReleased(const unsigned char letter)
 {
 	KeysDown[letter] = false;

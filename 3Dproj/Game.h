@@ -16,16 +16,16 @@
 #include "Graphics.h"
 #include "DynamicCubeEnviroment.h"
 #include "QuadTree.h"
-#include "TrashCollector.h"
 
-#include "DebugCamera.h"
+#include "GameState.h"
+
+
 
 //git
-class Game {
+class Game : public GameState {
 public:
-	Game(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine, _In_ int nCmdShow);
+	Game(Graphics*& gfx, ResourceManager*& rm, ImguiManager* imguimanager, Mouse* mouse, Keyboard* keyboard, Camera* cam);
 	virtual ~Game();
-	void run();
 	void DrawToBuffer();
 	void DrawDynamicCube();
 	void ForwardDraw();
@@ -37,14 +37,18 @@ private:
 	MSG msg = {};
 	Graphics *gfx;
 	ResourceManager* rm;
-	void Update();
-	const float PI = 3.14159265359f;
+
+	void handleEvents();
+	void renderShadow();
+	GameStatesEnum update(float dt);
+	void render();
+	
 private:
 	//logic and others
 	DeferredRendering *defRend;
 	DeltaTime dt;
 	ImguiManager UIManager;
-	Mouse* mus;
+	Mouse* mouse;
 	Keyboard* keyboard;
 	Camera* camera;
 	ShadowMap* shadowMap;

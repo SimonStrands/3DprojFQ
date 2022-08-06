@@ -5,10 +5,11 @@
 #include "Keyboard.h"
 #include "Vec.h"
 #include "Mouse.h"
+#include "Clamp.h"
 
 class Camera {
 public:
-	Camera(Graphics *&gfx, Mouse *mus = nullptr, Keyboard *keyboard = nullptr, vec3 pos = vec3(0,0,10), vec3 rot = vec3(0,0,1));
+	Camera(Graphics *&gfx, Mouse *mouse = nullptr, Keyboard *keyboard = nullptr, vec3 pos = vec3(0,0,10), vec3 rot = vec3(0,0,1));
 	virtual ~Camera();
 	void updateCamera();
 	void updateCamera(float dt);
@@ -27,10 +28,11 @@ public:
 	void setRotation(vec3 newRot);
 	void setPosition(vec3 newpos);
 	void rotateCamera(vec3 rotation);
+	void rotateCameraWithMouse(int x, int y);
 
 	void setData(float FOVRadians = 90, float viewRatio = 16/9, float nearDist = 0.001, float farDist = 2000);
 private:
-	Mouse *mus;
+	Mouse *mouse;
 	Keyboard* keyboard;
 	Vcb *Vcbd;
 	LCBGS* Lcbd;

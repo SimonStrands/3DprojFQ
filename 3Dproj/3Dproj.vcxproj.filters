@@ -91,6 +91,12 @@
     <Filter Include="Resource Files\Shaders\CubeMap">
       <UniqueIdentifier>{45a2d36b-60a3-4518-a4aa-eef17a05710c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\App">
+      <UniqueIdentifier>{8fd4d8d5-6017-4a6e-856b-a3dfcef4c9f1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Settings">
+      <UniqueIdentifier>{fa0433ca-7ee7-4a44-bb24-3550141ce5dc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -230,6 +236,15 @@
     </ClCompile>
     <ClCompile Include="WindowContainer.cpp">
       <Filter>Header Files\Events</Filter>
+    </ClCompile>
+    <ClCompile Include="GameState.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="App.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Settings.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -385,6 +400,21 @@
     </ClInclude>
     <ClInclude Include="WindowContainer.h">
       <Filter>Header Files\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="App.h">
+      <Filter>Source Files\App</Filter>
+    </ClInclude>
+    <ClInclude Include="SettingsFlags.h">
+      <Filter>Source Files\Settings</Filter>
+    </ClInclude>
+    <ClInclude Include="GameState.h">
+      <Filter>Source Files\Settings</Filter>
+    </ClInclude>
+    <ClInclude Include="Settings.h">
+      <Filter>Source Files\Settings</Filter>
+    </ClInclude>
+    <ClInclude Include="Clamp.h">
+      <Filter>Header Files\Other</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

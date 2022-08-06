@@ -1,43 +1,36 @@
 #include "Game.h"
 
-//git
-Game::Game(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine, _In_ int nCmdShow)
+
+Game::Game(Graphics*& gfx, ResourceManager*& rm, ImguiManager* imguimanager, Mouse* mouse, Keyboard* keyboard, Camera* cam):
+GameState(gfx, rm, imguimanager, mouse, keyboard, cam)
 {
-	gfx = new Graphics(hInstance, hPrevInstance, lpCmdLine, nCmdShow);
-	defRend = new DeferredRendering(gfx);
 	//Create a buffer for the light const buffer(hlsli)
 	CreateConstBuffer(gfx, gfx->getConstBuffers(0), sizeof(*gfx->getLightconstbufferforCS()), gfx->getLightconstbufferforCS());
 	CreateConstBuffer(gfx, gfx->getConstBuffers(1), sizeof(*gfx->getCamPosconstbuffer()), gfx->getCamPosconstbuffer());
-	//Resource manager
-	rm = new ResourceManager(gfx);
 
 	//create lights
 	nrOfLight = 4;
 	light = new Light * [nrOfLight];
-	light[0] = new DirLight(vec3(0,60,8), vec3(0.1f, -PI/2, 1.f), 50,50);
+	light[0] = new DirLight(vec3(0, 60, 8), vec3(0.1f, -PI / 2, 1.f), 50, 50);
 	light[1] = new SpotLight(vec3(18, 46, 45), vec3(-2.4f, -0.5, 1));
 	light[2] = new SpotLight(vec3(8, 47.f, 0), vec3(0, -1, 1));
 	light[3] = new SpotLight(vec3(30, 50, 0), vec3(-1, -1, 1));
 	gfx->getLightconstbufferforCS()->nrOfLights.element = nrOfLight;
-	
+
 	//shadow map needs to take more lights
 	this->shadowMap = new ShadowMap((SpotLight**)light, nrOfLight, gfx);
 	
-	gfx->takeIM(&this->UIManager);
-	mus = gfx->getWindowClass().getMouse();
-	keyboard = gfx->getWindowClass().getKeyboard();
-	camera = new Camera(gfx, mus, keyboard, vec3(0,0,0), vec3(1,0,0));
-	camera->setData();
-	
+	this->rm->getFire();
+
 	setUpObject();
 	Qtree = new QuadTree(stataicObj, vec2(0, 0), 4, 250);
 	//Qtree->CreateDebugObjects(rm->get_Models("DCube.obj", gfx), gfx);
 	//(pi,3.14) = 180 degrees
 	Qtree->setUpCamProp(2000);
-	
-	
- 	bill = new BillBoard(gfx, vec3(0.f, 0.f, 9.f), rm->getFire(), rm->getDef()[1], 6);
-	billManager = new BillBoardManager(gfx, rm->getFire(), 10, vec3(0,0,0),vec3(5,5,5));
+
+
+	bill = new BillBoard(gfx, vec3(0.f, 0.f, 9.f), rm->getFire(), rm->getDef()[1], 6);
+	billManager = new BillBoardManager(gfx, rm->getFire(), 10, vec3(0, 0, 0), vec3(5, 5, 5));
 	billManager->setAnimation(6, 1, 0.16f);
 	////DCube cannot use others standard obj:s without messing up others shaders
 	DCube = new DynamicCube(rm->get_Models("roundsol.obj", gfx), gfx, vec3(5.f, 0.f, 0.f), vec3(0.f, 0.f, 0.f), vec3(2.f, 2.0f, 2.0f));
@@ -53,14 +46,14 @@ Game::Game(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWS
 	}
 	//camera
 	//UIManager.takeObject(obj[1]);
-	
-	
+
+
 	gfx->takeLight((SpotLight**)light, nrOfLight);
-	
+
 	lightNr = 0;
 }
 
-Game::~Game() 
+Game::~Game()
 {
 	//part of game
  	TC::GetInst().empty();
@@ -92,75 +85,47 @@ Game::~Game()
 	delete billManager;
 }
 
-
-void Game::run()
+void Game::handleEvents()
 {
-	static bool once = true;
-	while (msg.message != WM_QUIT && gfx->getWindowClass().ProcessMessages() && once)
-	{
-		while (!mus->EventBufferEmpty() && mus->getMouseActive()) {
-			mouseEvent e = mus->ReadEvent();
-			if (e.getType() == mouseEvent::EventType::RAW_MOVE) {
-				camera->rotateCamera(vec3(e.getPosX(), e.getPosY(),0));
-			}
+	/*Read Mouse*/
+	while (!mouse->EventBufferEmpty() && mouse->getMouseActive()) {
+		mouseEvent e = mouse->ReadEvent();
+		if (e.getType() == mouseEvent::EventType::RAW_MOVE){ //&& !pauseMenu) {
+			camera->rotateCameraWithMouse(e.getPosX(), e.getPosY());
 		}
-		if (keyboard->isKeyPressed(VK_TAB)) {
-			gfx->getWindowClass().HideCoursor();
-		}
-		else if (keyboard->isKeyPressed(VK_ESCAPE)) {
+	}
+
+	if (keyboard->isKeyReleased(VK_ESCAPE)) {
+		//set pause
+		if (true) {
 			gfx->getWindowClass().ShowCoursor();
 		}
-		gfx->clearScreen();
-		gfx->setTransparant(false);
-		//for shadow
-		//måste uppdatera detta så inte hela object uppdateras när bara skugga ska
-		shadowMap->setUpdateShadow();
-		vec3 camLP = camera->getPos();
-		vec3 camLR = camera->getRot();
-		for (int i = 0; i < nrOfLight; i++) {
-			//set cam position to lightposition
-			camera->setPosition(light[i]->getPos());
-			camera->setRotation(light[i]->getRotation());
-			shadowMap->inUpdateShadow(i);
-			updateShaders(true, false);
-			
-			DrawAllShadowObject();
+		else {
+			gfx->getWindowClass().HideCoursor();
 		}
-		//set cam position so its the real cam
-		camera->setPosition(camLP);
-		camera->setRotation(camLR);
-		gfx->setProjection(0);//last can be dir light
-
-
-		Update();
-		updateShaders();
-
-		bill->UpdateShader(gfx, camera->getPos());
-		//DrawDynamicCube();
-		
-		defRend->BindFirstPass();
-
-		this->DrawToBuffer();
-
-		defRend->BindSecondPass(shadowMap->GetshadowResV());
-
-		gfx->setTransparant(true);
-		gfx->setRenderTarget();
-		this->ForwardDraw();
-		gfx->present(this->lightNr);
-
-		//once = false;
 	}
-	printf("quit");
 }
 
-void Game::Update()
+void Game::renderShadow()
 {
-	dt.restartClock();
-	//keyboard
-	
-	obj[3]->addRot(vec3(0, 1.f * dt.dt(), 0));
-	camera->updateCamera((float)dt.dt());
+	shadowMap->setUpdateShadow();
+	for (int i = 0; i < nrOfLight; i++) {
+		//set cam position to lightposition
+		camera->setPosition(light[i]->getPos());
+		camera->setRotation(light[i]->getRotation());
+		shadowMap->inUpdateShadow(i);
+		updateShaders(true, false);
+
+		DrawAllShadowObject();
+	}
+}
+
+GameStatesEnum Game::update(float dt)
+{
+	GameStatesEnum theReturn = GameStatesEnum::NO_CHANGE;
+
+	obj[3]->addRot(vec3(0, 1.f * dt, 0));
+	camera->updateCamera((float)dt);
 	if (getkey('N')) {
 		DirectX::XMMATRIX viewMatrix = DirectX::XMMATRIX(
 			1.0f, 0.0f, 0.0f, 0.0f,
@@ -172,20 +137,18 @@ void Game::Update()
 		YRotation(viewMatrix, obj[1]->getRot().y);
 		gfx->getVertexconstbuffer()->view.element = viewMatrix;
 	}
-	
+
 	obj[1]->setPos(vec3(obj[0]->getPos().x, obj[1]->getPos().y, obj[0]->getPos().z));
 
 	obj[0]->setPos(camera->getPos());
 	obj[0]->setRot(vec3(camera->getRot().z, camera->getRot().x, -camera->getRot().y) + vec3(0, 1.57f, 0));
-	bill->update((float)dt.dt());
-	billManager->update(dt.dt(), gfx);
+	bill->update((float)dt);
+	billManager->update(dt, gfx);
 
 	for (int i = 0; i < LightVisualizers.size(); i++) {
 		LightVisualizers[i]->setPos(light[i]->getPos());
-		LightVisualizers[i]->setRot(vec3(0 , light[i]->getRotation().x, -light[i]->getRotation().y) + vec3(0,1.57f,0));
+		LightVisualizers[i]->setRot(vec3(0, light[i]->getRotation().x, -light[i]->getRotation().y) + vec3(0, 1.57f, 0));
 	}
-	
-	gfx->Update((float)dt.dt(), camera->getPos());
 
 #pragma region camera_settings
 	if (getkey('C')) {
@@ -205,6 +168,26 @@ void Game::Update()
 		lightNr = 3;
 	}
 #pragma endregion camera_settings
+	return theReturn;
+}
+
+void Game::render()
+{
+	updateShaders();
+
+	bill->UpdateShader(gfx, camera->getPos());
+	//DrawDynamicCube();
+
+	defRend->BindFirstPass();
+
+	this->DrawToBuffer();
+
+	defRend->BindSecondPass(shadowMap->GetshadowResV());
+
+	gfx->setTransparant(true);
+	gfx->setRenderTarget();
+	this->ForwardDraw();
+	gfx->present(this->lightNr);
 }
 
 void Game::DrawToBuffer()

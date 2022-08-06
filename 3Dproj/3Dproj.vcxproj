@@ -28,26 +28,26 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -146,6 +146,8 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);NOMINMAX</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)/SFML/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -161,6 +163,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AnimationModel.cpp" />
+    <ClCompile Include="App.cpp" />
     <ClCompile Include="BillBoard.cpp" />
     <ClCompile Include="BillBoardManager.cpp" />
     <ClCompile Include="Camera.cpp" />
@@ -174,6 +177,7 @@
     <ClCompile Include="DynamicCubeEnviroment.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="GameState.cpp" />
     <ClCompile Include="Graphics.cpp" />
     <ClCompile Include="imgui.cpp" />
     <ClCompile Include="imguiManager.cpp" />
@@ -199,6 +203,7 @@
     <ClCompile Include="RenderWindow.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="rotation.cpp" />
+    <ClCompile Include="Settings.cpp" />
     <ClCompile Include="ShadowMap.cpp" />
     <ClCompile Include="TileAnimation.cpp" />
     <ClCompile Include="TrashCollector.cpp" />
@@ -209,10 +214,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationModel.h" />
+    <ClInclude Include="App.h" />
     <ClInclude Include="BillBoard.h" />
     <ClInclude Include="BillBoardManager.h" />
     <ClInclude Include="Bone.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="Clamp.h" />
     <ClInclude Include="Collision.h" />
     <ClInclude Include="Convertions.h" />
     <ClInclude Include="D311Helper.h" />
@@ -222,6 +229,7 @@
     <ClInclude Include="DynamicCubeEnviroment.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameObject.h" />
+    <ClInclude Include="GameState.h" />
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="CreateBuffer.h" />
     <ClInclude Include="imconfig.h" />
@@ -250,6 +258,8 @@
     <ClInclude Include="RenderWindow.h" />
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="rotation.h" />
+    <ClInclude Include="Settings.h" />
+    <ClInclude Include="SettingsFlags.h" />
     <ClInclude Include="ShadowMap.h" />
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="TileAnimation.h" />

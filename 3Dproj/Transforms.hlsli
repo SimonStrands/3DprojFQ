@@ -8,3 +8,8 @@ cbuffer lightOCameraCBuf : register (b6)
     row_major matrix lightViewProj[MAXNROFLIGHTS];
 	int nrOfLight; 
 }
+
+cbuffer Settings : register(b7)
+{
+    float2 Resulotion;
+}

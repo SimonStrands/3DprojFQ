@@ -40,7 +40,6 @@ QuadTree::QuadTree(std::vector<GameObject*>& objectList, vec2 position, int dept
 		//check if a object is contained in here
 		for (int i = 0; i < objectList.size(); i++) {
 			DirectX::XMFLOAT4 a[2];
-			DirectX::XMVECTOR p[2];
 			objectList[i]->getBoundingBox(a);
 			if (collision2d(a, position, size)) {//it is inside this quad tree
 				//add it to this object list

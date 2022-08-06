@@ -1,5 +1,5 @@
 #include <iostream>
-#include "Game.h"
+#include "App.h"
 #include "debug.h"
 #include "Random.h"
 //git
@@ -13,10 +13,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 #ifdef _DEBUG
 	RedirectIOToConsole();
 #endif
-	//obj fixes Exist in another branch
-	Game game(hInstance, hPrevInstance, lpCmdLine, nCmdShow);
-	game.run();
-	
+
+	App app(hInstance, hPrevInstance, lpCmdLine, nCmdShow);	
+	app.set_initial_gamestate(GameStatesEnum::TO_GAME);
+	app.run();
 	
 	return 0;
 }
